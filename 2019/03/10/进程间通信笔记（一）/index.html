@@ -1,0 +1,1212 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux,笔记,进程间通信,IPC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="进程间通信
+pipe进行父子进程间的通信
+pipe进行兄弟进程间的通信
+FIFO进行无血缘关系的进程间通信（FIFO又被称为命名管道）
+mmap函数进行有血缘无血缘进程间通信">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程间通信笔记（一）">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/03/10/进程间通信笔记（一）/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="进程间通信
+pipe进行父子进程间的通信
+pipe进行兄弟进程间的通信
+FIFO进行无血缘关系的进程间通信（FIFO又被称为命名管道）
+mmap函数进行有血缘无血缘进程间通信">
+<meta property="og:updated_time" content="2019-03-10T07:08:51.768Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="进程间通信笔记（一）">
+<meta name="twitter:description" content="进程间通信
+pipe进行父子进程间的通信
+pipe进行兄弟进程间的通信
+FIFO进行无血缘关系的进程间通信（FIFO又被称为命名管道）
+mmap函数进行有血缘无血缘进程间通信">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/03/10/进程间通信笔记（一）/"/>
+
+
+
+
+
+  <title> 进程间通信笔记（一） | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/03/10/进程间通信笔记（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                进程间通信笔记（一）
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-10T15:07:52+08:00">
+                2019-03-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/03/10/进程间通信笔记（一）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/03/10/进程间通信笔记（一）/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/03/10/进程间通信笔记（一）/" class="leancloud_visitors" data-flag-title="进程间通信笔记（一）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h1><ul>
+<li>pipe进行父子进程间的通信</li>
+<li>pipe进行兄弟进程间的通信</li>
+<li>FIFO进行无血缘关系的进程间通信（FIFO又被称为命名管道）</li>
+<li>mmap函数进行有血缘无血缘进程间通信</li>
+</ul>
+<a id="more"></a>
+<h1 id="IPC"><a href="#IPC" class="headerlink" title="IPC"></a>IPC</h1><ul>
+<li>InerProcess Communication(进程间通信)</li>
+</ul>
+<h1 id="进程间通信的4种方式"><a href="#进程间通信的4种方式" class="headerlink" title="进程间通信的4种方式"></a>进程间通信的4种方式</h1><ul>
+<li>管道 - 简单</li>
+<li>信号 - 系统开销小</li>
+<li>共享映射区 - 有无血缘关系的进程间通信都可以</li>
+<li>本地套接字  - 稳定</li>
+</ul>
+<h1 id="匿名管道pipe"><a href="#匿名管道pipe" class="headerlink" title="匿名管道pipe"></a>匿名管道pipe</h1><p>这里指的是匿名管道pipe</p>
+<h2 id="匿名管道概念"><a href="#匿名管道概念" class="headerlink" title="匿名管道概念"></a>匿名管道概念</h2><ul>
+<li>本质<ul>
+<li><strong>内核缓冲区</strong></li>
+<li>伪文件，匿名管道在硬盘上没有这个文件，也不占用磁盘空间</li>
+</ul>
+</li>
+<li>特点<ul>
+<li>两部分<ul>
+<li>读端，写端，对应两个文件描述符</li>
+<li>数据写端流入，读端流出</li>
+</ul>
+</li>
+<li>操作管道的进程被销毁之后，管道自动被释放了</li>
+<li>管道默认是阻塞的<ul>
+<li>读写</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="匿名管道的原理"><a href="#匿名管道的原理" class="headerlink" title="匿名管道的原理"></a>匿名管道的原理</h2><ul>
+<li><p>内部实现方式：队列</p>
+<ul>
+<li>环形队列</li>
+<li>特点：先进先出，数据结构特点：不用频繁移动内部元素，队头队尾会随元素移出相对移动。</li>
+</ul>
+</li>
+<li><p>缓冲区大小</p>
+<ul>
+<li>默认4k</li>
+<li>大小会根据实际情况做适当调整</li>
+</ul>
+</li>
+</ul>
+<h2 id="匿名管道的局限性"><a href="#匿名管道的局限性" class="headerlink" title="匿名管道的局限性"></a>匿名管道的局限性</h2><ul>
+<li>队列<ul>
+<li>数据只能读取一次，不能重复读取</li>
+</ul>
+</li>
+<li>半双工<ul>
+<li>单工：遥控器</li>
+<li>半双工：对讲机<ul>
+<li>数据传输方向是单向的</li>
+</ul>
+</li>
+<li>双工：电话</li>
+</ul>
+</li>
+<li>匿名管道pipe<ul>
+<li>适用于有血缘关系的进程</li>
+</ul>
+</li>
+</ul>
+<h2 id="创建匿名管道"><a href="#创建匿名管道" class="headerlink" title="创建匿名管道"></a>创建匿名管道</h2><ul>
+<li>int pipe(int fd[2]);<ul>
+<li>fd 为传出参数</li>
+<li>fd[0]为读端</li>
+<li>fd[1]为写端 </li>
+</ul>
+</li>
+</ul>
+<p>例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> fd[<span class="number">2</span>];</div><div class="line">    <span class="keyword">int</span> ret = pipe(fd);</div><div class="line">    <span class="keyword">if</span>(ret == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"piper error"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">pid_t</span> pid = fork();<span class="comment">//fork在管道之后，这样子进程能继承父进程的文件描述符</span></div><div class="line">    <span class="keyword">if</span>(pid == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"fork error"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="built_in">printf</span>(<span class="string">"pipe[0] = %d\n"</span> fd[<span class="number">0</span>]);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"pipe[1] = %d\n"</span> fd[<span class="number">1</span>]);</div><div class="line">    </div><div class="line">    close(fd[<span class="number">0</span>]);</div><div class="line">    close(fd[<span class="number">1</span>]);</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="父子进程使用匿名管道通信"><a href="#父子进程使用匿名管道通信" class="headerlink" title="父子进程使用匿名管道通信"></a>父子进程使用匿名管道通信</h2><ul>
+<li><p>练习</p>
+<ul>
+<li><p>父子进程间通信，实现 ps aux | grep bash</p>
+<ul>
+<li><strong>数据重定向：dup2（oldfd,newfd)</strong></li>
+<li>execlp</li>
+<li>因为管道的数据只能读一次，为了防止父进程把数据写了自己读了，而且有时候会出现浪费系统资源的现象<ul>
+<li>父进程写：关闭读端</li>
+<li>子进程读：关闭写端</li>
+<li>如果需要双向通信 ：那就要用两个管道了</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> fd[<span class="number">2</span>];</div><div class="line">    <span class="keyword">int</span> ret = pipe(fd);</div><div class="line">    <span class="keyword">if</span>(ret == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"piper error"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">pid_t</span> pid = fork();<span class="comment">//fork在管道之后，这样子进程能继承父进程的文件描述符</span></div><div class="line">    <span class="keyword">if</span>(pid == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"fork error"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//父进程</span></div><div class="line">    <span class="comment">// ps aux</span></div><div class="line">    <span class="keyword">if</span>(pid&gt;<span class="number">0</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="comment">//关闭读端</span></div><div class="line">        close(fd[<span class="number">0</span>]);</div><div class="line">        <span class="comment">//文件描述符重定向</span></div><div class="line">        dup2(fd[<span class="number">1</span>],STDOUT_FILENO);</div><div class="line">        execlp(<span class="string">"ps"</span>,<span class="string">"ps"</span>,<span class="string">"aux"</span>,<span class="literal">NULL</span>);</div><div class="line">        perror(<span class="string">"execlp"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(pid == <span class="number">0</span>) </div><div class="line">    &#123;</div><div class="line">        close(fd[<span class="number">1</span>]);</div><div class="line">        dup2(fd[<span class="number">0</span>],STDIN_FILENO);</div><div class="line">        execlp(<span class="string">"grep"</span>,<span class="string">"grep"</span>,<span class="string">"bash"</span>,<span class="literal">NULL</span>);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="built_in">printf</span>(<span class="string">"pipe[0] = %d\n"</span> fd[<span class="number">0</span>]);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"pipe[1] = %d\n"</span> fd[<span class="number">1</span>]);</div><div class="line">    </div><div class="line">    close(fd[<span class="number">0</span>]);</div><div class="line">    close(fd[<span class="number">1</span>]);</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>兄弟进程间通信，实现 ps aux |grep bash</p>
+<ul>
+<li>把父进程的读和写都close掉，父进程只负责回收子进程的pcb</li>
+</ul>
+</li>
+</ul>
+<h1 id="匿名管道的读写行为"><a href="#匿名管道的读写行为" class="headerlink" title="匿名管道的读写行为"></a>匿名管道的读写行为</h1><ul>
+<li><p>读操作</p>
+<ul>
+<li>有数据<ul>
+<li>read(fd) ：正常读，返回读出的字节数</li>
+</ul>
+</li>
+<li>无数据<ul>
+<li>写端全部关闭<ul>
+<li>read解除阻塞，返回0</li>
+<li>相对于读文件读到了尾部</li>
+</ul>
+</li>
+<li>没有全部关闭<ul>
+<li>read阻塞</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>写操作</p>
+<ul>
+<li>读端全部关闭<ul>
+<li>管道破裂，进程被终止<ul>
+<li>内核给当前进程发信号SIGPIPE</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>读端没全部关闭<ul>
+<li>缓冲区写满了<ul>
+<li>write阻塞</li>
+</ul>
+</li>
+<li>缓冲区没有满<ul>
+<li>write继续写</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>如何设置非阻塞？</p>
+<ul>
+<li><p>默认读写两端都阻塞</p>
+</li>
+<li><p>设置读端为非阻塞pipe(fd)</p>
+<ul>
+<li><p>fcntl - 变参函数</p>
+<ul>
+<li>修改文件属性：open的时候对应的flag属性</li>
+</ul>
+</li>
+<li><p>设置方法：</p>
+<ul>
+<li>获取原来的flag：<code>int flag =  fcntl(fd[0],F_GETFL)；</code></li>
+<li>生成新的flag：<code>flag |= NONBLOCK;</code></li>
+<li>设置：<code>fcntl(fd[0],F_SETFL,flags);</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="有名管道FIFO"><a href="#有名管道FIFO" class="headerlink" title="有名管道FIFO"></a>有名管道FIFO</h1><h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>有名管道</li>
+<li>在磁盘上有个文件，如果 ls -l 文件类型是 p</li>
+<li>伪文件，在磁盘上大小永远为0，往里面写的数据，会被映射到内核缓冲区</li>
+<li>在内核中有一个对应的缓冲区</li>
+<li>半双工</li>
+</ul>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ul>
+<li>可以进行没有血缘关系的进程间通信</li>
+</ul>
+<h2 id="创建方式"><a href="#创建方式" class="headerlink" title="创建方式"></a>创建方式</h2><ul>
+<li>命令：mkfifo 管道名</li>
+<li>函数：mkfifo</li>
+</ul>
+<h2 id="FIFO文件可以使用IO函数进行操作"><a href="#FIFO文件可以使用IO函数进行操作" class="headerlink" title="FIFO文件可以使用IO函数进行操作"></a>FIFO文件可以使用IO函数进行操作</h2><ul>
+<li>open/close</li>
+<li>read/write</li>
+<li>不能执行lseek操作</li>
+</ul>
+<h2 id="进程间通信-1"><a href="#进程间通信-1" class="headerlink" title="进程间通信"></a>进程间通信</h2><ul>
+<li>两个不相干的进程 </li>
+</ul>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>就像对待文件一样，创建，两个程序读写。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> PATHNAME    <span class="meta-string">"/tmp/myfifo"</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">pid_t</span> pid;</div><div class="line">    <span class="keyword">int</span> fd = <span class="number">-1</span>;</div><div class="line">    <span class="keyword">char</span> buf[BUFSIZ] = <span class="string">""</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 创建一个命名管道，大家可以用 ls -l 命令查看这个管道文件的属性</span></div><div class="line">    <span class="keyword">if</span> (mkfifo(PATHNAME, <span class="number">0644</span>) &lt; <span class="number">0</span>) &#123;</div><div class="line">        perror(<span class="string">"mkfifo()"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    fflush(<span class="literal">NULL</span>);</div><div class="line">    pid = fork();</div><div class="line">    <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</div><div class="line">        perror(<span class="string">"fork()"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (!pid) &#123; <span class="comment">// parent</span></div><div class="line">        pid = fork();</div><div class="line">        <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</div><div class="line">            perror(<span class="string">"fork()"</span>);</div><div class="line">            <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (!pid) &#123; <span class="comment">// parent</span></div><div class="line">            <span class="comment">// 两个子进程都创建完之后父进程直接退出，使两个子进程不具有亲缘关系。</span></div><div class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">/* child 2 */</span></div><div class="line">        <span class="comment">/* 像操作普通文件一样对这个管道进行 open(2)、read(2)、write(2)、close(2) */</span></div><div class="line">        fd = open(PATHNAME, O_RDWR);</div><div class="line">        <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</div><div class="line">            perror(<span class="string">"open()"</span>);</div><div class="line">            <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">        read(fd, buf, BUFSIZ);</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"%s"</span>, buf);</div><div class="line">        write(fd, <span class="string">" World!"</span>, <span class="number">8</span>);</div><div class="line">        close(fd);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">// child 1</span></div><div class="line">        fd = open(PATHNAME, O_RDWR);</div><div class="line">        <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</div><div class="line">            perror(<span class="string">"open()"</span>);</div><div class="line">            <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">        write(fd, <span class="string">"Hello"</span>, <span class="number">6</span>);</div><div class="line">        sleep(<span class="number">1</span>); <span class="comment">// 刚写完管道不要马上读，等第二个进程读取完并且写入新数据之后再读。</span></div><div class="line">        read(fd, buf, BUFSIZ);</div><div class="line">        close(fd);</div><div class="line">        <span class="built_in">puts</span>(buf);</div><div class="line">        <span class="comment">// 肯定是这个进程最后退出，所以把管道文件删除，不然下次再创建的时候会报文件已存在的错误</span></div><div class="line">        remove(PATHNAME);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="内存映射区"><a href="#内存映射区" class="headerlink" title="内存映射区"></a>内存映射区</h1><h2 id="mmap-创建内存映射区"><a href="#mmap-创建内存映射区" class="headerlink" title="mmap - 创建内存映射区"></a>mmap - 创建内存映射区</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#include &lt;sys/mman.h&gt;</div><div class="line"></div><div class="line">void * mmap (void *addr,</div><div class="line">             size_t len,</div><div class="line">             int prot,</div><div class="line">             int flags,</div><div class="line">             int fd,</div><div class="line">             off_t offset);</div></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>addr</strong><br> 这个参数是建议地址（hint），没有特别需求一般设为NULL。这个函数会返回一个实际 map 的地址。</p>
+</li>
+<li><p><strong>len</strong><br> 文件长度，不能为0</p>
+</li>
+<li><p><strong>prot</strong><br>表明对这块内存的保护方式，不可与文件访问方式冲突。</p>
+<ul>
+<li><code>PROT_READ</code><ul>
+<li>读权限，必须要有的权限</li>
+</ul>
+</li>
+<li><code>PROT_WRITE</code><ul>
+<li>写权限 </li>
+</ul>
+</li>
+<li><code>PROT_EXEC</code><ul>
+<li>执行权限 </li>
+</ul>
+</li>
+</ul>
+<p>使用 | 进行连接</p>
+</li>
+<li><p><strong>flags</strong></p>
+<ul>
+<li><code>MAP_PRIVATE</code><ul>
+<li>修改了内存数据不会同步到磁盘</li>
+</ul>
+</li>
+<li><code>MAP_SHARED</code><ul>
+<li>修改内存数据会同步到磁盘。</li>
+<li>与 <code>MAP_PRIVATE</code>冲突。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>fd</strong><br> 文件描述符。进行 map 之后，文件的引用计数会增加。因此，我们可以在 map 结束后关闭 fd，进程仍然可以访问它。当我们 munmap 或者结束进程，引用计数会减少。</p>
+</li>
+<li><p><strong>offset</strong></p>
+<ul>
+<li>文件偏移，从文件起始算起。必须是4K的整数倍</li>
+<li>或者为 0</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<p>如果成功，返回指向映射区首地址的指针。</p>
+<p>如果失败，mmap 函数将返回 <code>MAP_FAILED</code>。</p>
+</li>
+</ul>
+<h2 id="munmap-释放内存映射区"><a href="#munmap-释放内存映射区" class="headerlink" title="munmap 释放内存映射区"></a>munmap 释放内存映射区</h2><ul>
+<li>函数原型： int munmap(void *addr,size_t length);<ul>
+<li>addr :mmap的返回值，映射区的首地址</li>
+<li>length：mmap的第二个参数，映射区的长度</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdlib.h&gt;</div><div class="line">#include&lt;sys.mman.h&gt;</div><div class="line">#include&lt;fcntl.h&gt;</div><div class="line"></div><div class="line">int main()&#123;</div><div class="line">    int fd = open(&quot;english.txt&quot;,O_RDWR);</div><div class="line">    int len = lseek(fd,0,SEEK_END);</div><div class="line">    //创建内存映射区</div><div class="line">    void *ptr = mmap(NULL,len,PROT_READ | PROT_WRITE,MAP_SHARED, fd ,0);</div><div class="line">    </div><div class="line">    if(ptr == MAP_FAILED)</div><div class="line">    &#123;</div><div class="line">        perror(&quot;mmap error&quot;);</div><div class="line">        exit(1);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    printf(&quot;%s&quot;,(char*)ptr);</div><div class="line">    //释放内存映射区</div><div class="line">    munmap（ptr,len);</div><div class="line">    close(fd);</div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用mmap中的一些注意事项"><a href="#使用mmap中的一些注意事项" class="headerlink" title="使用mmap中的一些注意事项"></a>使用mmap中的一些注意事项</h2><ul>
+<li>如果对mmap的返回值做操作是不可以的。<ul>
+<li>因为munmap需要这个值进行释放操作，所以不能动。</li>
+<li>需要新建一个指针等于这个指向地址，在对新建指针进行操作。<code>char *pt = ptr;</code></li>
+</ul>
+</li>
+<li>open 文件的权限要大于等于 mmap创建内存映射区的权限，而且必须要有读权限。</li>
+<li>可以在open的时候O_CREAT一个新文件来创建映射区么？<ul>
+<li>可以，但只创建没有大小不可以，需要做文件拓展<ul>
+<li>lseek</li>
+<li>或truncate(path,length);</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>mmap后关闭文件描述符，对mmap映射有没有影响？<ul>
+<li>没有</li>
+</ul>
+</li>
+<li>对ptr越界操作会怎么样？<ul>
+<li>段错误</li>
+</ul>
+</li>
+</ul>
+<h2 id="mmap-优势"><a href="#mmap-优势" class="headerlink" title="mmap 优势"></a>mmap 优势</h2><p>比文件IO操作要更快，是直接在内存上处理的，不是在磁盘上，效率高，</p>
+<p>但mmap不阻塞，用的时候要考虑读写先后顺序。</p>
+<h2 id="mmap-创建匿名映射区"><a href="#mmap-创建匿名映射区" class="headerlink" title="mmap 创建匿名映射区"></a>mmap 创建匿名映射区</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys.mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">int</span> len = <span class="number">4096</span>;</div><div class="line">    <span class="comment">//创建匿名映射区</span></div><div class="line">    <span class="keyword">void</span> *ptr = mmap(<span class="literal">NULL</span>,len,PROT_READ | PROT_WRITE,MAP_SHARED|MAP_ANON, <span class="number">-1</span> ,<span class="number">0</span>);</div><div class="line">    </div><div class="line">    <span class="keyword">if</span>(ptr == MAP_FAILED)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"mmap error"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">//创建子进程</span></div><div class="line">    <span class="keyword">pid_t</span> pid = fork();</div><div class="line">    <span class="keyword">if</span>(pid == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"fork error"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)</div><div class="line">    &#123;	<span class="comment">//写数据</span></div><div class="line">        <span class="built_in">strcpy</span>((<span class="keyword">char</span>*)ptr,<span class="string">"复制进去一句话"</span>);</div><div class="line">        <span class="comment">//回收子进程</span></div><div class="line">        wait(<span class="literal">NULL</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(pid == <span class="number">0</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="comment">// 读数据</span></div><div class="line">        <span class="built_in">printf</span>(<span class="string">"%s\n"</span>,(<span class="keyword">char</span>*)ptr);</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"%s"</span>,(<span class="keyword">char</span>*)ptr);</div><div class="line">    <span class="comment">//释放内存映射区</span></div><div class="line">    munmap（ptr,len);</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于有血缘关系的进程，用mmap创建匿名文件映射区，不用管磁盘上到底有没有这个文件，更方便。</p>
+<h2 id="mmap对于没有血缘关系进程通信"><a href="#mmap对于没有血缘关系进程通信" class="headerlink" title="mmap对于没有血缘关系进程通信"></a>mmap对于没有血缘关系进程通信</h2><p>对于没有血缘关系的进程，需要借助磁盘文件创建映射区</p>
+<ul>
+<li>不阻塞</li>
+<li>a.c <ul>
+<li>打开文件用mmap对映射区进行读写操作</li>
+</ul>
+</li>
+<li>b.c<ul>
+<li>打开文件用mmapd对映射区做读写操作</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// a.c</span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys.mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="comment">//打开磁盘文件，没有就创建</span></div><div class="line">	<span class="keyword">int</span> fd = open(<span class="string">"temp"</span>, O_RDWR|O_CREAT,<span class="number">0664</span>);</div><div class="line">	<span class="comment">//给创建的文件做一个扩展</span></div><div class="line">	ftruncate(fd,<span class="number">4096</span>);</div><div class="line">	<span class="comment">//求文件大小，虽然扩展自己知道4096，但是万一改变了还需要改</span></div><div class="line">	<span class="keyword">int</span> len = lseek(fd,<span class="number">0</span>,SEEK_END);</div><div class="line">	<span class="comment">//创建mmap</span></div><div class="line">	<span class="keyword">void</span>* ptr = mmap(<span class="literal">NULL</span>,len,PROT_READ|PROT_WRITE,MAP_SHARED,fd,<span class="number">0</span>);</div><div class="line">	<span class="keyword">if</span>(ptr == MAP_FAILED)</div><div class="line">	&#123;</div><div class="line">        perror(<span class="string">"mmap"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</div><div class="line">	&#123;</div><div class="line">        sleep(<span class="number">1</span>);</div><div class="line">        <span class="comment">//读取映射区的时候不必从头读</span></div><div class="line">        <span class="built_in">printf</span>(<span class="string">"%s\n"</span>,(<span class="keyword">char</span>*)ptr+<span class="number">1024</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//释放</span></div><div class="line">	<span class="keyword">int</span> ret = munmap(ptr,len);</div><div class="line">	<span class="keyword">if</span>(ret == <span class="number">-1</span>)</div><div class="line">	&#123;</div><div class="line">        perror(<span class="string">"munmap"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>另一个程序</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// b.c</span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sys.mman.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="comment">//打开同一个磁盘文件</span></div><div class="line">	<span class="keyword">int</span> fd = open(<span class="string">"temp"</span>, O_RDWR|O_CREAT,<span class="number">0664</span>);</div><div class="line"></div><div class="line">	<span class="comment">//求文件大小</span></div><div class="line">	<span class="keyword">int</span> len = lseek(fd,<span class="number">0</span>,SEEK_END);</div><div class="line">	<span class="comment">//创建mmap</span></div><div class="line">	<span class="keyword">void</span>* ptr = mmap(<span class="literal">NULL</span>,len,PROT_READ|PROT_WRITE,MAP_SHARED,fd,<span class="number">0</span>);</div><div class="line">	<span class="keyword">if</span>(ptr == MAP_FAILED)</div><div class="line">	&#123;</div><div class="line">        perror(<span class="string">"mmap"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">while</span>(<span class="number">1</span>)</div><div class="line">	&#123;</div><div class="line">        <span class="comment">//写数据,写的方式就是对指针进行操作即可</span></div><div class="line">        <span class="keyword">char</span>* p = (<span class="keyword">char</span>*)ptr;</div><div class="line">        <span class="comment">//和读对应，也偏移1024</span></div><div class="line">        p+=<span class="number">1024</span>;</div><div class="line">        <span class="built_in">strcpy</span>(p,<span class="string">"hello,world\n"</span>);</div><div class="line">        <span class="comment">//特意写慢一些，那边读是不阻塞的，所以每2秒会有一次输出空行</span></div><div class="line">        sleep(<span class="number">2</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//释放</span></div><div class="line">	<span class="keyword">int</span> ret = munmap(ptr,len);</div><div class="line">	<span class="keyword">if</span>(ret == <span class="number">-1</span>)</div><div class="line">	&#123;</div><div class="line">        perror(<span class="string">"munmap"</span>);</div><div class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="补充：dup和dup2"><a href="#补充：dup和dup2" class="headerlink" title="补充：dup和dup2"></a>补充：dup和dup2</h1><p>复制文件描述符</p>
+<h2 id="dup"><a href="#dup" class="headerlink" title="dup"></a>dup</h2><ul>
+<li>int dup(int oldfd);<ul>
+<li>oldfd：要复制的文件描述符</li>
+<li>返回值：新的文件描述符</li>
+<li>dup调用成功<ul>
+<li>有两个文件描述符指向同一个文件</li>
+</ul>
+</li>
+<li>返回值：取最小的且没被暂用的文件描述符</li>
+<li>复制完有两个文件描述符，close掉其中一个，文件没有被关闭，还有一个文件描述符。</li>
+</ul>
+</li>
+<li>int dup2(int oldfd, int newfd);<ul>
+<li>oldfd -&gt;hello</li>
+<li>newfd -&gt;world</li>
+<li>假设newfd已经指向了一个文件，首先断开close与那个文件的链接，newfd指向oldfd指向的文件</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/03/10/进程间通信笔记（一）/">进程间通信笔记（一）</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年03月10日 - 15:03</p>
+  <p><span>最后更新:</span>2019年03月10日 - 15:03</p>
+  <p><span>原始链接:</span><a href="/2019/03/10/进程间通信笔记（一）/" title="进程间通信笔记（一）">https://ysbbswork.github.io/2019/03/10/进程间通信笔记（一）/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/03/10/进程间通信笔记（一）/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/进程间通信/" rel="tag"># 进程间通信</a>
+          
+            <a href="/tags/IPC/" rel="tag"># IPC</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/10/同步异步阻塞非阻塞/" rel="next" title="同步异步阻塞非阻塞">
+                <i class="fa fa-chevron-left"></i> 同步异步阻塞非阻塞
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/12/Linux多线程笔记/" rel="prev" title="Linux多线程笔记">
+                Linux多线程笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/03/10/进程间通信笔记（一）/"
+           data-title="进程间通信笔记（一）" data-url="https://ysbbswork.github.io/2019/03/10/进程间通信笔记（一）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程间通信"><span class="nav-number">1.</span> <span class="nav-text">进程间通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IPC"><span class="nav-number">2.</span> <span class="nav-text">IPC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程间通信的4种方式"><span class="nav-number">3.</span> <span class="nav-text">进程间通信的4种方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#匿名管道pipe"><span class="nav-number">4.</span> <span class="nav-text">匿名管道pipe</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#匿名管道概念"><span class="nav-number">4.1.</span> <span class="nav-text">匿名管道概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匿名管道的原理"><span class="nav-number">4.2.</span> <span class="nav-text">匿名管道的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#匿名管道的局限性"><span class="nav-number">4.3.</span> <span class="nav-text">匿名管道的局限性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建匿名管道"><span class="nav-number">4.4.</span> <span class="nav-text">创建匿名管道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#父子进程使用匿名管道通信"><span class="nav-number">4.5.</span> <span class="nav-text">父子进程使用匿名管道通信</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#匿名管道的读写行为"><span class="nav-number">5.</span> <span class="nav-text">匿名管道的读写行为</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#有名管道FIFO"><span class="nav-number">6.</span> <span class="nav-text">有名管道FIFO</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#特点"><span class="nav-number">6.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用场景"><span class="nav-number">6.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建方式"><span class="nav-number">6.3.</span> <span class="nav-text">创建方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FIFO文件可以使用IO函数进行操作"><span class="nav-number">6.4.</span> <span class="nav-text">FIFO文件可以使用IO函数进行操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进程间通信-1"><span class="nav-number">6.5.</span> <span class="nav-text">进程间通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">6.6.</span> <span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存映射区"><span class="nav-number">7.</span> <span class="nav-text">内存映射区</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mmap-创建内存映射区"><span class="nav-number">7.1.</span> <span class="nav-text">mmap - 创建内存映射区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#munmap-释放内存映射区"><span class="nav-number">7.2.</span> <span class="nav-text">munmap 释放内存映射区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用mmap中的一些注意事项"><span class="nav-number">7.3.</span> <span class="nav-text">使用mmap中的一些注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mmap-优势"><span class="nav-number">7.4.</span> <span class="nav-text">mmap 优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mmap-创建匿名映射区"><span class="nav-number">7.5.</span> <span class="nav-text">mmap 创建匿名映射区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mmap对于没有血缘关系进程通信"><span class="nav-number">7.6.</span> <span class="nav-text">mmap对于没有血缘关系进程通信</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补充：dup和dup2"><span class="nav-number">8.</span> <span class="nav-text">补充：dup和dup2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dup"><span class="nav-number">8.1.</span> <span class="nav-text">dup</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

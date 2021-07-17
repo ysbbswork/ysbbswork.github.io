@@ -1,0 +1,993 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="系统调用文件描述符每个进程在Linux内核中都有一个task_struct结构体来维护进程相关的 信息,称为进程描述符。task_struct中有一个指针(struct files_struct *files; )指向files_struct结构体,称为文件描述符表,其中每个表项包含一个指向已打开的文件的指针,如下图所示
+
+​         用户程序不能直接访问内核中的文件描述符表,而只能使用文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux编程笔记（二）——系统调用IO">
+<meta property="og:url" content="https://ysbbswork.github.io/2018/06/05/Linux编程笔记（二）——系统调用IO/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="系统调用文件描述符每个进程在Linux内核中都有一个task_struct结构体来维护进程相关的 信息,称为进程描述符。task_struct中有一个指针(struct files_struct *files; )指向files_struct结构体,称为文件描述符表,其中每个表项包含一个指向已打开的文件的指针,如下图所示
+
+​         用户程序不能直接访问内核中的文件描述符表,而只能使用文">
+<meta property="og:image" content="http://img.my.csdn.net/uploads/201304/15/1366040853_7047.png">
+<meta property="og:updated_time" content="2018-06-06T14:26:04.316Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux编程笔记（二）——系统调用IO">
+<meta name="twitter:description" content="系统调用文件描述符每个进程在Linux内核中都有一个task_struct结构体来维护进程相关的 信息,称为进程描述符。task_struct中有一个指针(struct files_struct *files; )指向files_struct结构体,称为文件描述符表,其中每个表项包含一个指向已打开的文件的指针,如下图所示
+
+​         用户程序不能直接访问内核中的文件描述符表,而只能使用文">
+<meta name="twitter:image" content="http://img.my.csdn.net/uploads/201304/15/1366040853_7047.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2018/06/05/Linux编程笔记（二）——系统调用IO/"/>
+
+
+
+
+
+  <title> Linux编程笔记（二）——系统调用IO | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/06/05/Linux编程笔记（二）——系统调用IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux编程笔记（二）——系统调用IO
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-05T21:38:28+08:00">
+                2018-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/06/05/Linux编程笔记（二）——系统调用IO/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/05/Linux编程笔记（二）——系统调用IO/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/06/05/Linux编程笔记（二）——系统调用IO/" class="leancloud_visitors" data-flag-title="Linux编程笔记（二）——系统调用IO">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h1><h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>每个进程在Linux内核中都有一个task_struct结构体来维护进程相关的 信息,称为<strong>进程描述符</strong>。task_struct中有一个指针(struct files_struct *files; )指向files_struct结构体,称为文件描述符表,其中每个表项包含一个指向已打开的文件的指针,如下图所示</p>
+<p><img src="http://img.my.csdn.net/uploads/201304/15/1366040853_7047.png" alt="img"></p>
+<p>​         用户程序不能直接访问<strong>内核中的文件描述符表</strong>,而<strong>只能使用文件描述符表的索引</strong> (即0、1、2、3这些数字),它实际上是一个由内核保存的数组下标，所以不会是负数。这些索引就称为文件描述符(File Descriptor),用int 型变量保存。 当调用open 打开一个文件或创建一个新文件时,内核分配一个文件描述符并返回给用户程序,该文件描述符表项中的指针指向新打开的文件。当读写文件时,用户程序把文件描述符传给read 或write ,内核根据文件描述符找到相应的表项,再通过表项中的指针找到相应的文件。</p>
+<p>文件描述符数组在每个进程中都会持有一份，所以理论上是每个进程最多可以打开 1024 个文件，而不是系统中所有的进程一共只能打开 1024 个文件。</p>
+<a id="more"></a>
+<p>例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">int in_fd,out_fd;  //int用来保存文件描述符</div><div class="line">in_fd=open(filename1,O_RDONLY);//系统调用的open和create成功后都是返回文件描述符</div><div class="line">out_fd=creat(filename2,COPYMODE);</div><div class="line">close(in_fd);//通过文件描述符来关闭文件</div><div class="line">close(out_fd);</div></pre></td></tr></table></figure>
+<h1 id="具体的系统调用I-O"><a href="#具体的系统调用I-O" class="headerlink" title="具体的系统调用I/O"></a>具体的系统调用I/O</h1><h2 id="fileno-3"><a href="#fileno-3" class="headerlink" title="fileno(3)"></a>fileno(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1 #include &lt;stdio.h&gt;</div><div class="line">2 </div><div class="line">3 int fileno(FILE *stream);</div><div class="line">4 </div><div class="line">5    Feature Test Macro Requirements for glibc (see feature_test_macros(7)):</div><div class="line">6 </div><div class="line">7        fileno(): _POSIX_C_SOURCE &gt;= 1 || _XOPEN_SOURCE || _POSIX_SOURCE</div></pre></td></tr></table></figure>
+<p> 这个函数的作用是从 STDIO 的 FILE 结构体指针中获得 SYSIO 的文件描述符。</p>
+<h2 id="fdopen-3"><a href="#fdopen-3" class="headerlink" title="fdopen(3)"></a>fdopen(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1 #include &lt;stdio.h&gt;</div><div class="line">2 </div><div class="line">3 FILE *fdopen(int fd, const char *mode);</div><div class="line">4 </div><div class="line">5 　　Feature Test Macro Requirements for glibc (see feature_test_macros(7)):</div><div class="line">6 </div><div class="line">7      fdopen(): _POSIX_C_SOURCE &gt;= 1 || _XOPEN_SOURCE || _POSIX_SOURCE</div></pre></td></tr></table></figure>
+<p> 这个函数和上面的 flieno(3) 函数的功能是反过来的，作用是把 SYSIO 的文件描述符转换为 STDIO 的 FILE 结构体指针。mode 参数的作用与 fopen(3) 中的 mode 参数相同，这里不再赘述。</p>
+<p>虽然这两个函数可以在 STDIO 与 SYSIO 之间互相转换，但是并<strong>不推荐对同一个文件同时采用两种方式操作</strong>。因为 STDIO 和 SYSIO 之间它们处理文件的私有数据是不同步的，如果同时使用两种方式操作同一个文件则可能带来不可预知的后果，具体可以参考上一篇博文中提到的那个合并系统调用的例子。</p>
+<h2 id="open-2"><a href="#open-2" class="headerlink" title="open(2)"></a>open(2)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">1 open - open and possibly create a file or device</div><div class="line">2 </div><div class="line">3 #include &lt;sys/types.h&gt;</div><div class="line">4 #include &lt;sys/stat.h&gt;</div><div class="line">5 #include &lt;fcntl.h&gt;</div><div class="line">6 </div><div class="line">7 int open(const char *pathname, int flags);</div><div class="line">8 int open(const char *pathname, int flags, mode_t mode);</div></pre></td></tr></table></figure>
+<p> 想要使用 SYSIO 操作文件或设备，要先通过 open(2) 函数获得一个文件描述符。<strong>注意博文中在函数上方标识出来的头文件大家在使用这个函数的时候一定要一个不少的全部包含到源代码中</strong>。</p>
+<p>参数列表：</p>
+<p>　　pathname：要打开的文件路径。</p>
+<p>　　flags：指定文件的操作方式，多个选项之间用按位或( | )运算符链接。</p>
+<p>　　　　比选项，三选一：<strong>O_RDONLY, O_WRONLY, O_RDWR</strong></p>
+<p>　　　　可选项：可选项有很多，这里只介绍常用的，想要查看完全的可选项，可以查阅 man 手册。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>O_APPEND</td>
+<td>追加到文件尾部。</td>
+</tr>
+<tr>
+<td>O_CREAT</td>
+<td>创建新文件。</td>
+</tr>
+<tr>
+<td>O_DIRECT</td>
+<td>最小化缓冲。buffer 时写的加速机制，cache 是读的加速机制。</td>
+</tr>
+<tr>
+<td>O_DIRECTORY</td>
+<td>强调一定要打开一个目录，如果 pathname 不是目录则会打开失败。</td>
+</tr>
+<tr>
+<td>O_LARGEFILE</td>
+<td>打开大文件的时候要加这个，会将 off_t 定义为 64 bit，当然也可以在编译的时候使用上一篇博文提到的宏定义来指定 off_t 的长度。</td>
+</tr>
+<tr>
+<td>O_NOFOLLOW</td>
+<td>如果 pathname 是符号链接则不展开，也就是说打开的是符号链接文件本身，而不是符号链接指向的文件。</td>
+</tr>
+<tr>
+<td>O_NONBLOCK</td>
+<td>非阻塞形式。阻塞是读取不到数据时死等，非阻塞是尝试读取，无论能否读取到数据都返回。</td>
+</tr>
+</tbody>
+</table>
+<p>　　mode：8 进制文件权限。当 flags 包含 O_CREAT 选项时必须传这个参数，否则可以不用传这个参数。当然系统在创建文件的时候不会直接这个参数，而是通过如下的公式计算得到最终的文件权限：</p>
+<blockquote>
+<p>mode &amp; ~(umask)</p>
+</blockquote>
+<p>　　具体的 umask 的值可以通过 umask(1) 命令获得。通过这样的公式进行计算可以避免程序中创建出权限过高的文件。</p>
+<p>不知道小伙伴们注意到没有，这个函数有一个有趣的地方。C 语言中是没有<strong>函数重载</strong>这个概念的，那么为什么这两个 open(2) 函数很像重载的函数呢？实际上它们是用可变长参数列表来实现的。</p>
+<p>顿时让我想起来一道面试题：如何确定一个函数是用重载实现的还是用变长参数实现的？答案是给它多传几个参数嘛，如果报错了那一定是函数重载，否则就是变长参数实现的呗。</p>
+<h2 id="close-2"><a href="#close-2" class="headerlink" title="close(2)"></a>close(2)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1 close - close a file descriptor</div><div class="line">2 </div><div class="line">3 #include &lt;unistd.h&gt;</div><div class="line">4 </div><div class="line">5 int close(int fd);</div></pre></td></tr></table></figure>
+<p> 关闭文件描述符。</p>
+<p>参数是要关闭的文件描述符。注意当一个文件描述符被关闭之后就不能再使用了，虽然 fd 这个变量的值没有变，但是内核已经将相关的资源释放了，这个 fd 相当于一个野指针了。</p>
+<p>返回值：</p>
+<p>　　成功为0，失败为-1。但很少对它的返回值做校验，一般都认为不会失败。</p>
+<h2 id="read-2"><a href="#read-2" class="headerlink" title="read(2)"></a>read(2)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1 read - read from a file descriptor</div><div class="line">2 </div><div class="line">3 #include &lt;unistd.h&gt;</div><div class="line">4 </div><div class="line">5 ssize_t read(int fd, void *buf, size_t count);</div></pre></td></tr></table></figure>
+<p>这是 SYSIO 读取文件的函数，作用是从文件描述符 fd 中读取 count 个字节的数据到 buf 所指向的空间。</p>
+<p>返回值：返回成功读取到的字节数；0 表示读取到了文件末尾；-1 表示出现错误并设置 errno。</p>
+<p>　　注意 read(2) 函数与 STDIO 中的 fread(3) 函数的返回值是有区别的，fread(3) 返回的是成功读取到了多少个对象，而 read(2) 函数返回的是成功读取到的字节数量。</p>
+<h2 id="write-2"><a href="#write-2" class="headerlink" title="write(2)"></a>write(2)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1 write - write to a file descriptor</div><div class="line">2 </div><div class="line">3 #include &lt;unistd.h&gt;</div><div class="line">4 </div><div class="line">5 ssize_t write(int fd, const void *buf, size_t count);</div></pre></td></tr></table></figure>
+<p> write(2) 是 SYSIO 向文件中写入数据的函数，作用是将 buf 中 count 字节的数据写入到文件描述符 fd 所对应的文件中。</p>
+<p>返回值：返回成功写入的字节数；0 并不表示写入失败，仅仅表示什么都没有写入；-1 才表示出现错误并设置 errno。</p>
+<p>　　注意 write(2) 函数与 STDIO 中的 fwrite(3) 函数的返回值是有区别的，fwrite(3) 返回的是成功写入了多少个对象，而 write(2) 函数返回的是成功写入的字节数量。</p>
+<p>大家想一想，为什么会出现写入的值是 0 的情况呢？其实原因有很多，其中一个原因是当写入的时候发生了阻塞，而阻塞中的 write(2) 系统调用恰巧被一个信号打断了，那么 write(2) 可能没有写入任何数据就返回了，所以返回值会是0。至于什么是阻塞，什么是信号，LZ 会在后面的博文中讲解。</p>
+<h2 id="lseek-2"><a href="#lseek-2" class="headerlink" title="lseek(2)"></a>lseek(2)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">1 lseek - reposition read/write file offset</div><div class="line">2 </div><div class="line">3 #include &lt;sys/types.h&gt;</div><div class="line">4 #include &lt;unistd.h&gt;</div><div class="line">5 </div><div class="line">6 off_t lseek(int fd, off_t offset, int whence);</div></pre></td></tr></table></figure>
+<p>通过上一篇博文大家知道了<strong>文件位置指针</strong>这个概念，它是系统为了方便我们读写文件而设定的一个标记，随着我们通过函数对文件的读写，它会自动相应的向文件尾部偏移。</p>
+<p>那么是不是说当我们读取过文件的一段内容之后，就没办法回去再次读取同一段内容了呢？</p>
+<p>其实不是的，通过 lseek(2) 函数就可以让我们随心所欲的控制文件位置指针了。</p>
+<p>参数列表：</p>
+<p>　　fd：要操作的文件描述符；</p>
+<p>　　offset：想对于 whence 的偏移量；</p>
+<p>　　whence：相对位置；三选一：SEEK_SET、SEEK_CUR、SEEK_END</p>
+<p>　　　　SEEK_SET 表示文件的起始位置；</p>
+<p>　　　　SEEK_CUR 表示文件位置指针当前所在位置；</p>
+<p>　　　　SEEK_END 表示文件末尾；</p>
+<p> 返回值：</p>
+<p>　　成功时返回文件首相对于移动结束之后的文件位置指针所在位置的偏移量；失败时返回 -1 并设置 errno；</p>
+<p>这个函数的 offset 参数和返回值都对基本数据类型进行了封装，这一点要比标准库的 fseek(3) 更先进。</p>
+<p>写一段伪代码来说明这个函数的使用方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1 lseek(fd, -1024, SEEK_CUR); // 从文件位置指针当前位置向前偏移 1024 个字节</div><div class="line">2 lseek(fd, 1024, SEEK_SET); // 从文件起始位置向后偏移 1kb</div><div class="line">3 lseek(fd, 1024UL*1024UL*1024UL*5UL, SEEK_SET); // 产生一个 5GB 大小的空洞文件</div></pre></td></tr></table></figure>
+<h3 id="lseek使用"><a href="#lseek使用" class="headerlink" title="lseek使用"></a>lseek使用</h3><p>系统每次打开open一个文件都会保存一个指向文件当前位置的指针，当读写操作完成时，指针会移到下一个记录位置，这个指针与<strong>文件描述符</strong><code>（int fd)</code>相关联。</p>
+<p>所以write只会更新下一条记录，而不是修改当前找到的那条要修改的记录。</p>
+<p>那么问题就来了。</p>
+<p>问题：在文件操作中，如何改变一个文件的当前读/写位置？</p>
+<p>答题：使用系统调用lseek</p>
+<ul>
+<li><p>目标：是指针指向文件中指定的位置</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">off_t oldpos = lseek (int fd, off_t dist , int base)</div></pre></td></tr></table></figure>
+</li>
+<li><p>fd 文件描述符 ， dist 移动的距离 ， base  (SEEK_SET:文件开始位置，SEEK_CUR:当前位置 ，SEEK_END：文件结尾）</p>
+</li>
+<li><p>返回值：oldpos 指针变化前的位置 。遇到错误返回 -1</p>
+</li>
+</ul>
+<h2 id="time-1"><a href="#time-1" class="headerlink" title="time(1)"></a>time(1)</h2><p>之前讨论过 STDIO 与 SYSIO 的效率问题，所以在这里聊一聊 time(1) 命令。</p>
+<p>这个命令可不是用来查看系统当前时间的，想要查看系统时间得使用 date(1) 命令，这个不是我们今天要讨论的内容，所以就不说了。</p>
+<p>time(1) 命令的作用是监视一个程序的用户时间，从而可以粗略的帮助我们分析这个程序的执行效率。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"> 1 while ((readlen = read(srcfd, buf, BUFSIZE)) &gt; 0) &#123;</div><div class="line"> 2         pos = 0;</div><div class="line"> 3         while (readlen &gt; 0) &#123;</div><div class="line"> 4                 writelen = write(destfd, buf+pos, readlen);</div><div class="line"> 5                 if (writelen &lt; 0) &#123;</div><div class="line"> 6                         err = errno;</div><div class="line"> 7                         goto e_write;</div><div class="line"> 8                 &#125;</div><div class="line"> 9                 pos += writelen;</div><div class="line">10                 readlen -= writelen;</div><div class="line">11         &#125;</div><div class="line">12 &#125;</div></pre></td></tr></table></figure>
+<p> 这是一个模仿 cp(1) 命令的程序的核心部分代码，其中的 buf 是一个 char 数组，用来作为数据读写的缓存。当 buf 的容量不同时文件拷贝的效率也是不同的，因为过于频繁的执行系统调用和使用过大的缓存都会使效率下降。如果通过不停的修改 buf 的容量的方式测试 buf 为多大的时候拷贝效率最高的话，就可以使用 time(1) 命令监视程序的执行时间。</p>
+<blockquote>
+<p>>$ gcc -Wall mycp_sysio.c -o mycp_sysio<br>>$ time ./mycp_sysio rhel-server-6.4-x86_64-dvd.iso tmp.iso<br>real    1m30.014s<br>user    0m0.003s<br>sys    1m29.003s</p>
+</blockquote>
+<p>sys 是程序在内核态消耗的时间，也就是执行系统调用所消耗的时间。 </p>
+<p>user 是程序在用户态消耗的时间，也就是程序本身的代码所消耗的时间。</p>
+<p>real 是用户等待的总时间，是 sys + user + CPU 调度时间，所以 real 时间会稍微比 sys + user 时间长一点。一个程序从提高响应素的的方式提高用户体验，一般指的就是提高 real 时间。</p>
+<h2 id="其它小结"><a href="#其它小结" class="headerlink" title="其它小结"></a>其它小结</h2><ul>
+<li><p>linux下可以通过以下系统调用来操作文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">open(filename,how)</div><div class="line">creat(filename,mode)</div><div class="line">read(fd,buffer,amt)</div><div class="line">write(fd,buffer,amt)</div><div class="line">lseek(fd,distance,base)</div><div class="line">close(fd)</div></pre></td></tr></table></figure>
+</li>
+<li><p>进程对文件的读,写都要通过文件描述符，文件描述符表示文件和进程之间的连接。</p>
+</li>
+<li><p>每次系统调用都会导致用户模式和内核模式的切换以及执行内核代码，所以减少程序中的系统调用发生的次数可以提高程序的运行效率。</p>
+</li>
+<li><p>程序可以通过缓存技术来减少系统调用的次数，仅当写缓冲区满或读缓冲区空才调用内核服务。</p>
+</li>
+<li><p>内核就是通过内核缓冲来减少访问磁盘的IO次数。</p>
+</li>
+</ul>
+<p>参考资料：</p>
+<p><a href="http://www.cnblogs.com/0xcafebabe/p/4426126.html" target="_blank" rel="external">http://www.cnblogs.com/0xcafebabe/p/4426126.html</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/04/像cocos2dX一样往VS控制台输出log/" rel="next" title="像cocos2dX一样往VS控制台输出log">
+                <i class="fa fa-chevron-left"></i> 像cocos2dX一样往VS控制台输出log
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/06/Linux编程笔记（三）——处理错误/" rel="prev" title="Linux编程笔记（三）——处理错误">
+                Linux编程笔记（三）——处理错误 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/06/05/Linux编程笔记（二）——系统调用IO/"
+           data-title="Linux编程笔记（二）——系统调用IO" data-url="https://ysbbswork.github.io/2018/06/05/Linux编程笔记（二）——系统调用IO/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#系统调用"><span class="nav-number">1.</span> <span class="nav-text">系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文件描述符"><span class="nav-number">1.1.</span> <span class="nav-text">文件描述符</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体的系统调用I-O"><span class="nav-number">2.</span> <span class="nav-text">具体的系统调用I/O</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#fileno-3"><span class="nav-number">2.1.</span> <span class="nav-text">fileno(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fdopen-3"><span class="nav-number">2.2.</span> <span class="nav-text">fdopen(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#open-2"><span class="nav-number">2.3.</span> <span class="nav-text">open(2)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#close-2"><span class="nav-number">2.4.</span> <span class="nav-text">close(2)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#read-2"><span class="nav-number">2.5.</span> <span class="nav-text">read(2)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#write-2"><span class="nav-number">2.6.</span> <span class="nav-text">write(2)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lseek-2"><span class="nav-number">2.7.</span> <span class="nav-text">lseek(2)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lseek使用"><span class="nav-number">2.7.1.</span> <span class="nav-text">lseek使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#time-1"><span class="nav-number">2.8.</span> <span class="nav-text">time(1)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它小结"><span class="nav-number">2.9.</span> <span class="nav-text">其它小结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

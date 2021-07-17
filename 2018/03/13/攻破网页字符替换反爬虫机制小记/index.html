@@ -1,0 +1,934 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.
+
+摘要：python3 进行网页爬取数据出现乱码，出现奇怪的编码方式，关键数据无法爬取，网站特殊字体的反爬机制的完整攻克过程。
+
+最近在爬 实习僧 网站职位数据的时候遇到关键字体无法解析的问题。一开始还以为是chrome的解码格式不符合，解码错误导致的，但随着深入，发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="攻破网页字符替换反爬虫机制小记">
+<meta property="og:url" content="https://ysbbswork.github.io/2018/03/13/攻破网页字符替换反爬虫机制小记/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.
+
+摘要：python3 进行网页爬取数据出现乱码，出现奇怪的编码方式，关键数据无法爬取，网站特殊字体的反爬机制的完整攻克过程。
+
+最近在爬 实习僧 网站职位数据的时候遇到关键字体无法解析的问题。一开始还以为是chrome的解码格式不符合，解码错误导致的，但随着深入，发">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9y3c6byj30vz0mp10p.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9yio3z4j31ax03zq30.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9zgzuk7j30id04dq30.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9zqczrhj30n90h5q42.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fpba4iulsjj30lw0cnjti.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fpbadh6ajxj306n02ggle.jpg">
+<meta property="og:updated_time" content="2018-03-15T07:56:42.483Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="攻破网页字符替换反爬虫机制小记">
+<meta name="twitter:description" content="本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.
+
+摘要：python3 进行网页爬取数据出现乱码，出现奇怪的编码方式，关键数据无法爬取，网站特殊字体的反爬机制的完整攻克过程。
+
+最近在爬 实习僧 网站职位数据的时候遇到关键字体无法解析的问题。一开始还以为是chrome的解码格式不符合，解码错误导致的，但随着深入，发">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9y3c6byj30vz0mp10p.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2018/03/13/攻破网页字符替换反爬虫机制小记/"/>
+
+
+
+
+
+  <title> 攻破网页字符替换反爬虫机制小记 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/03/13/攻破网页字符替换反爬虫机制小记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                攻破网页字符替换反爬虫机制小记
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-13T16:28:23+08:00">
+                2018-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/13/攻破网页字符替换反爬虫机制小记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/03/13/攻破网页字符替换反爬虫机制小记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/03/13/攻破网页字符替换反爬虫机制小记/" class="leancloud_visitors" data-flag-title="攻破网页字符替换反爬虫机制小记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.</strong></p>
+<blockquote>
+<p>摘要：python3 进行网页爬取数据出现乱码，出现奇怪的编码方式，关键数据无法爬取，网站特殊字体的反爬机制的完整攻克过程。</p>
+</blockquote>
+<p>最近在爬 实习僧 网站职位数据的时候遇到关键字体无法解析的问题。一开始还以为是chrome的解码格式不符合，解码错误导致的，但随着深入，发现这是可不是简单的编码问题，是网站精心策划的反爬机制。</p>
+<p>第一次遇到这种情况，攻克的过程也挺复杂有趣，中间学到了很多东西，新手一开始遇到还真的会和我一样摸不着头脑，即使google可能也会从编码去查，绕很多弯路也百思不得其解。后来用这种发现这种方式的网站还挺多的，毕竟这种反爬机制是很易用的，想绕过去也是很麻烦的，所以写这篇文章，记录下整个攻克的方法和过程分享出来。</p>
+<a id="more"></a>
+<h1 id="初步摸索"><a href="#初步摸索" class="headerlink" title="初步摸索"></a>初步摸索</h1><p>用chrome的开发者工具查看源是这样子的：<img src="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9y3c6byj30vz0mp10p.jpg" alt=""></p>
+<p>关键的数据圈闭都是显示为乱码的方框状的，无法正确显示和爬取，很显然，是遇到了网站的反爬机制。</p>
+<p>然后查看未被解析的源代码，看看这个字体是怎么一回事：</p>
+<p><img src="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9yio3z4j31ax03zq30.jpg" alt=""></p>
+<p>实际发现网页中的<code>200-300/天</code>在源码中是<code>&amp;#xf161&amp;#xe973&amp;#xe973-&amp;#xebf3&amp;#xe973&amp;#xe973／天</code>的形式，这个</p>
+<p><code>&amp;#xf161</code>是什么编码啊？如果知道这个编码系，爬下来自己解码应该就可以了。</p>
+<p>乍一看，很像<a href="http://www.cnblogs.com/shishm/archive/2011/11/24/2261996.html" target="_blank" rel="external">NCR编码</a>，但仔细对比后，</p>
+<p>很可惜，它不属于任何编码，试着用几种方式去解析之后发现这个编码出了和数字一一对应以外，没有什么特别的规律。</p>
+<p>会不会是网页控制的异步加载数据类型呢？</p>
+<p>尝试用调试工具的network-XHR也没有发现任何的API的response和解析字符有关。</p>
+<p>不过细心的回去看源代码的时候发现：</p>
+<p>凡是有乱码被保护的数据css样式都出现了<code>cutom_font</code>（自定义字体）。</p>
+<p>= =，自定义字体 写的如此明显，看来找到问题的所在了。。。</p>
+<h1 id="锁定问题"><a href="#锁定问题" class="headerlink" title="锁定问题"></a>锁定问题</h1><p>既然已经发现问题了，那么看怎么样一步一步解决它把！</p>
+<p>首先在开发者工具中找到这个自定义字体，看看到底是怎么回事：</p>
+<p><img src="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9zgzuk7j30id04dq30.jpg" alt=""></p>
+<p>发现，font-family里有一个非主流的<code>myfont</code>，看来问题就是出现在这个<code>myfont</code>上了，</p>
+<p>锁定，继续查找，发现这是个在线font字体文件，打开它查看：</p>
+<p><img src="http://ww1.sinaimg.cn/large/005HFdfGgy1fpb9zqczrhj30n90h5q42.jpg" alt=""></p>
+<p>这个字体看起来正常无比，和微软雅黑没什么区别，</p>
+<p>但问题是这个字体有自己一套特别的编码，网页是通过对应关系将所谓的乱码解析成这个字体里的数字，</p>
+<p>我们要弄到这套编码，解码字体的问题就自然迎刃而解了。</p>
+<h1 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h1><h2 id="分析字体"><a href="#分析字体" class="headerlink" title="分析字体"></a>分析字体</h2><p>从开发者工具点击这个字体文件，从网络源上下载一份字体文件来做分析，font字体文件需要导入python的<code>fontTools</code>第三方库，</p>
+<p><code>pip3 install fonttools</code>安装库</p>
+<p>使用这个库：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">from fontTools.ttLib import TTFont   </div><div class="line">font = TTFont(r&apos;C:\Users\dell\Downloads\1&apos;)    # 打开字体文件</div><div class="line">font.saveXML(&apos;./1.xml&apos;)     # 转换成 xml 文件方便分析</div><div class="line"># print(help(TTFont))，可以使用help来查询这个库的方法，我就是这么用的。。。</div></pre></td></tr></table></figure>
+<p>对于这个字体文件的解析，最好先导出XML文件进行观察，因为找到网上的例子发现，虽然很多网站都是用字体文件来实现关键数据的反爬机制，但是每个字体文件的编码设计又是复杂多变的，<code>print(help(TTFont))</code>可以帮助你查看函数方法，把字体里的关键数据解析出来。</p>
+<p>通过网页上的<code>xe973&amp;#xe973-&amp;#xea32&amp;#xf368&amp;#xe973／天</code>代表<code>100-150</code></p>
+<p>在XML里根据网页上的代码和uni代码的对应关系：</p>
+<p><img src="http://ww1.sinaimg.cn/large/005HFdfGgy1fpba4iulsjj30lw0cnjti.jpg" alt=""></p>
+<p>很容易发现，</p>
+<p><code>&#39;uni30&#39;, &#39;uni31&#39;, &#39;uni32&#39;, &#39;uni33&#39;, &#39;uni34&#39;, &#39;uni35&#39;, &#39;uni36&#39;, &#39;uni37&#39;, &#39;uni38&#39;, &#39;uni39&#39;</code></p>
+<p>分别代表数字0~9</p>
+<p>而<code>&amp;#x</code>和<code>uni</code>编码的对应关系，也就是字体编码的部分，集中在font文件导出的XML<code>cmap</code>字段里，用<code>font.getBestCmap()</code>可以获得<code>cmap</code>的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">from fontTools.ttLib import TTFont    </div><div class="line">font = TTFont(r&apos;C:\Users\dell\Downloads\1&apos;)    # 打开文件</div><div class="line">font_map = font.getBestCmap()    # 获取 GlyphOrder 字段的值</div><div class="line">print(font_map)</div></pre></td></tr></table></figure>
+<p>打印font_map：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;60418: &apos;uni79&apos;, 59262: &apos;uni50&apos;, 62470: &apos;uni58&apos;, 58119: &apos;uni6b&apos;, 57866: &apos;uni4F5C&apos;, 58892: &apos;uni62&apos;, 58645: &apos;uni72&apos;, 57879: &apos;uni38&apos;, 62084: &apos;uni7AEF&apos;, 63238: &apos;uni77&apos;, 63016: &apos;uni56DB&apos;, 59178: &apos;uni6d&apos;, 59954: &apos;uni31&apos;, 59694: &apos;uni6f&apos;, 60466: &apos;uni53&apos;, 63611: &apos;uni6708&apos;, 63381: &apos;uni4b&apos;, 59194: &apos;uni78&apos;, 63038: &apos;uni4EBA&apos;, 57921: &apos;uni70&apos;, 59970: &apos;uni48&apos;, 58851: &apos;uni73&apos;, 59489: &apos;uni75&apos;, 61769: &apos;uni43&apos;, 58702: &apos;uni37&apos;, 58959: &apos;uni76&apos;, 61008: &apos;uni68&apos;, 59475: &apos;uni62DB&apos;, 57942: &apos;uni7A0B&apos;, 60508: &apos;uni4e&apos;, 61882: &apos;uni7a&apos;, 61793: &apos;uni32&apos;, 62050: &apos;uni94F6&apos;, 61028: &apos;uni59&apos;, 60262: &apos;uni6e&apos;, 62312: &apos;uni35&apos;, 61160: &apos;uni45&apos;, 61554: &apos;uni54&apos;, 59763: &apos;uni30&apos;, 62910: &apos;uni4f&apos;, 59511: &apos;uni573A&apos;, 120: &apos;x&apos;, 58746: &apos;uni8BBE&apos;, 61051: &apos;uni66&apos;, 57725: &apos;uni8054&apos;, 57982: &apos;uni6a&apos;, 60031: &apos;uni52&apos;, 60545: &apos;uni4E09&apos;, 60036: &apos;uni67&apos;, 62601: &apos;uni39&apos;, 60812: &apos;uni4E2A&apos;, 57998: &apos;uni544A&apos;, 58769: &apos;uni63&apos;, 58514: &apos;uni5E7F&apos;, 58133: &apos;uni42&apos;, 57749: &apos;uni4d&apos;, 61079: &apos;uni46&apos;, 59631: &apos;uni7F51&apos;, 58016: &apos;uni44&apos;, 63018: &apos;uni74&apos;, 58020: &apos;uni4F1A&apos;, 63401: &apos;uni5E02&apos;, 59029: &apos;uni5DE5&apos;, 59312: &apos;uni4EF6&apos;, 63410: &apos;uni5929&apos;, 62131: &apos;uni57&apos;, 59060: &apos;uni69&apos;, 63670: &apos;uni6c&apos;, 62135: &apos;uni55&apos;, 59609: &apos;uni8D22&apos;, 63420: &apos;uni5a&apos;, 61118: &apos;uni61&apos;, 60098: &apos;uni884C&apos;, 59844: &apos;uni51&apos;, 62410: &apos;uni4a&apos;, 63436: &apos;uni5E74&apos;, 60622: &apos;uni64&apos;, 58319: &apos;uni4E92&apos;, 60883: &apos;uni47&apos;, 62798: &apos;uni36&apos;, 58325: &apos;uni4c&apos;, 61142: &apos;uni8F6F&apos;, 62116: &apos;uni4E00&apos;, 59354: &apos;uni524D&apos;, 58844: &apos;uni34&apos;, 59617: &apos;uni8058&apos;, 62691: &apos;uni8BA1&apos;, 58598: &apos;uni5468&apos;, 60392: &apos;uni56&apos;, 62953: &apos;uni653F&apos;, 60655: &apos;uni4E94&apos;, 61168: &apos;uni5E08&apos;, 60403: &apos;uni33&apos;, 58750: &apos;uni4E8C&apos;, 60150: &apos;uni49&apos;, 58616: &apos;uni65&apos;, 57849: &apos;uni751F&apos;, 58875: &apos;uni41&apos;, 62717: &apos;uni71&apos;&#125;</div><div class="line"></div><div class="line">进程已结束,退出代码0</div></pre></td></tr></table></figure>
+<p>发现十六进制导出后变成十进制的map了。</p>
+<p><code>0xe973</code>变成了<code>59763</code>，<code>59763: &#39;uni30&#39;</code>也就是数字0，</p>
+<p>完全对应的~</p>
+<p>那么有了这张表之后，</p>
+<p>最后就是将网页源代码中的’乱码’，去掉<code>&amp;#x</code>之后，转换成十进制查表得到<code>uni</code>编码，再根据之前得到的</p>
+<p><code>&#39;uni30&#39;, &#39;uni31&#39;, &#39;uni32&#39;, &#39;uni33&#39;, &#39;uni34&#39;, &#39;uni35&#39;, &#39;uni36&#39;, &#39;uni37&#39;, &#39;uni38&#39;, &#39;uni39&#39;</code></p>
+<p>分别代表数字0~9，即可解出正确的数字啦！</p>
+<p>例：</p>
+<p>网页源码获得<code>&amp;#xe973</code>—去掉前缀–&gt;<code>e973</code>—–转为十进制—-&gt;<code>59763</code>—查表–&gt; <code>uni30</code>—-查表—&gt;0</p>
+<h2 id="编写代码"><a href="#编写代码" class="headerlink" title="编写代码"></a>编写代码</h2><p>就根据如此过程编写示例代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line">import requests</div><div class="line">import hashlib</div><div class="line">import urllib.request</div><div class="line">from fontTools.ttLib import TTFont     # 导包</div><div class="line">import re</div><div class="line">import os</div><div class="line"></div><div class="line"># 这个网站的font文件链接超级长，md5转换下缩短链接</div><div class="line">def to_md5(onestr):</div><div class="line">    md5=hashlib.md5(onestr.encode(&quot;utf8&quot;)).hexdigest()</div><div class="line">    return md5</div><div class="line"># 下载字体文件</div><div class="line">def download(url, md5):</div><div class="line">    new_file = urllib.request.urlopen(url)</div><div class="line">    with open(md5, &apos;wb&apos;) as f:</div><div class="line">        f.write(new_file.read())</div><div class="line"></div><div class="line"></div><div class="line"># 已有font文件后解析font文件函数</div><div class="line"># 每个网站的font文件不相同，需要分析文件后改写</div><div class="line">def analysis_font(font_url,filename):</div><div class="line"></div><div class="line">    font = TTFont(font_url)    # 打开文件</div><div class="line">    font.saveXML(&apos;./&#123;&#125;.xml&apos;.format(filename))     # 转换成 xml 文件并保存</div><div class="line">    font_map = font.getBestCmap()    #查看font文件里面的单元，并提取关键值</div><div class="line">    map = &#123;v:k for k,v in font_map.items()&#125;</div><div class="line">    # print(font_map)</div><div class="line">    # print(map)</div><div class="line">    temp_list=font.getGlyphOrder()[2:12]</div><div class="line">    # print(temp_list)</div><div class="line">    numberlist=[]</div><div class="line">    for temp in temp_list:</div><div class="line">        numberlist.append(hex(int(map[temp])))</div><div class="line">    return numberlist</div><div class="line"></div><div class="line"></div><div class="line"># 转换函数，将字符串中的编码按解析出来的数字一一对应的替换</div><div class="line">def translate(onestr,filename):</div><div class="line">    fontfile = filename</div><div class="line"></div><div class="line">    # fontfile = r&apos;C:\Users\dell\Downloads\sss&apos;</div><div class="line">    numberlist = analysis_font(fontfile, filename)</div><div class="line"></div><div class="line">    def _fontmatch(matched):#匹配函数</div><div class="line">        tempstr = matched.group()</div><div class="line">        shortstr=tempstr[2:]</div><div class="line">        newstr = 9999</div><div class="line">        for i in range(10):</div><div class="line">            if shortstr == numberlist[i][1:]:</div><div class="line">                newstr=str(i)</div><div class="line">        return newstr</div><div class="line"></div><div class="line">    replacedStr = re.sub(&quot;&amp;#x....&quot;, _fontmatch, onestr)#这里用了re.sub加入匹配函数</div><div class="line">    return replacedStr</div><div class="line"></div><div class="line"># 判断字体是否下载过</div><div class="line">def get_font_name(font_url):</div><div class="line"></div><div class="line">    font_md5=to_md5(font_url)</div><div class="line">    file_list = os.listdir()</div><div class="line">    if font_md5 not in file_list:</div><div class="line">        print(&apos;不在字体库中, 下载:&apos;, font_md5)</div><div class="line">        font_list.append(font_md5)</div><div class="line">        download(font_url,font_md5)</div><div class="line">    return font_md5</div><div class="line"></div><div class="line"></div><div class="line"># 用正则解析网页</div><div class="line">def get_data(url):</div><div class="line">    data = requests.get(url)</div><div class="line">    pattern = re.compile(r&apos;&lt;div class=&quot;job_msg&quot;&gt;.+&lt;/div&gt;&apos;)</div><div class="line">    result = re.search(pattern, data.text)</div><div class="line">    job_money = re.findall(r&apos;&lt;span class=&quot;job_money cutom_font&quot;&gt;(.+?)&lt;/span&gt;&apos;, result.group())</div><div class="line">    job_week = re.findall(r&apos;&lt;span class=&quot;job_week cutom_font&quot;&gt;(.+?)&lt;/span&gt;&apos;, result.group())</div><div class="line">    job_time = re.findall(r&apos;&lt;span class=&quot;job_time cutom_font&quot;&gt;(.+?)&lt;/span&gt;&apos;, result.group())</div><div class="line">    title_pattern = re.compile(r&apos;&lt;div class=&quot;new_job_name&quot; title=&quot;(.+?)&quot;&gt;.+&lt;/div&gt;&apos;)</div><div class="line">    title = re.findall(title_pattern, data.text)</div><div class="line">    font_url_pattern = re.compile(&apos;@font-face \&#123;font-family:myFont; src: url\(&quot;(.+)&quot;\)\&#125;&apos;)</div><div class="line">    font_url=re.findall(font_url_pattern,data.text)</div><div class="line">    font_md5=get_font_name(font_url[0])</div><div class="line">    print(title[0])</div><div class="line">    print(translate(job_money[0],font_md5), translate(job_time[0],font_md5), translate(job_week[0],font_md5))</div><div class="line"></div><div class="line"></div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line"></div><div class="line">    url = &quot;https://www.shixiseng.com/intern/inn_olhzeo1lexqf&quot;</div><div class="line">    get_data(url)</div></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<p><img src="http://ww1.sinaimg.cn/large/005HFdfGgy1fpbadh6ajxj306n02ggle.jpg" alt=""></p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>其实遇到数字信息被自定义font文字文件反爬拦住的时候，不一定要像我这样去从font文件剖析入手，</p>
+<p>也许有小伙伴认为可以通过大量分析网页的数和网页源码中的编码是可以自己找到10个数字与编码的一一对应关系，自己手动建立查询表。</p>
+<p>但是对于大部分使用这种反爬机制的网站都加入了多个自定义的font文件，并且采用随机使用的方法，</p>
+<p>并且对于更复杂的情况，比如加入26个字母，数字组合等，手动去对比源码数据建表就非常繁琐和没有效率了。</p>
+<p>本文提到的方法是具有通用性的，主要就是在分析font文件导出的XML的时候需要费点功夫，因为每个网站使用的font都不太一样，今天这个例子属于比较麻烦的一种，就是用了二次编码，要进行两次查表，有的网站用的font可能一次查表就可以得到。</p>
+<p>祝你好运~</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="http://imweb.io/topic/5a016f791f0e50753869bfa3" target="_blank" rel="external">http://imweb.io/topic/5a016f791f0e50753869bfa3</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/05/C-QT设计模式（第二版）/" rel="next" title="C++QT设计模式（第二版）">
+                <i class="fa fa-chevron-left"></i> C++QT设计模式（第二版）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/15/补码小记/" rel="prev" title="补码小记">
+                补码小记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/03/13/攻破网页字符替换反爬虫机制小记/"
+           data-title="攻破网页字符替换反爬虫机制小记" data-url="https://ysbbswork.github.io/2018/03/13/攻破网页字符替换反爬虫机制小记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#初步摸索"><span class="nav-number">1.</span> <span class="nav-text">初步摸索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#锁定问题"><span class="nav-number">2.</span> <span class="nav-text">锁定问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决问题"><span class="nav-number">3.</span> <span class="nav-text">解决问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析字体"><span class="nav-number">3.1.</span> <span class="nav-text">分析字体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编写代码"><span class="nav-number">3.2.</span> <span class="nav-text">编写代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后记"><span class="nav-number">4.</span> <span class="nav-text">后记</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

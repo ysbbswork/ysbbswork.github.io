@@ -1,0 +1,973 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,Linux,Makefile," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="今天把make和写makefile的一些非常常用的方法和技巧整理了一下，算是一个旋风式入门了吧，自己的一些小项目按这个方法写makefile是很容易的，make也算是一个学完可以一劳永逸的好工具了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="makefile编写旋风实践">
+<meta property="og:url" content="https://ysbbswork.github.io/2018/06/21/makefile编写旋风实践/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="今天把make和写makefile的一些非常常用的方法和技巧整理了一下，算是一个旋风式入门了吧，自己的一些小项目按这个方法写makefile是很容易的，make也算是一个学完可以一劳永逸的好工具了。">
+<meta property="og:updated_time" content="2019-04-24T02:10:43.237Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="makefile编写旋风实践">
+<meta name="twitter:description" content="今天把make和写makefile的一些非常常用的方法和技巧整理了一下，算是一个旋风式入门了吧，自己的一些小项目按这个方法写makefile是很容易的，make也算是一个学完可以一劳永逸的好工具了。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2018/06/21/makefile编写旋风实践/"/>
+
+
+
+
+
+  <title> makefile编写旋风实践 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/06/21/makefile编写旋风实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                makefile编写旋风实践
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-21T22:19:24+08:00">
+                2018-06-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/06/21/makefile编写旋风实践/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/21/makefile编写旋风实践/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/06/21/makefile编写旋风实践/" class="leancloud_visitors" data-flag-title="makefile编写旋风实践">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>今天把make和写makefile的一些非常常用的方法和技巧整理了一下，算是一个旋风式入门了吧，自己的一些小项目按这个方法写makefile是很容易的，make也算是一个学完可以一劳永逸的好工具了。</p>
+</blockquote>
+<a id="more"></a>
+<h1 id="旋风入门"><a href="#旋风入门" class="headerlink" title="旋风入门"></a>旋风入门</h1><p>基础的makefile例子：</p>
+<p>main.c是主程序文件，里面的功能是由stack.c和maze.c两个程序中的函数组成，</p>
+<p>main.h中定义了几个常量和一个类型，main.c，stack.c，maze.c都要用到。</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">main: main.o stack.o maze.o</div><div class="line">		gcc main.o stack.o maze.o -o main</div><div class="line"></div><div class="line">main.o: main.c main.h stack.h maze.h</div><div class="line">		gcc -c main.c</div><div class="line"></div><div class="line">stack.o: stack.c stack.h main.h</div><div class="line">		 gcc -c stack.c</div><div class="line"></div><div class="line">maze.o: maze.c maze.h main.h</div><div class="line">		gcc -c maze.c</div></pre></td></tr></table></figure>
+<p>每条格式如下：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">target ... :prerequisites(先决条件) ...</div><div class="line">		command1</div><div class="line">		command2</div></pre></td></tr></table></figure>
+<p>目标和先决条件的关系是：欲更新目标，必须先更新它的所有条件；所有条件中只要有一个条件被更新了，目标也必须随之被更新。</p>
+<p><strong>注意：命令列表中的每条命令必须以一个Tab开头，注意不能用空格代替这个Tab。对于Makefile中每个以Tab开头的命令，make会启动一个Shell进程去执行它。</strong></p>
+<p>make 会自动选择那些受影响的源文件重新编译，不受影响的源文件不会重新编译。</p>
+<p>clean例子：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="section">clean:</span></div><div class="line">	@echo <span class="string">"cleanning begin"</span></div><div class="line">	-rm main *.o</div><div class="line">	@echo <span class="string">"clean completed"</span></div></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make clean</div></pre></td></tr></table></figure>
+<p>附注：</p>
+<p>如果文件夹下存在clean的文件，则会扰乱使用<code>make clean</code>，想不被文件名所扰乱make命令的使用，可以将clean声明成一个伪目标：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta"><span class="meta-keyword">.PHONY</span>: clean</span></div></pre></td></tr></table></figure>
+<p>这样，完整clean例子：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="section">clean:</span></div><div class="line">	@echo <span class="string">"cleanning begin"</span></div><div class="line">	-rm main *.o</div><div class="line">	@echo <span class="string">"clean completed"</span></div><div class="line"></div><div class="line"><span class="meta"><span class="meta-keyword">.PHONY</span>: clean</span></div></pre></td></tr></table></figure>
+<p>不会被同名文件夹所干扰。</p>
+<p>PS：clean用来清除目标是一个约定俗称的名字，在所有软件项目中makefile类似的约定俗称的名字还有：</p>
+<ul>
+<li>all, 执行主要编译工作，通常作为缺省目标</li>
+<li>install，执行编译后的安装工作，把可执行文件，配置文件，文档等分别复制到不同安装目录。</li>
+</ul>
+<h1 id="升级提高"><a href="#升级提高" class="headerlink" title="升级提高"></a>升级提高</h1><p>Makefile有很多灵活的写法，可以写得更简洁，同时减少人为出错的可能。</p>
+<h2 id="几种常用写法认识"><a href="#几种常用写法认识" class="headerlink" title="几种常用写法认识"></a>几种常用写法认识</h2><p>前提知识：</p>
+<ul>
+<li><p>拆</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">main.o: main.c main.h stack.h maze.h</div><div class="line">		gcc -c main.c</div></pre></td></tr></table></figure>
+<p>可以拆成两句：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">main.o: main.h stack.h maze.h</div><div class="line">		</div><div class="line">main.o: main.c main.h stack.h maze.h</div><div class="line">		gcc -c main.c</div></pre></td></tr></table></figure>
+<p>规定：一个目标拆成多条，但只能有其中一条允许带命令列表。</p>
+</li>
+</ul>
+<p>由<strong>拆</strong>我们可以将前面的简单例子写成以下形式：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">main: main.o stack.o maze.o</div><div class="line">		gcc main.o stack.o maze.o -o main</div><div class="line"></div><div class="line">main.o:  main.h stack.h maze.h</div><div class="line">stack.o: stack.h main.h</div><div class="line">maze.o:  maze.h main.h</div><div class="line"></div><div class="line">		</div><div class="line">main.o: main.c </div><div class="line">		gcc -c main.c</div><div class="line"></div><div class="line">stack.o: stack.c </div><div class="line">		 gcc -c stack.c</div><div class="line"></div><div class="line">maze.o: maze.c</div><div class="line">		gcc -c maze.c</div><div class="line">		</div><div class="line"><span class="section">clean:</span></div><div class="line">	@echo <span class="string">"cleanning begin"</span></div><div class="line">	-rm main *.o</div><div class="line">	@echo <span class="string">"clean completed"</span></div><div class="line"></div><div class="line"><span class="meta"><span class="meta-keyword">.PHONY</span>: clean</span></div></pre></td></tr></table></figure>
+<p>并且我们可以将提出来的几条规则删去，写成以下形式：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">main: main.o stack.o maze.o</div><div class="line">		gcc main.o stack.o maze.o -o main</div><div class="line"></div><div class="line">main.o:  main.h stack.h maze.h</div><div class="line">stack.o: stack.h main.h</div><div class="line">maze.o:  maze.h main.h</div><div class="line">		</div><div class="line"><span class="section">clean:</span></div><div class="line">	@echo <span class="string">"cleanning begin"</span></div><div class="line">	-rm main *.o</div><div class="line">	@echo <span class="string">"clean completed"</span></div><div class="line"></div><div class="line"><span class="meta"><span class="meta-keyword">.PHONY</span>: clean</span></div></pre></td></tr></table></figure>
+<p>为什么main.o,stack.o,maze.o三个目标编译命令都删去了，怎么还能编译呢？</p>
+<p>因为利用了make的机制，make会尝试在内建的隐含规则数据库中查找合适的规则。（具体隐含规则不展开聊了，可以通过<code>make -p</code>查看，个人建议，还是能省的不要省，要不错了都不知道为什么）</p>
+<p>这个例子比较常用，也很方便写，所以举出来，建议使用。</p>
+<p><strong>另外一种写法</strong></p>
+<p>之前makefile都是以目标为中心写依赖逻辑的，可以换种写法，以条件为中心，makefile只要写明白依赖关系既可，所以上面的例子还可以这么写：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">main: main.o stack.o maze.o</div><div class="line">		gcc main.o stack.o maze.o -o main</div><div class="line"></div><div class="line">main.o stack.o maze.o: main.h</div><div class="line">main.o stack.o: stack.h</div><div class="line">main.o maze.o: maze.h</div><div class="line">		</div><div class="line"><span class="section">clean:</span></div><div class="line">	-rm main *.o</div><div class="line"></div><div class="line"><span class="meta"><span class="meta-keyword">.PHONY</span>: clean</span></div></pre></td></tr></table></figure>
+<h2 id="加入变量"><a href="#加入变量" class="headerlink" title="加入变量"></a>加入变量</h2><p>一个简单例子了解变量：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="section">all:</span></div><div class="line">	@echo <span class="variable">$(foo)</span></div><div class="line">foo = <span class="variable">$(bar)</span></div><div class="line">bar = Huh?</div></pre></td></tr></table></figure>
+<p>执行make命令会打印出Huh?</p>
+<p>变量在实际运用中：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Compiler is G++</span></div><div class="line">CXX = g++</div><div class="line"></div><div class="line">LIBDIR = .</div><div class="line">SOCKETLIBDIR = <span class="variable">$(LIBDIR)</span>/SocketLib</div><div class="line">BASICLIBDIR  = <span class="variable">$(LIBDIR)</span>/BasicLib</div><div class="line"></div><div class="line"><span class="comment"># flags</span></div><div class="line">CFLAGS = -I<span class="variable">$(LIBDIR)</span></div><div class="line"></div><div class="line">link: $(wildcard *.cpp)</div><div class="line"></div><div class="line">	<span class="variable">$(CXX)</span> <span class="variable">$(CFLAGS)</span> <span class="variable">$(SOCKETLIBDIR)</span>/*.cpp -c;</div><div class="line">	<span class="variable">$(CXX)</span> <span class="variable">$(CFLAGS)</span> <span class="variable">$(BASICLIBDIR)</span>/*.cpp -c;</div><div class="line">	<span class="variable">$(CXX)</span> <span class="variable">$(CFLAGS)</span> -o chatroomserver *.cpp *.o</div><div class="line"></div><div class="line"><span class="section">clean:</span></div><div class="line">	@echo <span class="string">"cleanning begin"</span></div><div class="line">	-rm chatroomserver *.o</div><div class="line">	@echo <span class="string">"cleanning end"</span></div><div class="line"><span class="meta"><span class="meta-keyword">.PHONY</span>: clean</span></div></pre></td></tr></table></figure>
+<p>CFLAGES常用来定义一些编译选项，例如-o，-g等。</p>
+<p>CPPFLAGES 常用来定义一些预处理选项，如-D，-I。</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;g++ -I. </div><div class="line">&gt;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>用来标志包含目录位置，非常有用！</p>
+<p>关于预处理中-D：</p>
+<p>源代码里面如果这样是定义的：<br>#ifdef   MACRONAME<br>//可选代码<br>#endif</p>
+<p>那在makefile里面<br>gcc   -D   MACRONAME=MACRODEF<br>或者<br>gcc   -D   MACRONAME </p>
+<p>这样就定义了预处理宏，编译的时候可选代码就会被编译进去了。</p>
+<p>对于GCC编译器，有如下选项：<br>​        -D macro=string，等价于在头文件中定义：#define   macro   string。例如：-D TRUE=true，等价于：#define   TRUE   true<br>​        -D macro，等价于在头文件中定义：#define   macro   1，实际上也达到了定义：#define   macro的目的。例如：-D LINUX，等价于：#define   LINUX   1（与#define   LINUX作用类似）。<br>​        –define-macro   macro=string与-D macro=string作用相同。</p>
+</blockquote>
+<h3 id="自动变量"><a href="#自动变量" class="headerlink" title="自动变量"></a>自动变量</h3><p>常用的自动变量有：</p>
+<ul>
+<li>$@：表示规则中的目标</li>
+<li>$&lt;：表示规则中第一个条件</li>
+<li>$?：表示规则中所有比目标新的条件，组成一个列表，以空格分隔。</li>
+<li>$^：表示规则中的所有条件，组成一个列表，以空格分隔，如果这个列表中有重复的项则将其消除。</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">main: main.o stack.o maze.o</div><div class="line">		gcc main.o stack.o maze.o -o main</div></pre></td></tr></table></figure>
+<p>可以改写成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">main: main.o stack.o maze.o</div><div class="line">		gcc $^ -o $@</div></pre></td></tr></table></figure>
+<h2 id="自动处理头文件的依赖关系"><a href="#自动处理头文件的依赖关系" class="headerlink" title="自动处理头文件的依赖关系"></a>自动处理头文件的依赖关系</h2><p>现在我们的makefile可以写成如下：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">all:main</div><div class="line"></div><div class="line">main: main.o stack.o maze.o</div><div class="line">		gcc $^ -o $@</div><div class="line"></div><div class="line">main.o stack.o maze.o: main.h</div><div class="line">main.o stack.o: stack.h</div><div class="line">main.o maze.o: maze.h</div><div class="line">		</div><div class="line"><span class="section">clean:</span></div><div class="line">	-rm main *.o</div><div class="line"></div><div class="line"><span class="meta"><span class="meta-keyword">.PHONY</span>: clean</span></div></pre></td></tr></table></figure>
+<p>按照惯例，用all做缺省目标。</p>
+<p>现在唯一的麻烦就是，写目标依赖关系的时候还要查看源代码，去一个个分析它们的依赖于哪些头文件，这个过程很容易出错，一是因为有的头文件包含在另一个头文件中，在写规则时很容易遗漏，二是如果以后修改源代码改变了依赖关系，很可能忘记修改Makefile规则。</p>
+<p>因为我们知道源代码中包含了目标文件和头文件之间的依赖关系，这种依赖关系是以#include形式描述的，我们只要想办法把源代码中的依赖关系信息抽取出来自动转换成makefile中的规则即可。</p>
+<p>第一步，用gcc的-M选项自动分析目标文件和源文件的依赖关系，输出：</p>
+<p>（以一个工程的例子为输出结果，主要看实现过程）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">ubuntu-ysbbs:~/yscode/Chatroom$ g++ -M -I . ./chatroomserver.cpp</div><div class="line">chatroomserver.o: chatroomserver.cpp /usr/include/stdc-predef.h \</div><div class="line"> SocketLib/SocketLib.h SocketLib/SocketLibTypes.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/sys/types.h /usr/include/features.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/sys/cdefs.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/wordsize.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/gnu/stubs.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/types.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/typesizes.h /usr/include/time.h \</div><div class="line"> /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h /usr/include/endian.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/endian.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/byteswap.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/byteswap-16.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/sys/select.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/select.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/sigset.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/time.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/sys/sysmacros.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/sys/socket.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/sys/uio.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/uio.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/socket.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/socket_type.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/bits/sockaddr.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/asm/socket.h \</div><div class="line"> /usr/include/asm-generic/socket.h \</div><div class="line"> /usr/include/x86_64-linux-gnu/asm/sockios.h \</div><div class="line"> ...</div></pre></td></tr></table></figure>
+<p>输出不仅包含我们编写的文件，还包含了用到的系统头文件一大堆，系统头文件不需要和我们程序一起维护，我们可以用<code>-MM</code>选项，输出只包含我们自己编写的头文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">ubuntu-ysbbs:~/yscode/Chatroom$ g++ -MM -I . ./chatroomserver.cpp</div><div class="line">chatroomserver.o: chatroomserver.cpp SocketLib/SocketLib.h \</div><div class="line"> SocketLib/SocketLibTypes.h SocketLib/SocketLibSystem.h \</div><div class="line"> SocketLib/SocketLibSocket.h BasicLib/BasicLib.h BasicLib/BasicLibTypes.h \</div><div class="line"> BasicLib/BasicLibTime.h BasicLib/BasicLibString.h BasicLib/minilogger.h \</div><div class="line"> SocketLib/SocketLibErrors.h SocketLib/Connection.h \</div><div class="line"> SocketLib/ConnectionManager.h SocketLib/SocketSet.h \</div><div class="line"> SocketLib/ListeningManager.h SocketLib/ConnectionHandler.h \</div><div class="line"> SocketLib/Telnet.h SCUserDB.h SCLogon.h SCChat.h</div></pre></td></tr></table></figure>
+<p>这样就可以方便知道文件的依赖关系而不用去一个个代码查看了。</p>
+<h1 id="其它make常用命令"><a href="#其它make常用命令" class="headerlink" title="其它make常用命令"></a>其它make常用命令</h1><p>如果某次编译想加入调试选项而不是每次都要加入-g,可以在命令行中定义CFLAGS变量而不需要修改makefile：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$make CFLAGS=-g</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2018/06/21/makefile编写旋风实践/">makefile编写旋风实践</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2018年06月21日 - 22:06</p>
+  <p><span>最后更新:</span>2019年04月24日 - 10:04</p>
+  <p><span>原始链接:</span><a href="/2018/06/21/makefile编写旋风实践/" title="makefile编写旋风实践">https://ysbbswork.github.io/2018/06/21/makefile编写旋风实践/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2018/06/21/makefile编写旋风实践/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/Makefile/" rel="tag"># Makefile</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/21/Linux后台开发常用命令/" rel="next" title="Linux后台开发常用命令">
+                <i class="fa fa-chevron-left"></i> Linux后台开发常用命令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/24/也许你会需要一张开发电脑装机清单/" rel="prev" title="也许你会需要一张开发电脑装机清单">
+                也许你会需要一张开发电脑装机清单 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/06/21/makefile编写旋风实践/"
+           data-title="makefile编写旋风实践" data-url="https://ysbbswork.github.io/2018/06/21/makefile编写旋风实践/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#旋风入门"><span class="nav-number">1.</span> <span class="nav-text">旋风入门</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#升级提高"><span class="nav-number">2.</span> <span class="nav-text">升级提高</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#几种常用写法认识"><span class="nav-number">2.1.</span> <span class="nav-text">几种常用写法认识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加入变量"><span class="nav-number">2.2.</span> <span class="nav-text">加入变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自动变量"><span class="nav-number">2.2.1.</span> <span class="nav-text">自动变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动处理头文件的依赖关系"><span class="nav-number">2.3.</span> <span class="nav-text">自动处理头文件的依赖关系</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其它make常用命令"><span class="nav-number">3.</span> <span class="nav-text">其它make常用命令</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

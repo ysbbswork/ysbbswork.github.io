@@ -1,0 +1,952 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,笔记,Debug,g++," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="问题描述在编译时遇到：
+12345undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;collect2: error: ld returned 1 exit status
+但检查发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次g++链接问题debug笔记">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/06/06/一次g-链接问题debug笔记/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="问题描述在编译时遇到：
+12345undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;collect2: error: ld returned 1 exit status
+但检查发">
+<meta property="og:updated_time" content="2019-06-06T07:06:56.404Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一次g++链接问题debug笔记">
+<meta name="twitter:description" content="问题描述在编译时遇到：
+12345undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;undefined reference to `xxxx&amp;apos;collect2: error: ld returned 1 exit status
+但检查发">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/06/06/一次g-链接问题debug笔记/"/>
+
+
+
+
+
+  <title> 一次g++链接问题debug笔记 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/06/06/一次g-链接问题debug笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                一次g++链接问题debug笔记
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-06T15:01:19+08:00">
+                2019-06-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/06/06/一次g-链接问题debug笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/06/06/一次g-链接问题debug笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/06/06/一次g-链接问题debug笔记/" class="leancloud_visitors" data-flag-title="一次g++链接问题debug笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在编译时遇到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">undefined reference to `xxxx&apos;</div><div class="line">undefined reference to `xxxx&apos;</div><div class="line">undefined reference to `xxxx&apos;</div><div class="line">undefined reference to `xxxx&apos;</div><div class="line">collect2: error: ld returned 1 exit status</div></pre></td></tr></table></figure>
+<p>但检查发现不是头文件未包含，和未链接导致的错误，</p>
+<p>错误原因挺有意思，记录之。</p>
+<h2 id="debug过程"><a href="#debug过程" class="headerlink" title="debug过程"></a>debug过程</h2><ul>
+<li>第一反应是没有把库链接上<ul>
+<li>所以检查Makefile</li>
+<li><code>$(CXX) $(CFLAGS) $(LIB) -o $@ $^</code> </li>
+<li><code>$(LIB)</code>里链接上了需要的库</li>
+</ul>
+</li>
+<li>故检查头文件<ul>
+<li>确认包含了头文件</li>
+<li>头文件在makefile中也正确</li>
+<li>并且undefined reference to `NS_XXXX:XXXX’<ul>
+<li>在g++错误提示里带上了命名空间，这部分都是在头文件里声明的，所以说明头文件正确包含了</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>怀疑库有问题？<ul>
+<li>网络上建议我用nm命令查看so的符号表，看看这个函数是否正常，于是nm -D 库文件，查看了下，结果函数正常的，包含了提示的那些接口。</li>
+<li>说明库是没问题的</li>
+</ul>
+</li>
+<li>那就还是链接问题<ul>
+<li>怀疑是库路径不对，或者gcc没找到正确的库？？<ul>
+<li>尝试改动makefile，</li>
+<li><code>链接一个无关的不存在的库 -lxxx</code><ul>
+<li>编译提示找不到库</li>
+<li>说明，如果库不存在，或路径里找不到，都会报找不到库的错</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>将链接的那个库去掉，不链接了<ul>
+<li>发现报错没有变</li>
+<li>说明这个库压根 就没有链接上</li>
+<li>虽然命令写对了，路径也是对的，但g++编译时就是没有链接上这个库</li>
+</ul>
+</li>
+<li>问题定位了，google之，虽然之前也google，但是问题没有定位准确，google也是出不来正确的结果<ul>
+<li>“c++ 链接动态库 报错，没链上”</li>
+<li>得到答案：</li>
+<li>相同的链接库链接时的编译命令，在不同的Linux平台下的不同的gcc版本下表现出不同的效果。它们的代码是一样的，链接的库都是一样的，命令也是一样的，一个是链接成功，而另一个是报错，提示有未定义的引用，即”undefined reference to xxxx”。这类问题报错一般是缺少链接库提示的，只要添加上-lxxx添加上了libxxx即可解决，最多再添加-L/path/to/lib添加正确的搜索库的路径，但我遇到的情况还是不能解决。其实，提示“未定义的引用”说明具有这个函数定义的库没有链接成功，仔细排查后发现，在某些gcc版本下，原来这个居然和链接库在编译或链接的命令中的位置是有关系的。</li>
+</ul>
+</li>
+<li>原因就是，-lxxx这个指令放在了test_gcc.c的前面，对于Redhat的高版本的gcc，这个是没有问题的，而对于Ubuntu下的较低版本的问题，就出现问题，必须将链接的库放在需要链接的对象(xxx.c或xxx.o)的后面，gcc才能正确的去链接，编译命令改为：<br>gcc test_gcc.c -lxxx<br><strong>这样就都没有问题了，所以在编写Makefile或者写编译链接命令时，均把链接库写在后面就可以保证兼容了。</strong></li>
+</ul>
+<a id="more"></a>
+<h2 id="reference原文"><a href="#reference原文" class="headerlink" title="reference原文"></a>reference原文</h2><p>这几天在执行一些Makefile的时候发现，相同的链接库链接时的编译命令，在不同的Linux平台下的不同的gcc版本下表现出不同的效果。它们的代码是一样的，链接的库都是一样的，命令也是一样的，一个是链接成功，而另一个是报错，提示有未定义的引用，即”undefined reference to xxxx”。这类问题报错一般是缺少链接库提示的，只要添加上-lxxx添加上了libxxx即可解决，最多再添加-L/path/to/lib添加正确的搜索库的路径，但我遇到的情况还是不能解决。其实，提示“未定义的引用”说明具有这个函数定义的库没有链接成功，仔细排查后发现，在某些gcc版本下，原来这个居然和链接库在编译或链接的命令中的位置是有关系的。</p>
+<p> 我们在两个不同平台环境下编译，系统分别为64位Ubuntu和64位Redhat，均使用gcc –version分别显示为:<br>Ubuntu<br>gcc (Ubuntu 4.8.2-19ubuntu1) 4.8.2<br>Copyright (C) 2013 Free Software Foundation, Inc.<br>This is free software; see the source for copying conditions. There is NO<br>warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. </p>
+<p>Redhat<br>gcc (GCC) 4.8.5<br>Copyright (C) 2015 Free Software Foundation, Inc.<br>This is free software; see the source for copying conditions. There is NO<br>warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. </p>
+<p>编译生成命令均使用：</p>
+<p>gcc -lpthread test_gcc.c</p>
+<p>Redhat正常通过并且正确运行，而Ubuntu则显示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">test_gcc.c:(.text+0x50): undefined reference to `pthread_create&apos;</div><div class="line">test_gcc.c:(.text+0x61): undefined reference to `pthread_join&apos;</div><div class="line">collect2: error: ld returned 1 exit status</div></pre></td></tr></table></figure>
+<p>原因就是，-lpthread这个指令放在了test_gcc.c的前面，对于Redhat的高版本的gcc，这个是没有问题的，而对于Ubuntu下的较低版本的问题，就出现问题，必须将链接的库放在需要链接的对象(xxx.c或xxx.o)的后面，gcc才能正确的去链接，编译命令改为：<br>gcc test_gcc.c -lpthread<br><strong>这样就都没有问题了，所以在编写Makefile或者写编译链接命令时，均把链接库写在后面就可以保证兼容了。</strong></p>
+<p>结论<br>  所以，在使用gcc等编译命令时，如果出现这类错误，可考虑命令中各类成分的位置问题。<br>  特别的，Makefile中有默认的隐式推导规则，比如由很多xxx.o去生成可执行目标的时候，它也有相对应的宏变量来链接上库的，很可能直接就把链接库写在了需要链接对象的前面，造成了出现“未定义的引用”错误，所以咱们为了清晰明了，还是别用隐式推导规则了(谁知道各版本的make是否一致呢)，自己手写编译链接命令的好。</p>
+<p>原文：<a href="https://blog.csdn.net/junyucsdn/article/details/50573222" target="_blank" rel="external">https://blog.csdn.net/junyucsdn/article/details/50573222</a> </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/06/06/一次g-链接问题debug笔记/">一次g++链接问题debug笔记</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年06月06日 - 15:06</p>
+  <p><span>最后更新:</span>2019年06月06日 - 15:06</p>
+  <p><span>原始链接:</span><a href="/2019/06/06/一次g-链接问题debug笔记/" title="一次g++链接问题debug笔记">https://ysbbswork.github.io/2019/06/06/一次g-链接问题debug笔记/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/06/06/一次g-链接问题debug笔记/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/Debug/" rel="tag"># Debug</a>
+          
+            <a href="/tags/g/" rel="tag"># g++</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/04/vim阅读代码神器ctags/" rel="next" title="vim阅读代码神器ctags">
+                <i class="fa fa-chevron-left"></i> vim阅读代码神器ctags
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/09/GO语言学习笔记1——总览/" rel="prev" title="GO语言学习笔记1——总览">
+                GO语言学习笔记1——总览 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/06/06/一次g-链接问题debug笔记/"
+           data-title="一次g++链接问题debug笔记" data-url="https://ysbbswork.github.io/2019/06/06/一次g-链接问题debug笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题描述"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#debug过程"><span class="nav-number">2.</span> <span class="nav-text">debug过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference原文"><span class="nav-number">3.</span> <span class="nav-text">reference原文</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

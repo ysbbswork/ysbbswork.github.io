@@ -1,0 +1,1022 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="笔记,GO," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="结构体 struct
+用来自定义复杂数据结构
+
+struct 里面可以包含多个字段（属性）
+
+struct类型可以定义方法，注意和函数的区别
+
+struct类型是值类型
+
+struct类型可以嵌套
+
+GO语言没有class类型，只有struct 类型
+
+声明：
+12345678910111213141516type 标识符 struct&amp;#123;	field1 type	field2 type&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GO语言学习笔记5——结构体">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/06/10/GO语言学习笔记5——结构体/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="结构体 struct
+用来自定义复杂数据结构
+
+struct 里面可以包含多个字段（属性）
+
+struct类型可以定义方法，注意和函数的区别
+
+struct类型是值类型
+
+struct类型可以嵌套
+
+GO语言没有class类型，只有struct 类型
+
+声明：
+12345678910111213141516type 标识符 struct&amp;#123;	field1 type	field2 type&amp;">
+<meta property="og:updated_time" content="2019-06-10T07:55:23.054Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GO语言学习笔记5——结构体">
+<meta name="twitter:description" content="结构体 struct
+用来自定义复杂数据结构
+
+struct 里面可以包含多个字段（属性）
+
+struct类型可以定义方法，注意和函数的区别
+
+struct类型是值类型
+
+struct类型可以嵌套
+
+GO语言没有class类型，只有struct 类型
+
+声明：
+12345678910111213141516type 标识符 struct&amp;#123;	field1 type	field2 type&amp;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/06/10/GO语言学习笔记5——结构体/"/>
+
+
+
+
+
+  <title> GO语言学习笔记5——结构体 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/06/10/GO语言学习笔记5——结构体/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                GO语言学习笔记5——结构体
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-10T15:54:31+08:00">
+                2019-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/06/10/GO语言学习笔记5——结构体/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/06/10/GO语言学习笔记5——结构体/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/06/10/GO语言学习笔记5——结构体/" class="leancloud_visitors" data-flag-title="GO语言学习笔记5——结构体">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="结构体-struct"><a href="#结构体-struct" class="headerlink" title="结构体 struct"></a>结构体 struct</h2><ul>
+<li><p>用来自定义复杂数据结构</p>
+</li>
+<li><p>struct 里面可以包含多个字段（属性）</p>
+</li>
+<li><p>struct类型可以定义方法，注意和函数的区别</p>
+</li>
+<li><p><strong>struct类型是值类型</strong></p>
+</li>
+<li><p>struct类型可以嵌套</p>
+</li>
+<li><p>GO语言没有class类型，只有struct 类型</p>
+</li>
+<li><p>声明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">type 标识符 struct&#123;</div><div class="line">	field1 type</div><div class="line">	field2 type</div><div class="line">&#125;</div><div class="line">//例</div><div class="line"></div><div class="line">type Student struct&#123;</div><div class="line">	Name string</div><div class="line">	Age int</div><div class="line">	Score int</div><div class="line">&#125;</div><div class="line"></div><div class="line">var stu Student</div><div class="line"></div><div class="line">stu.Name = &quot;tony&quot;</div><div class="line">stu.Age = 18</div></pre></td></tr></table></figure>
+</li>
+<li><p>定义的三种方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var stu Student</div><div class="line">var stu *Student = new(Student) //指针</div><div class="line">var stu *Student = &amp;Student&#123;&#125;	//指针</div></pre></td></tr></table></figure>
+<ul>
+<li>指针访问元素时，用(*stu).Age 或者 直接 stu.Age 也可以，GO做了优化</li>
+</ul>
+</li>
+<li><p>struct的内存布局，所有字段在内存是连续的</p>
+</li>
+<li><p>golang中struct没有构造函数，一般可以使用工厂模式来解决</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">Package model</div><div class="line">type student struct&#123;</div><div class="line">	Name string</div><div class="line">	Age int</div><div class="line">&#125;</div><div class="line"></div><div class="line">func NewStudent(name string, age int) *student&#123;</div><div class="line">	return &amp;student&#123;</div><div class="line">		Name:name,</div><div class="line">		Age:age,</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">Package main</div><div class="line">S := new(student)</div><div class="line">S := model.NewStudent(&quot;dante&quot;,18)</div></pre></td></tr></table></figure>
+</li>
+<li><p>再次强调</p>
+<ul>
+<li>make用来创建map,slice,channel</li>
+<li>new 用来创建值类型<ul>
+<li>struct是值类型</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>匿名字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">type Cart struct &#123;</div><div class="line">	name string</div><div class="line">	age  int</div><div class="line">&#125;</div><div class="line"></div><div class="line">type Train struct &#123;</div><div class="line">	Cart</div><div class="line">	int</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">	var t Train</div><div class="line">	t.name = &quot;train&quot;</div><div class="line">	t.age = 100</div><div class="line">	t.int = 666</div><div class="line">	fmt.Println(t)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>如果匿名字段是结构体，可以简化结构体多层调用<ul>
+<li>如果有冲突就不能用简化的了，还得指定具体子结构体<ul>
+<li>t.Cart1.name = “xxx”</li>
+<li>t.Cart2.name = “222”</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如果匿名字段是普通值类型，那么就直接把值类型作为成员调用<ul>
+<li>但是这都是在没有冲突下使用，如果有冲突，就不能这么用了</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>GO中继承通过匿名字段来完成</p>
+</li>
+</ul>
+<a id="more"></a>
+<h3 id="struct的tag机制"><a href="#struct的tag机制" class="headerlink" title="struct的tag机制"></a>struct的tag机制</h3><p>tag 是放在结构体中元素后面的字符串</p>
+<p>我们可以为struct中的每个字段，写上一个tag。这个tag可以通过反射的机制获取到，最常用的场景就是json序列化和反序列化。</p>
+<ul>
+<li><p>背景</p>
+<ul>
+<li>如果结构体里面的字段首字母是小写，作为另一个包中的json序列化函数就无法访问这些小写的结构体，无法进行序列化</li>
+<li>虽然可以通过将结构体中的成员首字母大写来解决，但是在有时候和对方通信，协议中大家约定是小写字母，此时该怎么办呢？</li>
+<li>这时候就用到tag</li>
+</ul>
+</li>
+<li><p>解决方案</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">type Student struct &#123;</div><div class="line">	Name  string `json:&quot;student_name&quot;`</div><div class="line">	Age   int    `json:&quot;age&quot;`</div><div class="line">	Score int    `json:&quot;score&quot;`</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>这样json包能通过反射获取到tag内容，并序列化时按tag中的内容进行</li>
+</ul>
+</li>
+</ul>
+<h3 id="结构体的方法"><a href="#结构体的方法" class="headerlink" title="结构体的方法"></a>结构体的方法</h3><ul>
+<li>GO中的方法是作用在特定类型的变量上，因此自定义类型，都可以有方法，而不仅仅是struct</li>
+<li><p>定义</p>
+<ul>
+<li><code>func (recevier type) methodName（参数列表）（返回值列表）{}</code></li>
+</ul>
+</li>
+<li><p>例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> integer <span class="keyword">int</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p integer)</span> <span class="title">print</span><span class="params">()</span></span> &#123;</div><div class="line">	fmt.Println(<span class="string">"p is "</span>, p)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *integer)</span> <span class="title">set</span><span class="params">(b integer)</span></span> &#123;</div><div class="line">	*p = b</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Student <span class="keyword">struct</span> &#123;</div><div class="line">	Name  <span class="keyword">string</span></div><div class="line">	Age   <span class="keyword">int</span></div><div class="line">	Score <span class="keyword">int</span></div><div class="line">	sex   <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Student)</span> <span class="title">init</span><span class="params">(name <span class="keyword">string</span>, age <span class="keyword">int</span>, score <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">	p.Name = name</div><div class="line">	p.Age = age</div><div class="line">	p.Score = score</div><div class="line">	fmt.Println(p)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Student)</span> <span class="title">get</span><span class="params">()</span> <span class="title">Student</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> p</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> stu Student</div><div class="line">	stu.init(<span class="string">"stu"</span>, <span class="number">10</span>, <span class="number">200</span>)</div><div class="line"></div><div class="line">	stu1 := stu.get()</div><div class="line">	fmt.Println(stu1)</div><div class="line"></div><div class="line">	<span class="keyword">var</span> a integer</div><div class="line">	a = <span class="number">100</span></div><div class="line">	a.<span class="built_in">print</span>()</div><div class="line"></div><div class="line">	a.set(<span class="number">1000</span>)</div><div class="line">	a.<span class="built_in">print</span>()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>使用匿名字段实现继承，同样也能继承方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">type</span> Car <span class="keyword">struct</span> &#123;</div><div class="line">	weight <span class="keyword">int</span></div><div class="line">	name   <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Car)</span> <span class="title">Run</span><span class="params">()</span></span> &#123;</div><div class="line">	fmt.Println(<span class="string">"running"</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Bike <span class="keyword">struct</span> &#123;</div><div class="line">	Car</div><div class="line">	lunzi <span class="keyword">int</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Train <span class="keyword">struct</span> &#123;</div><div class="line">	c Car</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> a Bike</div><div class="line">	a.weight = <span class="number">100</span></div><div class="line">	a.name = <span class="string">"bike"</span></div><div class="line">	a.lunzi = <span class="number">2</span></div><div class="line"></div><div class="line">	fmt.Println(a)</div><div class="line">	a.Run()</div><div class="line"></div><div class="line">	<span class="keyword">var</span> b Train</div><div class="line">	b.c.weight = <span class="number">100</span></div><div class="line">	b.c.name = <span class="string">"train"</span></div><div class="line">	b.c.Run()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>多重继承也是使用匿名字段实现</p>
+<ul>
+<li>如果各子结构体内有字段冲突就不能使用简化指定方法，要具体到子结构体名称去调用。</li>
+</ul>
+</li>
+<li><p>如果结构体的实现了某些接口的方法，就等于实现了这个接口</p>
+<ul>
+<li>就可以获得这个接口的特性</li>
+<li>例如：结构体实现一个格式化打印接口的方法</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">type</span> Car <span class="keyword">struct</span> &#123;</div><div class="line">	weight <span class="keyword">int</span></div><div class="line">	name   <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Train <span class="keyword">struct</span> &#123;</div><div class="line">	Car</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Train)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	str := fmt.Sprintf(<span class="string">"name=[%s] weight=[%d]"</span>, p.name, p.weight)</div><div class="line">	<span class="keyword">return</span> str</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> b Train</div><div class="line">	b.weight = <span class="number">100</span></div><div class="line">	b.name = <span class="string">"train"</span></div><div class="line"></div><div class="line">	fmt.Printf(<span class="string">"%s"</span>, b)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/06/10/GO语言学习笔记5——结构体/">GO语言学习笔记5——结构体</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年06月10日 - 15:06</p>
+  <p><span>最后更新:</span>2019年06月10日 - 15:06</p>
+  <p><span>原始链接:</span><a href="/2019/06/10/GO语言学习笔记5——结构体/" title="GO语言学习笔记5——结构体">https://ysbbswork.github.io/2019/06/10/GO语言学习笔记5——结构体/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/06/10/GO语言学习笔记5——结构体/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/GO/" rel="tag"># GO</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/10/vscode插件安装问题/" rel="next" title="vscode插件安装问题">
+                <i class="fa fa-chevron-left"></i> vscode插件安装问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/10/GO语言学习笔记6——接口/" rel="prev" title="GO语言学习笔记6——接口">
+                GO语言学习笔记6——接口 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/06/10/GO语言学习笔记5——结构体/"
+           data-title="GO语言学习笔记5——结构体" data-url="https://ysbbswork.github.io/2019/06/10/GO语言学习笔记5——结构体/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#结构体-struct"><span class="nav-number">1.</span> <span class="nav-text">结构体 struct</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#struct的tag机制"><span class="nav-number">1.1.</span> <span class="nav-text">struct的tag机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结构体的方法"><span class="nav-number">1.2.</span> <span class="nav-text">结构体的方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

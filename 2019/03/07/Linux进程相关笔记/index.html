@@ -1,0 +1,1042 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux,笔记,进程,C,进程间通信,IPC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="进程并发应该是一手筷子，一手电话，说一句话，咽一口饭。
+并行是咽一口饭同时说一句话，而这光靠一张嘴是办不到的，至少两张嘴。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux进程相关笔记">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/03/07/Linux进程相关笔记/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="进程并发应该是一手筷子，一手电话，说一句话，咽一口饭。
+并行是咽一口饭同时说一句话，而这光靠一张嘴是办不到的，至少两张嘴。">
+<meta property="og:image" content="https://s1.51cto.com/images/blog/201808/05/1da59b9e9c3873b61c1f3b8def972e4b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+<meta property="og:updated_time" content="2019-03-08T03:06:54.351Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux进程相关笔记">
+<meta name="twitter:description" content="进程并发应该是一手筷子，一手电话，说一句话，咽一口饭。
+并行是咽一口饭同时说一句话，而这光靠一张嘴是办不到的，至少两张嘴。">
+<meta name="twitter:image" content="https://s1.51cto.com/images/blog/201808/05/1da59b9e9c3873b61c1f3b8def972e4b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/03/07/Linux进程相关笔记/"/>
+
+
+
+
+
+  <title> Linux进程相关笔记 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/03/07/Linux进程相关笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux进程相关笔记
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-07T11:22:29+08:00">
+                2019-03-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/03/07/Linux进程相关笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/03/07/Linux进程相关笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/03/07/Linux进程相关笔记/" class="leancloud_visitors" data-flag-title="Linux进程相关笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h1><p>并发应该是一手筷子，一手电话，说一句话，咽一口饭。</p>
+<p>并行是咽一口饭同时说一句话，而这光靠一张嘴是办不到的，至少两张嘴。</p>
+<a id="more"></a>
+<h1 id="进程控制块PCB"><a href="#进程控制块PCB" class="headerlink" title="进程控制块PCB"></a>进程控制块PCB</h1><p>每启动一个进程，进程中有个内核区，内核区里有一个进程控制块(PCB)来维护进程相关的信息，进程控制块时一个很大很复杂的结构体，用来保存进程的各种状态，资源上限数据，进程切换时要保存和恢复的cpu寄存器信息，环境变量等等。</p>
+<h1 id="PS"><a href="#PS" class="headerlink" title="PS"></a>PS</h1><h1 id="aux和elf两种参数的区别"><a href="#aux和elf两种参数的区别" class="headerlink" title="aux和elf两种参数的区别"></a>aux和elf两种参数的区别</h1><p>参考：<a href="https://blog.51cto.com/10412806/2154827" target="_blank" rel="external">https://blog.51cto.com/10412806/2154827</a></p>
+<p>在以往操作linux查看进程中总是看到有使用 ps aux 和 ps -elf的,我本人用的最多也是ps -elf ,今天就来和大家聊聊两者之间的区别:<br>首先,这两个密令都可以配合grep查看进程, ps aux 来自BSD风格(<strong>不带 -</strong>),ps -elf 来自 UNIXf风格 (<strong>必须带 -</strong>),在终端下截图为证:<br><img src="https://s1.51cto.com/images/blog/201808/05/1da59b9e9c3873b61c1f3b8def972e4b.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=" alt="聊聊 ps aux 和 ps -elf   (^_^)"></p>
+<ul>
+<li><p>ps aux</p>
+<p>ps aux 是最常用的 BSD 风格选项组合，其中的 a 简单的说，表示所有关联到终端的进程，如果同时使用 x 则代表所有进程；u 表示列出进程的用户。此外,由于一些ps版本的原因,也支持了 ps -aux</p>
+</li>
+<li><p>ps -elf </p>
+<p>ps -elf 的 -e 代表列出所有进程，-l 代表长格式，-f 代表完整的格式，有时候也用 -F 代表超完整的格式。 不过，不同操作系统（如 Linux、BSD）的 ps 的版本和参数有很大差异，具体还是要以自己的手册而定。</p>
+</li>
+<li><p>ps ajx</p>
+<p>加上j参数可以看到PPID</p>
+<p>进程组：PGID，会话： SID</p>
+</li>
+</ul>
+<h1 id="kill"><a href="#kill" class="headerlink" title="kill"></a>kill</h1><ul>
+<li><p>kill -9 </p>
+<p>无条件杀进程。</p>
+</li>
+<li><p>kill -l</p>
+<p>查看所有信号</p>
+</li>
+</ul>
+<h1 id="fork"><a href="#fork" class="headerlink" title="fork"></a>fork</h1><p>fork有两个返回值，但是是一个进程返回一个返回值。</p>
+<p>父进程：返回子进程的PID</p>
+<p>子进程：返回0</p>
+<ul>
+<li>getpid/getppid<ul>
+<li>getpid 得到当前进程的PID</li>
+<li>getppid 得到当前进程的父进程的PID</li>
+</ul>
+</li>
+</ul>
+<h1 id="ecec-函数族"><a href="#ecec-函数族" class="headerlink" title="ecec 函数族"></a>ecec 函数族</h1><ul>
+<li><p>可以让父子进程执行不相干的操作</p>
+</li>
+<li><p>能够替换进程地址空间中的源代码.text段</p>
+<ul>
+<li>实现换核不换壳的功能，内容就完全被挖走了，换成另一个程序的了，后面的代码也不会在子进程中被执行</li>
+<li>执行一个另外的程序不需要创建额外的地址空间</li>
+<li>有一个运行的程序A，在A中调用另外的应用程序B</li>
+</ul>
+</li>
+<li><p>使用exec函数族之前需要fork</p>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>如果函数执行成功，不返回</li>
+<li>如果失败，返回 -1</li>
+<li>或者执行失败通过perror(“xxx”);exit(1);打印错误信息并退出。</li>
+</ul>
+</li>
+<li><p>execl使用方法</p>
+<ul>
+<li>int execl(const char <em>path,const char </em>arg,..);</li>
+<li>path:要执行的程序的绝对路径</li>
+<li>变参arg：要执行的程序的需要的参数</li>
+<li>第一个arg：为占位作用</li>
+<li>后面的arg：命令参数</li>
+<li>参数写完之后：NULL</li>
+<li>一般执行自己写的程序</li>
+</ul>
+<p>例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">execl(&quot;/bin/ls&quot;,&quot;6666&quot;,&quot;-la&quot;,NULL);</div></pre></td></tr></table></figure>
+</li>
+<li><p>execlp</p>
+<ul>
+<li><p>和execl一样参数</p>
+</li>
+<li><p>但主要是执行系统自带的应用程序</p>
+</li>
+<li><p>它会从环境变量里去找这个程序</p>
+</li>
+<li><p>例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">execlp(&quot;ps&quot;,&quot;6666&quot;,&quot;aux&quot;,NULL);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="进程回收"><a href="#进程回收" class="headerlink" title="进程回收"></a>进程回收</h1><ul>
+<li>孤儿进程<ul>
+<li>父进程fork出子进程</li>
+<li>父进程先死，子进程还活着，被称为孤儿进程，被init进程领养，成为孤儿进程的父进程</li>
+<li>原因：为了释放子进程占用的系统资源<ul>
+<li>进程结束之后，能够释放用户区空间</li>
+<li>但释放不了pcb，必须由父进程释放</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>僵尸进程<ul>
+<li>子进程死了，但父进程还在，但父进程不去释放子进程的pcb，子进程就被称为僵尸进程。</li>
+<li>僵尸进程是一个已经死掉的进程。kill -9 也没有用，他已经是死掉的了</li>
+<li>想释放僵尸进程最简单的方法，就是把它的父进程杀死。</li>
+</ul>
+</li>
+<li>进程回收<ul>
+<li>wait - 阻塞函数<ul>
+<li>pid_t wait(int* status);<ul>
+<li>返回值：<ul>
+<li>-1：回收失败，已经没有子进程了</li>
+<li>大于0：回收的是子进程对于的PID</li>
+</ul>
+</li>
+<li>参数：status<ul>
+<li>判断子进程是如何死的<ul>
+<li>正常退出</li>
+<li>被某个信号杀死了</li>
+</ul>
+</li>
+<li>如果对它的退出状态不关心，可以用NULL</li>
+</ul>
+</li>
+<li>调用一次只能回收一个子进程</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>pid_t waitpid(pid_t pid,int *status,in options);<ul>
+<li>函数作用：同wait函数</li>
+<li>参数：<ul>
+<li>pid:<ul>
+<li>pid == -1 等待任一子进程。与wait等效。</li>
+<li>pid &gt; o 等待进程ID与PID相等的子进程</li>
+<li>pid == 0 等待其组ID等于调用进程的组ID的任一子进程</li>
+<li>pid&lt;-1 等待其组ID等于PID的绝对值的任一子进程</li>
+</ul>
+</li>
+<li>status:同wait</li>
+<li>options:设置为WNOHANG，函数非阻塞，设置为0，函数阻塞</li>
+</ul>
+</li>
+<li>返回值：<ul>
+<li>大于 0 ：返回清理掉的子进程ID</li>
+<li>-1：无子进程</li>
+<li>= 0：参数3位WNOHANG，且子进程正在运行。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="附注"><a href="#附注" class="headerlink" title="附注"></a>附注</h1><p>Linux 里很多函数是早于C的，所以会有很多不同的数据类型。</p>
+<p>当出现XXX_t，即，有_t的数据类型，说明他是用typedef重定义的数据类型。</p>
+<p>例如：pid_t 其实是一个unsigned int</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/03/07/Linux进程相关笔记/">Linux进程相关笔记</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年03月07日 - 11:03</p>
+  <p><span>最后更新:</span>2019年03月08日 - 11:03</p>
+  <p><span>原始链接:</span><a href="/2019/03/07/Linux进程相关笔记/" title="Linux进程相关笔记">https://ysbbswork.github.io/2019/03/07/Linux进程相关笔记/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/03/07/Linux进程相关笔记/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/进程/" rel="tag"># 进程</a>
+          
+            <a href="/tags/C/" rel="tag"># C</a>
+          
+            <a href="/tags/进程间通信/" rel="tag"># 进程间通信</a>
+          
+            <a href="/tags/IPC/" rel="tag"># IPC</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/02/Vps小飞机故障排除小记/" rel="next" title="Vps小飞机故障排除小记">
+                <i class="fa fa-chevron-left"></i> Vps小飞机故障排除小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/08/巴菲特工作策略笔记/" rel="prev" title="巴菲特工作策略笔记">
+                巴菲特工作策略笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/03/07/Linux进程相关笔记/"
+           data-title="Linux进程相关笔记" data-url="https://ysbbswork.github.io/2019/03/07/Linux进程相关笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#进程"><span class="nav-number">1.</span> <span class="nav-text">进程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程控制块PCB"><span class="nav-number">2.</span> <span class="nav-text">进程控制块PCB</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PS"><span class="nav-number">3.</span> <span class="nav-text">PS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#aux和elf两种参数的区别"><span class="nav-number">4.</span> <span class="nav-text">aux和elf两种参数的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kill"><span class="nav-number">5.</span> <span class="nav-text">kill</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#fork"><span class="nav-number">6.</span> <span class="nav-text">fork</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ecec-函数族"><span class="nav-number">7.</span> <span class="nav-text">ecec 函数族</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#进程回收"><span class="nav-number">8.</span> <span class="nav-text">进程回收</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附注"><span class="nav-number">9.</span> <span class="nav-text">附注</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

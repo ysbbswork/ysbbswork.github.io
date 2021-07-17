@@ -1,0 +1,1119 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux,笔记,Makefile," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="make是什么
+gcc ：编译器
+
+make：linux自带的构建器
+
+构建的具体规则写在makefile中
+
+
+makefile文件的命名
+
+makefile
+Makefile
+
+
+makefile中的规则
+
+三部分：目标，依赖，命令
+
+123# （注释#）具体格式：# 目标:依赖# (tab缩进，只能是tab)命令
+
+123# 举例：编译语句：gcc a.c b.c c.c -o app 写成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="makefile学习笔记">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/02/26/makefile学习笔记/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="make是什么
+gcc ：编译器
+
+make：linux自带的构建器
+
+构建的具体规则写在makefile中
+
+
+makefile文件的命名
+
+makefile
+Makefile
+
+
+makefile中的规则
+
+三部分：目标，依赖，命令
+
+123# （注释#）具体格式：# 目标:依赖# (tab缩进，只能是tab)命令
+
+123# 举例：编译语句：gcc a.c b.c c.c -o app 写成">
+<meta property="og:updated_time" content="2019-04-24T04:54:22.262Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="makefile学习笔记">
+<meta name="twitter:description" content="make是什么
+gcc ：编译器
+
+make：linux自带的构建器
+
+构建的具体规则写在makefile中
+
+
+makefile文件的命名
+
+makefile
+Makefile
+
+
+makefile中的规则
+
+三部分：目标，依赖，命令
+
+123# （注释#）具体格式：# 目标:依赖# (tab缩进，只能是tab)命令
+
+123# 举例：编译语句：gcc a.c b.c c.c -o app 写成">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/02/26/makefile学习笔记/"/>
+
+
+
+
+
+  <title> makefile学习笔记 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/02/26/makefile学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                makefile学习笔记
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-26T20:11:53+08:00">
+                2019-02-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/02/26/makefile学习笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/02/26/makefile学习笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/02/26/makefile学习笔记/" class="leancloud_visitors" data-flag-title="makefile学习笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="make是什么"><a href="#make是什么" class="headerlink" title="make是什么"></a>make是什么</h2><ul>
+<li><p>gcc ：编译器</p>
+</li>
+<li><p>make：linux自带的构建器</p>
+<ul>
+<li>构建的具体规则写在makefile中</li>
+</ul>
+</li>
+<li><p>makefile文件的命名</p>
+<ul>
+<li>makefile</li>
+<li>Makefile</li>
+</ul>
+</li>
+<li><p>makefile中的规则</p>
+<ul>
+<li><p>三部分：目标，依赖，命令</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># （注释#）具体格式：</div><div class="line"># 目标:依赖</div><div class="line"># (tab缩进，只能是tab)命令</div></pre></td></tr></table></figure>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># 举例：编译语句：gcc a.c b.c c.c -o app 写成makefile</div><div class="line">app:a.c b.c c.c</div><div class="line">	gcc a.c b.c c.c -o app</div></pre></td></tr></table></figure>
+</li>
+<li><p>makefile中由一条或多条规则组成</p>
+</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li><p>makefile编写</p>
+<ul>
+<li><p><strong>第一个版本</strong>：</p>
+<ul>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">app:a.c b.c c.c</div><div class="line">	gcc a.c b.c c.c -o app</div></pre></td></tr></table></figure>
+</li>
+<li><p>缺点：效率太低，修改一个文件，全部文件都需要重新编译</p>
+</li>
+</ul>
+</li>
+<li><p><strong>第二个版本</strong>：</p>
+<ul>
+<li><p>makefile工作原理</p>
+<ul>
+<li><p>检测依赖是否存在：</p>
+<ul>
+<li>向下搜索下面的规则，如果有规则是用来生成查找的依赖的，执行规则中的命令</li>
+</ul>
+</li>
+<li><p>依赖存在，判断是否需要更新</p>
+<ul>
+<li><p>原则：目标时间 &gt; 依赖的时间</p>
+<ul>
+<li>反之，则更新</li>
+</ul>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">app:main.o add.o sub.o mul.o</div><div class="line">	gcc main.o add.o sub.o mul.o -o app</div><div class="line">	</div><div class="line">main.o:main.c</div><div class="line">	gcc main.c -c</div><div class="line">	</div><div class="line">add.o:add.c</div><div class="line">	gcc add.c -c</div><div class="line">	</div><div class="line">sub.o:sub.c</div><div class="line">	gcc sub.c -c</div><div class="line"></div><div class="line">mul.o:mul.c</div><div class="line">	gcc mul.c -c</div></pre></td></tr></table></figure>
+</li>
+<li><p>缺点：冗余（很多重复的命令，写法一样重复在写）</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>第三个版本</strong></p>
+<ul>
+<li><p>自定义变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">obj=a.o b.o c.o</div></pre></td></tr></table></figure>
+<p>变量取值：aa=$(obj)</p>
+</li>
+<li><p>makefile自带的变量：大写</p>
+<ul>
+<li>CPPFLAGES</li>
+<li>CC</li>
+</ul>
+</li>
+<li><p><strong>自动变量</strong></p>
+<ul>
+<li><strong>$@：规则中的目标</strong></li>
+<li><strong>$&lt;：规则中的第一个依赖</strong></li>
+<li>$^：规则中的所有依赖</li>
+<li>只能在规则的命令中使用</li>
+</ul>
+</li>
+<li><p>例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">obj = main.o add.o sub.o mul.o</div><div class="line">target = app</div><div class="line">$(target):$(obj)</div><div class="line">	gcc $(obj) -o $(target)</div><div class="line"></div><div class="line">%.o:%.c</div><div class="line">	gcc -c $&lt; -o $@</div></pre></td></tr></table></figure>
+<p><strong>模式匹配：</strong></p>
+<p><strong>%.o:%.c</strong></p>
+<p><strong>第一次：main.o没有，向下找匹配规则，自动变量会自动生成规则</strong></p>
+<p><strong>main.o:main.c</strong></p>
+<p>​    <strong>gcc -c main.c -o main.o</strong></p>
+<p><strong>第二次：add.o</strong></p>
+<p><strong>add.o:add.c</strong></p>
+<p>​    <strong>gcc -c add.c -o add.o</strong></p>
+</li>
+<li><p>缺点：可移植性比较差</p>
+</li>
+</ul>
+</li>
+<li><p><strong>第四个版本</strong></p>
+<ul>
+<li>makefile所有的函数都有返回值</li>
+<li>查找指定目录下指定类型的文件<ul>
+<li>src = $(wildcard ./*.c)    #搜索当前目录下所有.c文件</li>
+</ul>
+</li>
+<li>匹配替换<ul>
+<li>patsubst进行替换，有三个参数</li>
+<li>obj = \$(patsubst %.c,%.o,$(src))</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SOURCES = $(wildcard *.cpp)</div><div class="line">OBJS=$(patsubst %.cpp,%.o, $(SOURCES))</div></pre></td></tr></table></figure>
+<p>第二种匹配替换方法：</p>
+<ul>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SRC=$(wildcard *.cpp)</div><div class="line">OBJ=$(SRC:.cpp=.o)</div></pre></td></tr></table></figure>
+</li>
+<li><p>用这种方法比patsubst要容易记忆</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>第五个版本</strong></p>
+<ul>
+<li><p>让make生成不是终极目标的目标</p>
+<ul>
+<li>make 目标名 ：来执行</li>
+</ul>
+</li>
+<li><p>编写一个清理项目的规则</p>
+<ul>
+<li><p>clean:</p>
+<p><code>-rm -f *.o app</code></p>
+</li>
+</ul>
+</li>
+<li><p>声明伪目标：</p>
+<ul>
+<li>.PHONY：clean</li>
+<li>这样把目标声明成伪目标之后，就不会去进行文件存在检查和文件更新时间检查</li>
+</ul>
+</li>
+<li><p>补充知识：</p>
+<ul>
+<li><strong>rm:-f, –force    忽略不存在的文件，从不给出提示。</strong></li>
+<li><strong>makefile 命令加一个减号 - 代表当前命令执行失败了不会停止，继续执行下面的命令，即忽略失败</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="最终版本示例："><a href="#最终版本示例：" class="headerlink" title="最终版本示例："></a>最终版本示例：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">target=myappname</div><div class="line">#大写代表是makefile自带的变量，CPPFLAGS指的是预处理时的一些参数，默认为空，忘记了用小写的也行</div><div class="line">CPPFLAGS=./include</div><div class="line">#makefile 里变量引用的方式为$(x)</div><div class="line"></div><div class="line">#wildcard 可以检索指定目录下的文件名</div><div class="line">src=$(wildcard ./src/*.c)</div><div class="line"></div><div class="line">#patsubst进行匹配替换</div><div class="line">obj=$(patsubst %.c,%.o, $(src))</div><div class="line"></div><div class="line"></div><div class="line">#自动变量$@：表示规则中的目标</div><div class="line">$(target):$(obj)</div><div class="line">    gcc $^ -o $@</div><div class="line">    </div><div class="line"></div><div class="line">#自动变量$&lt;：表示规则中第一个条件，只在有一个条件时用，这个条件是变化的，上面编译时，需要什么目标就会通过%模式匹配生成什么编译语句。</div><div class="line">#-I 指定头文件目录</div><div class="line">%.o:%.c</div><div class="line">    echo $&lt;</div><div class="line">    gcc -c $&lt; -I (CPPFLAGS) -o $@</div><div class="line">    </div><div class="line">    </div><div class="line">    </div><div class="line">clean:</div><div class="line">	-rm -f *.o $(target)</div><div class="line">    </div><div class="line"></div><div class="line">.PHONY: clean</div></pre></td></tr></table></figure>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><h3 id=""><a href="#" class="headerlink" title="@"></a>@</h3><p>make执行到每一句命令的时候，不仅会执行那个命令，同时还会将命令完整的打印输出到屏幕上，但是作为执行命令的符号，我们有时候不希望打印在屏幕上，不好看，也显得乱，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo &quot;begin!&quot;</div></pre></td></tr></table></figure>
+<p>最终输出为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo begin!</div></pre></td></tr></table></figure>
+<p>不是我们希望的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">begin!</div></pre></td></tr></table></figure>
+<p>这时候就需要使用到@符号。</p>
+<ul>
+<li>@<ul>
+<li><strong>在命令前加上@符号后就可以使make不显示这个命令本身和相关参数</strong></li>
+</ul>
+</li>
+</ul>
+<p>例1：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@echo &quot;begin!&quot;</div></pre></td></tr></table></figure>
+<p>输出为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">begin!</div></pre></td></tr></table></figure>
+<p>例二：（不仅不显示命令本身，相关的参数也会被自动去掉）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@g++ -c test.cpp -o test.o</div></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">test.o</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/02/26/makefile学习笔记/">makefile学习笔记</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年02月26日 - 20:02</p>
+  <p><span>最后更新:</span>2019年04月24日 - 12:04</p>
+  <p><span>原始链接:</span><a href="/2019/02/26/makefile学习笔记/" title="makefile学习笔记">https://ysbbswork.github.io/2019/02/26/makefile学习笔记/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/02/26/makefile学习笔记/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/Makefile/" rel="tag"># Makefile</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/05/Vim旋风式入门笔记/" rel="next" title="Vim旋风式入门笔记">
+                <i class="fa fa-chevron-left"></i> Vim旋风式入门笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/28/文件描述符/" rel="prev" title="文件描述符">
+                文件描述符 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/02/26/makefile学习笔记/"
+           data-title="makefile学习笔记" data-url="https://ysbbswork.github.io/2019/02/26/makefile学习笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#make是什么"><span class="nav-number">1.</span> <span class="nav-text">make是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最终版本示例："><span class="nav-number">2.</span> <span class="nav-text">最终版本示例：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">3.1.</span> <span class="nav-text">@</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

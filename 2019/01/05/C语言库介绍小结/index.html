@@ -1,0 +1,1072 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="对C/C++语言的库相关内容进行了总结，在平时项目中经常用到链接库，
+虽然很多人都会用，但是对于其原因如何探究下去就是一种模糊的状态，可谓是知其然而不知其所以然，
+为什么要链接库？静态库和动态库分别有什么特点？
+自己什么时候该动态库，什么时候又该用静态库呢？
+自己该如何编译一个库呢？
+下面就以笔记的方式总结了一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言库介绍小结">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/01/05/C语言库介绍小结/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="对C/C++语言的库相关内容进行了总结，在平时项目中经常用到链接库，
+虽然很多人都会用，但是对于其原因如何探究下去就是一种模糊的状态，可谓是知其然而不知其所以然，
+为什么要链接库？静态库和动态库分别有什么特点？
+自己什么时候该动态库，什么时候又该用静态库呢？
+自己该如何编译一个库呢？
+下面就以笔记的方式总结了一下。">
+<meta property="og:updated_time" content="2019-01-05T13:33:15.252Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C语言库介绍小结">
+<meta name="twitter:description" content="对C/C++语言的库相关内容进行了总结，在平时项目中经常用到链接库，
+虽然很多人都会用，但是对于其原因如何探究下去就是一种模糊的状态，可谓是知其然而不知其所以然，
+为什么要链接库？静态库和动态库分别有什么特点？
+自己什么时候该动态库，什么时候又该用静态库呢？
+自己该如何编译一个库呢？
+下面就以笔记的方式总结了一下。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/01/05/C语言库介绍小结/"/>
+
+
+
+
+
+  <title> C语言库介绍小结 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/01/05/C语言库介绍小结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                C语言库介绍小结
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-05T21:31:17+08:00">
+                2019-01-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/01/05/C语言库介绍小结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/01/05/C语言库介绍小结/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/01/05/C语言库介绍小结/" class="leancloud_visitors" data-flag-title="C语言库介绍小结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>对C/C++语言的库相关内容进行了总结，在平时项目中经常用到链接库，</p>
+<p>虽然很多人都会用，但是对于其原因如何探究下去就是一种模糊的状态，可谓是知其然而不知其所以然，</p>
+<p>为什么要链接库？静态库和动态库分别有什么特点？</p>
+<p>自己什么时候该动态库，什么时候又该用静态库呢？</p>
+<p>自己该如何编译一个库呢？</p>
+<p>下面就以笔记的方式总结了一下。</p>
+<a id="more"></a>
+<h1 id="旋风式介绍"><a href="#旋风式介绍" class="headerlink" title="旋风式介绍"></a>旋风式介绍</h1><ul>
+<li>库是什么？(二进制源代码)<ul>
+<li>二进制文件</li>
+<li>将源代码-》二进制格式的源代码<ul>
+<li>.c .cpp</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>能干什么：加密，保护知识产品，封装</li>
+<li>怎么用？<ul>
+<li>静态库：<ul>
+<li>gcc -c 参数生成 .o：<code>gcc a.c b.c -c</code></li>
+<li>用ar rcs 进行打包：<code>ar rcs libtest.a a.o b.o</code></li>
+<li>使用：编写测试程序test.c：<code>gcc test.c -L./ -ltest</code></li>
+</ul>
+</li>
+<li>动态库：<ul>
+<li>gcc -c -fpic 参数生成 .o：<code>gcc a.c b.c -c</code> -fpic</li>
+<li>用gcc -shared 参数进行打包：<code>gcc -shared a.o b.o -o libtest.so</code></li>
+<li>使用：编写测试程序test.c：<code>gcc test.c -L./ -ltest</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>静态库优缺点<ul>
+<li>优点：<ul>
+<li>静态库被打包到应用程序中加载速度快</li>
+<li>发布程序无需提供静态库，移植方便</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>修改库里什么东西，都要重新编译整个项目，更新的时候很麻烦<ul>
+<li>就比如手机里有个游戏，每次更新都需要你重新安装APP，岂不是烦死了。。。</li>
+</ul>
+</li>
+<li>浪费系统资源（一些不同程序共用的库都得自行分别加载到内存），浪费内存</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>动态库优缺点<ul>
+<li>优点<ul>
+<li>只有程序调用到动态库中的函数时候，才会把动态库加载到内存<ul>
+<li>ld-linux 为动态链接器，负责调度这个过程</li>
+</ul>
+</li>
+<li>程序升级简单</li>
+<li>可实现进程间资源共享</li>
+<li>程序员可以控制何时加载动态库</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>加载速度比静态库慢</li>
+<li>发布程序需要提供依赖的动态库</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="具体介绍"><a href="#具体介绍" class="headerlink" title="具体介绍"></a>具体介绍</h1><ul>
+<li><p>库制作出来之后，如何给用户使用？ </p>
+<ul>
+<li>头文件（使用说明）</li>
+<li>制作出的库</li>
+</ul>
+</li>
+<li><p>静态库的制作和使用</p>
+<ul>
+<li><p>命名规则：libtest.a</p>
+<ul>
+<li>前缀lib</li>
+<li>xxx-库的名字</li>
+<li>.a</li>
+</ul>
+</li>
+<li><p>制作步骤：</p>
+<ul>
+<li>原材料：源代码.c .cpp</li>
+<li>将.c 生成.o<ul>
+<li><code>gcc a.cpp b.cpp -c</code></li>
+</ul>
+</li>
+<li>将.o打包<ul>
+<li>ar rcs 静态库的名字 原材料<ul>
+<li><code>ar rcs libtest.a *.o</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>nm可以查看静态库中有什么内容：<code>nm  libtest.a</code></li>
+</ul>
+</li>
+<li><p>库的使用</p>
+<ul>
+<li>-L：指定静态库的文件所在的路径</li>
+<li>-l：指定静态库的名字</li>
+</ul>
+<p>例：静态库文件名叫libtest.a：</p>
+<p><code>gcc main.c -I ./include -L ./lib -ltest -o myapp</code></p>
+</li>
+</ul>
+</li>
+<li><p>动态库的制作和使用.so</p>
+<ul>
+<li>命名规则<ul>
+<li>libxxx.so</li>
+</ul>
+</li>
+<li>制作步骤<ul>
+<li>将源文件生成.o<ul>
+<li><code>gcc a.c b.c -fpic(fPIC)</code></li>
+</ul>
+</li>
+<li>打包<ul>
+<li><code>gcc -shared -o libxxx.so a.o b.o</code></li>
+</ul>
+</li>
+<li>库的使用<ul>
+<li>头文件</li>
+<li>动态库 libtest.so</li>
+<li>链接：<code>gcc main.c -I ./include -L ./ -l test -o myapp</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>查看库的链接：ldd myapp</li>
+<li>动态库无法加载：<ul>
+<li>使用环境变量<ul>
+<li>临时设置：在终端：<code>export LD_LIBRARY_PATH=动态库的路径</code><ul>
+<li>为了不覆盖LD_LIBRARY_PATH内的值：用拼接写法：<code>export LD_LIBRARY_PATH=XXXXX:$LD_LIBRARY_PATH</code></li>
+</ul>
+</li>
+<li>永久设置<ul>
+<li>用户级别：<ul>
+<li>~/.bashrc</li>
+<li>把shell语句<code>export LD_LIBRARY_PATH=XXXXX:$LD_LIBRARY_PATH</code>加到文件最后</li>
+<li>source ~/.bashrc ：相当于重新对文件做个加载</li>
+</ul>
+</li>
+<li>系统级别：<ul>
+<li>/etc/profile</li>
+<li>修改完：source /etc/profile</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>/etc/ld.so.cache 文件列表 (适用于库位置基本不变了)<ul>
+<li>找到一个配置文件<ul>
+<li>/etc/ld.so.conf</li>
+<li>把动态库的绝对路径添加到文件中</li>
+</ul>
+</li>
+<li>执行一个命令：<ul>
+<li>sudo ldconfig -v</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>拓展方式：<ul>
+<li>dlopen,dlclose,dlsym</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/01/05/C语言库介绍小结/">C语言库介绍小结</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年01月05日 - 21:01</p>
+  <p><span>最后更新:</span>2019年01月05日 - 21:01</p>
+  <p><span>原始链接:</span><a href="/2019/01/05/C语言库介绍小结/" title="C语言库介绍小结">https://ysbbswork.github.io/2019/01/05/C语言库介绍小结/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/01/05/C语言库介绍小结/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/04/gcc实用笔记/" rel="next" title="gcc实用笔记">
+                <i class="fa fa-chevron-left"></i> gcc实用笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/05/Vim旋风式入门笔记/" rel="prev" title="Vim旋风式入门笔记">
+                Vim旋风式入门笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/01/05/C语言库介绍小结/"
+           data-title="C语言库介绍小结" data-url="https://ysbbswork.github.io/2019/01/05/C语言库介绍小结/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#旋风式介绍"><span class="nav-number">1.</span> <span class="nav-text">旋风式介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体介绍"><span class="nav-number">2.</span> <span class="nav-text">具体介绍</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

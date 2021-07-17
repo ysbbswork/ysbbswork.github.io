@@ -1,0 +1,990 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="综述标准I/O提供的f系列I/O文件操作，如（fwrite,fread,fseek等）都是提供了有缓存的接口，如果数据需要送到像控制终端等交互设备，必须要设置fflush或者使用非缓存I/O。
+而缓存可以减少系统调用的次数，增加效率。
+这是标准I/O相对于系统调用的特点，也是优点。
+而系统调用的I/O读写是无缓冲的，实时性高。
+到这里我们还是没有说明白为什么标准 IO 吞吐量高，而系统 IO 实时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux编程笔记（一）——标准IO">
+<meta property="og:url" content="https://ysbbswork.github.io/2018/05/10/Linux编程笔记（一）——标准IO/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="综述标准I/O提供的f系列I/O文件操作，如（fwrite,fread,fseek等）都是提供了有缓存的接口，如果数据需要送到像控制终端等交互设备，必须要设置fflush或者使用非缓存I/O。
+而缓存可以减少系统调用的次数，增加效率。
+这是标准I/O相对于系统调用的特点，也是优点。
+而系统调用的I/O读写是无缓冲的，实时性高。
+到这里我们还是没有说明白为什么标准 IO 吞吐量高，而系统 IO 实时">
+<meta property="og:updated_time" content="2018-05-10T13:46:23.073Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux编程笔记（一）——标准IO">
+<meta name="twitter:description" content="综述标准I/O提供的f系列I/O文件操作，如（fwrite,fread,fseek等）都是提供了有缓存的接口，如果数据需要送到像控制终端等交互设备，必须要设置fflush或者使用非缓存I/O。
+而缓存可以减少系统调用的次数，增加效率。
+这是标准I/O相对于系统调用的特点，也是优点。
+而系统调用的I/O读写是无缓冲的，实时性高。
+到这里我们还是没有说明白为什么标准 IO 吞吐量高，而系统 IO 实时">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2018/05/10/Linux编程笔记（一）——标准IO/"/>
+
+
+
+
+
+  <title> Linux编程笔记（一）——标准IO | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/05/10/Linux编程笔记（一）——标准IO/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux编程笔记（一）——标准IO
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-10T21:44:41+08:00">
+                2018-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/10/Linux编程笔记（一）——标准IO/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/05/10/Linux编程笔记（一）——标准IO/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/05/10/Linux编程笔记（一）——标准IO/" class="leancloud_visitors" data-flag-title="Linux编程笔记（一）——标准IO">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h1><p>标准I/O提供的f系列I/O文件操作，如（fwrite,fread,fseek等）都是提供了有缓存的接口，如果数据需要送到像控制终端等交互设备，必须要设置fflush或者使用非缓存I/O。</p>
+<p>而缓存可以减少系统调用的次数，增加效率。</p>
+<p>这是标准I/O相对于系统调用的特点，也是优点。</p>
+<p>而系统调用的I/O读写是无缓冲的，实时性高。</p>
+<p>到这里我们还是没有说明白为什么标准 IO 吞吐量高，而系统 IO 实时性高。我再举个简单的栗子：门卫老大爷负责送信到邮局，他去一次邮局要花费 10 分钟的时间，而每次最多能送 20 封信，每当信件累计到 20 封的时候他就要动身去邮局了。但是当他收到一封加急的邮件时，就会立即去一趟邮局。系统 IO 就好比每收到一封信时都要去一趟邮局，所以实时性高。而标准 IO 就好比要攒够 20 封信才去一趟邮局，所以吞吐量高，因为用户把信件交到老大爷的手上时就会立即返回，响应速度快，用户体验更好。而我们使用 fflush(3) 之类的函数强制刷新缓冲的时候，就相当于是老大爷收到了一封加急信件需要立即去一趟邮局送信。</p>
+<h1 id="标准I-O"><a href="#标准I-O" class="headerlink" title="标准I/O"></a>标准I/O</h1><h2 id="1-fopen-3"><a href="#1-fopen-3" class="headerlink" title="1.fopen(3)"></a>1.fopen(3)</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function">FILE *<span class="title">fopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *mode)</span></span>;</div></pre></td></tr></table></figure>
+<p>这是今天要学习的第一个函数，在操作文件之前，我们需要通过 fopen() 函数将文件打开，通过这个函数我们可以告诉操作系统我们要操作的是哪个文件，以及用什么样的方式操作这个文件。</p>
+<p>参数列表：</p>
+<p>path：要操作的文件路径。</p>
+<p>mode：文件的打开方式，这个打开方式一共分为6种。</p>
+<p>　　r：以<strong>只读</strong>的方式打开文件，并且文件位置指针会被定位到文件首。如果要打开的文件不存在则报错。</p>
+<p>　　r+：以<strong>读写</strong>的方式打开文件，并且文件位置指针会被定位到文件首。如果要打开的文件不存在则报错。</p>
+<p>　　w：以<strong>只写</strong>的方式打开文件，如果文件不存在则创建，如果文件已存在则被<strong>截断</strong>为 0 字节，并且文件位置指针会被定位到文件首。</p>
+<p>　　w+：以<strong>读写</strong>的方式打开文件，如果文件不存在则创建，如果文件已存在则被<strong>截断</strong>为 0 字节，并且文件位置指针会被定位到文件首。</p>
+<p>　　a：以<strong>追加</strong>的方式打开文件，如果文件不存在则创建，且文件位置指针会被定位到文件最后一个有效字符的后面（EOF，end of the file）。</p>
+<p>　　a+：以<strong>读和追加</strong>的方式打开文件，如果文件不存在则创建，且读文件位置指针会被初始化到文件首，但是总是写入到最后一个有效字符的后面（EOF，end of the file）。</p>
+<p>返回值：</p>
+<p>　　FILE 是一个由标准库定义的结构体，各位童鞋不要企图通过手动修改结构体里的内容来实现文件的操作，一定要通过标准库函数来操作文件。</p>
+<p>　　这个函数返回一个 FILE 类型的指针，它作为我们打开文件的凭据，后面所有对这个文件的操作都需要使用这个指针，而且使用之后一定不要忘记调用 fclose(3) 函数释放资源。</p>
+<p>　　如果该函数返回了一个指向 NULL 的指针，则表示文件打开失败了，可以通过 errno 获取到具体失败的原因。</p>
+<h2 id="2-fclose-3"><a href="#2-fclose-3" class="headerlink" title="2.fclose(3)"></a>2.fclose(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1 fclose - close a stream</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 int fclose(FILE *fp);</div></pre></td></tr></table></figure>
+<p>这个函数是与 fopen(3) 函数对应的，当我们使用完一个文件之后，需要调用 fclose(3) 函数释放相关的资源，否则会造成内存泄漏。当一个 FILE 指针被 fclose(3) 函数成功释放后，这个指针所指向的内容将不能再次被使用，如果需要再次打开文件还需要调用 fopen(3) 函数。</p>
+<p>参数列表：</p>
+<p>　　fp：fopen(3) 函数的返回值作为参数传入即可。</p>
+<h2 id="3-fgets-3"><a href="#3-fgets-3" class="headerlink" title="3.fgets(3)"></a>3.fgets(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1 fgets - input of strings</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 int fgetc(FILE *stream);</div><div class="line">6 </div><div class="line">7 char *fgets(char *s, int size, FILE *stream);</div></pre></td></tr></table></figure>
+<p>从输入流 stream 中读取一个字符串回填到 s 所指向的空间。</p>
+<p>这里出现了一个 stream 的概念，这个 stream 是什么呢，它被成为“流”，其实就是操作系统对于可以像文件一样操作的东西的一种抽象。它并非像自然界的小河流水一样潺潺细流，而通常是要么没有数据，要么一下子来一坨数据。当然 stream 也未必一定就是文件，比如系统为每个进程默认打开的三个 stream：stdin、stdout、stderr，它们本身就不是文件，就是与文件有着相同的操作方式，所以同样被抽象成了“流”。</p>
+<p>这个函数并没有解决 gets(3) 函数可能会导致的数组越界问题，而是通过牺牲了获取数据的正确性来保证程序不会出现数组越界的错误，实际上是掩盖了 gets(3) 的问题。</p>
+<p>该函数遇到如下四种情况会返回：</p>
+<p>　　1.当读入的数据量达到 size - 1 时；</p>
+<p>　　2.当读取的字符遇到 \n 时；</p>
+<p>　　3.当读取的字符遇到 EOF 时；</p>
+<p>　　4.当读取遇到错误时；</p>
+<p>并且它会在读取到的数据的最后面添加一个 \0 到 s 中。</p>
+<p>返回值：</p>
+<p>　　成功时返回 s。</p>
+<p>　　返回 NULL 时表示出现了错误或者读到了 strem 的末尾(EOF)。</p>
+ <a id="more"></a>
+<h2 id="4-fread-3-、fwrite-3"><a href="#4-fread-3-、fwrite-3" class="headerlink" title="4.fread(3)、fwrite(3)"></a>4.fread(3)、fwrite(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1 fread, fwrite - binary stream input/output</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);</div><div class="line">6 </div><div class="line">7 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);</div></pre></td></tr></table></figure>
+<p>这两个函数使用得最频繁，用来读写 stream，通常是用来读写文件。</p>
+<p>参数列表：</p>
+<p>　　ptr：fread(3) 将从 stream 中读取出来的数据回填到 ptr 所指向的位置；fwrite(3) 则将从 ptr 所只想的位置读取数据写入到 stream 中；</p>
+<p>　　size：要读取的每个对象所占用的字节数；</p>
+<p>　　nmemb：要读取出多少个对象；</p>
+<p>　　stream：数据来源或去向；</p>
+<p>返回值：</p>
+<p>　　<strong>注意这两个函数的返回值表示的是成功读（写）的对象的个数，而不是字节数！</strong></p>
+<p>例如：</p>
+<p>　　read(buf, 1, 10, fp); // 读取 10 个对象，每个对象 1 个字节</p>
+<p>　　read(buf, 10, 1, fp); // 读取 1 个对象，每个对象 10 个字节</p>
+<p>当数据量充足的时候，这两种方式是没有区别的。</p>
+<p><strong>但是！！</strong>当数据量少于 size 个字节的整倍数时，第二种方法的的最后一个对象会读取失败。比如数据只有 45 个字节，那么第二种方法的返回值为 4，因为它只能成功读取 4 个对象。</p>
+<p>所以通常第一种方式读写数据使用得比较普遍。</p>
+<h2 id="5-atoi-3"><a href="#5-atoi-3" class="headerlink" title="5.atoi(3)"></a>5.atoi(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">1 atoi, atol, atoll, atoq - convert a string to an integer</div><div class="line">2 </div><div class="line">3 #include &lt;stdlib.h&gt;</div><div class="line">4 </div><div class="line">5 int atoi(const char *nptr);</div><div class="line">6 long atol(const char *nptr);</div><div class="line">7 long long atoll(const char *nptr);</div><div class="line">8 long long atoq(const char *nptr);</div></pre></td></tr></table></figure>
+<p>atoi(3) 函数族在这里提一下，主要是为了下面的 printf(3) 函数族做一个铺垫。</p>
+<p>这些函数的作用是方便的将一个字符串形式的数字转换为对应的数字类型的数字。</p>
+<p>上面这句话可能有点坳口，给你看个例子就懂了，下面是伪代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1 char *str = &quot;123abc456&quot;;</div><div class="line">2 int i = 0;</div><div class="line">3 i = atoi(str);</div></pre></td></tr></table></figure>
+<p>i 的结果会变成 123。这些函数会转换一个字符串中地一个非有效数字前面的数字。如果很不幸这个字符串中的第一个字符就不是一个有效数字时，那么它们会返回 0。</p>
+<h2 id="6-printf-3-家族"><a href="#6-printf-3-家族" class="headerlink" title="6.printf(3)家族"></a>6.printf(3)家族</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">1 printf,   fprintf,  sprintf,  snprintf - formatted output conversion</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 int printf(const char *format, ...);</div><div class="line">6 int fprintf(FILE *stream, const char *format, ...);//输出到文件流</div><div class="line">7 int sprintf(char *str, const char *format, ...);//输出到字符串流</div><div class="line">8 int snprintf(char *str, size_t size, const char *format, ...);</div></pre></td></tr></table></figure>
+<p>printf(3) 函数大家一定不会陌生了，应该从写 Hello World! 的时候就接触到了的吧，所以我也不多介绍了，主要介绍两个内容。</p>
+<p>一个是面试常考的一个问题，用了这么久的 printf(3) 函数，大家有没有注意过它的返回值表示什么呢？</p>
+<p><strong>printf(3) 的返回值表示成功打印的有效字符数量，不包括 \0。</strong></p>
+<p>另一个要说的就是刚才我们提到了 atoi(3) 函数族，它们负责将字符串转换为数字，那么有没有什么函数可以将数字转换为字符串呢，其实通过 sprintf(3) 或 snprintf(3) 就可以了。</p>
+<p>有了这两个函数，不仅可以方便的将数字转换为字符串，还可以将多个字符串任意拼接为一个完整的字符串。</p>
+<p>这里直接讲解一下 snprintf(3) 函数。</p>
+<p>参数列表：</p>
+<p>　　str：拼接之后的结果会回填到这个指针所指向的位置；</p>
+<p>　　size：size - 1 为回填到 str 中的最大长度，数据超过这个长度的部分则会被舍弃，然后会在拼接的字符串的尾部追加 \0；</p>
+<p>　　format：格式化字符串，用法与 printf(3) 相同，这里不再赘述；</p>
+<p>　　…：格式化字符串的参数，用法与 printf(3) 相同；</p>
+<p>这个函数与 fputs(3) 一样，只是掩盖了 sprintf(3) 可能会导致的数组越界问题，通过牺牲数据的正确性来保证程序不会出现数组越界的错误。</p>
+<h2 id="7-scanf-3"><a href="#7-scanf-3" class="headerlink" title="7.scanf(3)"></a>7.scanf(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1 scanf,  fscanf, sscanf - input format conversion</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 int scanf(const char *format, ...);</div><div class="line">6 int fscanf(FILE *stream, const char *format, ...);</div><div class="line">7 int sscanf(const char *str, const char *format, ...);</div></pre></td></tr></table></figure>
+<p>scanf(3) 函数族相信也不用过多的介绍了，这里唯一要强调的就是：<strong>scanf(3) 函数支持多种格式化参数，唯独 %s 是不能安全使用的，可能会导致数组越界</strong>，所以当需要接收用户输入的时候可以使用 fgets(3) 等函数来替代。</p>
+<h2 id="8-fseek-3"><a href="#8-fseek-3" class="headerlink" title="8.fseek(3)"></a>8.fseek(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">1 fgetpos, fseek, fsetpos, ftell, rewind - reposition a stream</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 int fseek(FILE *stream, long offset, int whence);</div><div class="line">6 </div><div class="line">7 long ftell(FILE *stream);</div><div class="line">8 </div><div class="line">9 void rewind(FILE *stream);</div></pre></td></tr></table></figure>
+<p>fseek(3) 函数族的函数用来控制和获取文件位置指针所在的位置，从而能够使我们灵活的读写文件。</p>
+<p>介绍一下 fseek(3) 函数的参数列表：</p>
+<p>　　stream：这个已经不需要多介绍了吧，就是准备修改文件位置指针的文件流；</p>
+<p>　　offset：基于 whence 参数的偏移量；</p>
+<p>　　whence：相对于文件的哪里；有三个宏定义可以作为它的参数：SEEK_SET（文件首）, SEEK_CUR（当前位置）, or SEEK_END（文件尾）；</p>
+<p>返回值：</p>
+<p>　　成功返回 0；失败返回 -1，并且会设置 errno。</p>
+<p>单独看参数列表也许你还有所疑惑，那么我写点简单的伪代码作为例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">1 fseek(fp, -10, SEEK_CUR); // 从当前位置向前偏移10个字节。</div><div class="line">2 fseek(fp, 2GB, SEEK_SET); // 可以制造一个空洞文件，如迅雷刚开始下载时产生的文件。</div></pre></td></tr></table></figure>
+<p>ftell(3) 函数以字节为单位获得文件指针的位置。</p>
+<p>fseek(fp, 0, SEEK_END) + ftell(3) 可以计算出文件总字节大小。</p>
+<p>还有一个值得大家注意的问题：</p>
+<p>fseek(3) 和 ftell(3) 的参数和返回值使用了 long，所以取值范围为 -2GB ~ (2GB-1)，而 ftell(3) 只能表示 2G-1 之内的文件大小，所以可以使用 fseeko(3) 和 ftello(3) 函数替代它们，但它们只是方言（SUSv2, POSIX.1-2001.）。</p>
+<p>由于这两个函数比较古老，所以设计的时候认为 +-2GB 的取值范围已经足够用了，而没有意识到科技发展如此迅速的今天，2GB 大小的文件已经完全不能满足实际的需求了。</p>
+<p>rewind(3) 函数将文件位置指针移动到文件起始位置，相当于：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">1 (void) fseek(stream, 0L, SEEK_SET)</div></pre></td></tr></table></figure>
+<h2 id="9-getline-3"><a href="#9-getline-3" class="headerlink" title="9.getline(3)"></a>9.getline(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"> 1 getline - delimited string input</div><div class="line"> 2 </div><div class="line"> 3 #include &lt;stdio.h&gt;</div><div class="line"> 4 </div><div class="line"> 5 ssize_t getline(char **lineptr, size_t *n, FILE *stream);</div><div class="line"> 6 </div><div class="line"> 7 Feature Test Macro Requirements for glibc (see feature_test_macros(7)):</div><div class="line"> 8 </div><div class="line"> 9 getline():</div><div class="line">10     Since glibc 2.10:</div><div class="line">11         _POSIX_C_SOURCE &gt;= 200809L || _XOPEN_SOURCE &gt;= 700</div><div class="line">12     Before glibc 2.10:</div><div class="line">13         _GNU_SOURCE</div></pre></td></tr></table></figure>
+<p>这个函数是一个非常好用的函数，它能帮助我们一次获取一行数据，而无论这个数据有多长。</p>
+<p>参数列表：<br>　　lineptr：一个一级指针的地址，它会将读取到的数据填写到一级指针指向的位置，并将&gt;该位置回填到该参数中。指针初始必须置为NULL，该函数会根据指针是否为 NULL 来决定是否需要分配新的内存。<br>　　n：是由该函数回填的申请的内存缓冲区的总大小，长度初始必须置为0。<br>虽然很好用，但是各位童鞋别高兴得太早了，该函数仅支持 GNU 标准，所以是方言，大家还是自己封装一个备用吧。</p>
+<p>另外，想要使用这个函数必须在编译的时候指定 -D_GNU_SOURCE 参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">1 $&gt; gcc -D_GNU_SOURCE</div></pre></td></tr></table></figure>
+<p>当然如果不想在编译的时候添加参数，也可以在引用头文件之前 #define _GNU_SOURCE，只是比较丑陋而已。</p>
+<p>还有一个办法，是在 makefile 中配置 CFLAGS += -D_GNU_SOURCE，这样即省去了编译时手动写参数的麻烦，也避免了代码中的丑陋。</p>
+<h2 id="10-fflush-3"><a href="#10-fflush-3" class="headerlink" title="10.fflush(3)"></a>10.fflush(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">int fflush(FILE *stream);</div></pre></td></tr></table></figure>
+<p>fflush(3) 函数的作用是刷新缓冲区，提到这个函数就要讲讲缓冲区了。</p>
+<p> 缓冲区的作用是为了合并系统调用，在上面讲 STDIO 与 SYSIO 的区别时大家已经看到什么是合并系统调用了。</p>
+<p>Linux 系统中有三种缓冲形式：无缓冲、行缓冲和全缓冲。</p>
+<p>无缓冲：需要立刻输出时使用，例如 stderr；</p>
+<p>行缓冲：遇到换行符时进行刷新、缓冲区满了的时候刷新、强制刷新(fflush(3))；而标准输出(stdout)是行缓冲，因为涉及到终端设备；</p>
+<p>全缓冲：只有缓冲区满了的时候和强制刷新(fflush(3))时才会刷新，这是 Linux 默认的缓冲模式，但终端设备除外，终端设备使用行缓冲模式；</p>
+<p>当数据被放入缓冲区的时候是不会通过系统调用(read(3)、write(3))送到内核中的，只有缓冲区被刷新的时候数据才会通过系统调用进入内核。而刷新缓冲区就是 fflush(3) 函数的作用。</p>
+<p>fflush(3) 的参数是具体要刷新的流，当参数为 NULL 时会刷新所有的输出流。</p>
+<h1 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h1><h2 id="文件读"><a href="#文件读" class="headerlink" title="文件读"></a>文件读</h2><p>文件的I/O 操作包含在stdio.h中。</p>
+<p>文件I/O操作中使用的句柄：</p>
+<p><code>FILE    *fp;</code></p>
+<p>这个句柄通常叫文件指针，是一个透明的结构体，且不应该由开发人员直接访问。</p>
+<p>读文件的例子，一个简单的more01程序实现：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line">/* more01.c  - version 0.1 of more</div><div class="line"> *	read and print 24 lines then pause for a few special commands</div><div class="line"> */</div><div class="line"></div><div class="line">#include	&lt;stdio.h&gt;</div><div class="line"></div><div class="line">#define	PAGELEN	24</div><div class="line">#define	LINELEN	512</div><div class="line"></div><div class="line">void do_more(FILE *);</div><div class="line">int  see_more();</div><div class="line"></div><div class="line">int main( int ac , char *av[] )</div><div class="line">&#123;</div><div class="line">	FILE	*fp;</div><div class="line"></div><div class="line">	if ( ac == 1 )</div><div class="line">		do_more( stdin );</div><div class="line">	else</div><div class="line">		while ( --ac )</div><div class="line">			if ( (fp = fopen( *++av , "r" )) != NULL )</div><div class="line">			&#123;</div><div class="line">				do_more( fp ) ; </div><div class="line">				fclose( fp );</div><div class="line">			&#125;</div><div class="line">			else</div><div class="line">				exit(1);</div><div class="line">	return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">void do_more( FILE *fp )</div><div class="line">/*</div><div class="line"> *  read PAGELEN lines, then call see_more() for further instructions</div><div class="line"> */</div><div class="line">&#123;</div><div class="line">	char	line[LINELEN];</div><div class="line">	int	num_of_lines = 0;</div><div class="line">	int	see_more(), reply;</div><div class="line"></div><div class="line">	while ( fgets( line, LINELEN, fp ) )&#123;		/* more input	*/</div><div class="line">		if ( num_of_lines == PAGELEN ) &#123;	/* full screen?	*/</div><div class="line">			reply = see_more();		/* y: ask user  */</div><div class="line">			if ( reply == 0 )		/*    n: done   */</div><div class="line">				break;</div><div class="line">			num_of_lines -= reply;		/* reset count	*/</div><div class="line">		&#125;</div><div class="line">		if ( fputs( line, stdout )  == EOF )	/* show line	*/</div><div class="line">			exit(1);			/* or die	*/</div><div class="line">		num_of_lines++;				/* count it	*/</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int see_more()</div><div class="line">/*</div><div class="line"> *	print message, wait for response, return # of lines to advance</div><div class="line"> *	q means no, space means yes, CR means one line</div><div class="line"> */</div><div class="line">&#123;</div><div class="line">	int	c;</div><div class="line"></div><div class="line">	printf("\033[7m more? \033[m");		/* reverse on a vt100	*/</div><div class="line">	while( (c=getchar()) != EOF )			/* get response	*/</div><div class="line">	&#123;</div><div class="line">		if ( c == 'q' )			/* q -&gt; N		*/</div><div class="line">			return 0;</div><div class="line">		if ( c == ' ' )			/* ' ' =&gt; next page	*/</div><div class="line">			return PAGELEN;		/* how many to show	*/</div><div class="line">		if ( c == '\n' )		/* Enter key =&gt; 1 line	*/</div><div class="line">			return 1;		</div><div class="line">	&#125;</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码解读：</p>
+<p><code>ac==1时</code>的<code>do_more(stdin)</code>是让标准输入流重定向进来的方法！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">if(fputs(line,stdout)==EOF) //fputs将字符串char line[LINELEN]输出到标准输出中，顺便利用返回值进行检错</div></pre></td></tr></table></figure>
+<p>more01 如果用linux 管道命令“|”将<code>ls /bin | ./more01</code>输出重定向到more01，结果发现打印24行后没有停下来，这是为什么呢？</p>
+<p>因为<code>ls /bin | ./more01</code>已经将more01的标准输入重定向到ls的标准输出了，这样more01从同一个数据流中读了数据，又读了用户输入，显然是有问题的。</p>
+<p>解决办法：</p>
+<p>从标准输入中读入要分页的数据，直接从键盘读取用户的输入。</p>
+<p>具体如何做呢？</p>
+<p>有一个文件/dev/tty，这是键盘和显示器的设备文件，向这个文件写相当于显示在用户屏幕上，读相当于从键盘获取用户的输入。即使程序的输入/输出被“&lt;”或“&gt;”重定向，程序还是可以通过这个文件与终端交换数据。</p>
+<p>改进的more02：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div></pre></td><td class="code"><pre><div class="line">/*  more02.c  - version 0.2 of more</div><div class="line"> *	read and print 24 lines then pause for a few special commands</div><div class="line"> *      feature of version 0.2: reads from /dev/tty for commands</div><div class="line"> */</div><div class="line">#include	&lt;stdio.h&gt;</div><div class="line"></div><div class="line">#define	PAGELEN	24</div><div class="line">#define	LINELEN	512</div><div class="line"></div><div class="line">void do_more(FILE *);</div><div class="line">int see_more(FILE *);</div><div class="line"></div><div class="line">int main( int ac , char *av[] )</div><div class="line">&#123;</div><div class="line">	FILE	*fp;</div><div class="line"></div><div class="line">	if ( ac == 1 )</div><div class="line">		do_more( stdin );</div><div class="line">	else</div><div class="line">		while ( --ac )</div><div class="line">			if ( (fp = fopen( *++av , "r" )) != NULL )</div><div class="line">			&#123;</div><div class="line">				do_more( fp ) ; </div><div class="line">				fclose( fp );</div><div class="line">			&#125;</div><div class="line">			else</div><div class="line">				exit(1);</div><div class="line">	return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">void do_more( FILE *fp )</div><div class="line">/*</div><div class="line"> *  read PAGELEN lines, then call see_more() for further instructions</div><div class="line"> */</div><div class="line">&#123;</div><div class="line">	char	line[LINELEN];</div><div class="line">	int	num_of_lines = 0;</div><div class="line">	int	see_more(FILE *), reply;</div><div class="line">	FILE	*fp_tty;</div><div class="line"></div><div class="line">	fp_tty = fopen( "/dev/tty", "r" );	   /* NEW: cmd stream   */</div><div class="line">	if ( fp_tty == NULL )			   /* if open fails     */</div><div class="line">		exit(1);                           /* no use in running */</div><div class="line"></div><div class="line">	while ( fgets( line, LINELEN, fp ) )&#123;		/* more input	*/</div><div class="line">		if ( num_of_lines == PAGELEN ) &#123;	/* full screen?	*/</div><div class="line">			reply = see_more(fp_tty);  /* NEW: pass FILE *  */</div><div class="line">			if ( reply == 0 )		/*    n: done   */</div><div class="line">				break;</div><div class="line">			num_of_lines -= reply;		/* reset count	*/</div><div class="line">		&#125;</div><div class="line">		if ( fputs( line, stdout )  == EOF )	/* show line	*/</div><div class="line">			exit(1);			/* or die	*/</div><div class="line">		num_of_lines++;				/* count it	*/</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">int see_more(FILE *cmd)				   /* NEW: accepts arg  */</div><div class="line">/*</div><div class="line"> *	print message, wait for response, return # of lines to advance</div><div class="line"> *	q means no, space means yes, CR means one line</div><div class="line"> */</div><div class="line">&#123;</div><div class="line">	int	c;</div><div class="line"></div><div class="line">	printf("\033[7m more? \033[m");		/* reverse on a vt100	*/</div><div class="line">	while( (c=getc(cmd)) != EOF )		/* NEW: reads from tty  */</div><div class="line">	&#123;</div><div class="line">		if ( c == 'q' )			/* q -&gt; N		*/</div><div class="line">			return 0;</div><div class="line">		if ( c == ' ' )			/* ' ' =&gt; next page	*/</div><div class="line">			return PAGELEN;		/* how many to show	*/</div><div class="line">		if ( c == '\n' )		/* Enter key =&gt; 1 line	*/</div><div class="line">			return 1;		</div><div class="line">	&#125;</div><div class="line">	return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>参考资料：</p>
+<ul>
+<li><a href="http://www.cnblogs.com/0xcafebabe/p/4423699.html" target="_blank" rel="external">http://www.cnblogs.com/0xcafebabe/p/4423699.html</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/09/有趣的linux下的表达方式vt100/" rel="next" title="有趣的linux下的表达方式vt100">
+                <i class="fa fa-chevron-left"></i> 有趣的linux下的表达方式vt100
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/13/Linux管道编程小记/" rel="prev" title="Linux管道编程小记">
+                Linux管道编程小记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/05/10/Linux编程笔记（一）——标准IO/"
+           data-title="Linux编程笔记（一）——标准IO" data-url="https://ysbbswork.github.io/2018/05/10/Linux编程笔记（一）——标准IO/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#综述"><span class="nav-number">1.</span> <span class="nav-text">综述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#标准I-O"><span class="nav-number">2.</span> <span class="nav-text">标准I/O</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-fopen-3"><span class="nav-number">2.1.</span> <span class="nav-text">1.fopen(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-fclose-3"><span class="nav-number">2.2.</span> <span class="nav-text">2.fclose(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-fgets-3"><span class="nav-number">2.3.</span> <span class="nav-text">3.fgets(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-fread-3-、fwrite-3"><span class="nav-number">2.4.</span> <span class="nav-text">4.fread(3)、fwrite(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-atoi-3"><span class="nav-number">2.5.</span> <span class="nav-text">5.atoi(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-printf-3-家族"><span class="nav-number">2.6.</span> <span class="nav-text">6.printf(3)家族</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-scanf-3"><span class="nav-number">2.7.</span> <span class="nav-text">7.scanf(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-fseek-3"><span class="nav-number">2.8.</span> <span class="nav-text">8.fseek(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-getline-3"><span class="nav-number">2.9.</span> <span class="nav-text">9.getline(3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-fflush-3"><span class="nav-number">2.10.</span> <span class="nav-text">10.fflush(3)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例子"><span class="nav-number">3.</span> <span class="nav-text">例子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文件读"><span class="nav-number">3.1.</span> <span class="nav-text">文件读</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

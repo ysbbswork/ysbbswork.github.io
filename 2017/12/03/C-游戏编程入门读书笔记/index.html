@@ -1,0 +1,980 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,笔记," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.
+
+周末打麻将的时候和几个本科生一时兴起约了尬图书馆，第二天直接从寝室出发也没带书，准备去图书馆随便借点来看，我到了图书馆的时候他们还都在睡觉，看来我保住了研究生爱学习的良好形象，虽然打麻将什么的也是前晚熬夜打麻将是我带着他们去的（逃~）
+去了图书加自习室的南馆四楼，计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++游戏编程入门读书笔记">
+<meta property="og:url" content="https://ysbbswork.github.io/2017/12/03/C-游戏编程入门读书笔记/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.
+
+周末打麻将的时候和几个本科生一时兴起约了尬图书馆，第二天直接从寝室出发也没带书，准备去图书馆随便借点来看，我到了图书馆的时候他们还都在睡觉，看来我保住了研究生爱学习的良好形象，虽然打麻将什么的也是前晚熬夜打麻将是我带着他们去的（逃~）
+去了图书加自习室的南馆四楼，计">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fm1hp7r6ndj30fc06cmx4.jpg">
+<meta property="og:updated_time" content="2017-12-03T07:16:05.138Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++游戏编程入门读书笔记">
+<meta name="twitter:description" content="本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.
+
+周末打麻将的时候和几个本科生一时兴起约了尬图书馆，第二天直接从寝室出发也没带书，准备去图书馆随便借点来看，我到了图书馆的时候他们还都在睡觉，看来我保住了研究生爱学习的良好形象，虽然打麻将什么的也是前晚熬夜打麻将是我带着他们去的（逃~）
+去了图书加自习室的南馆四楼，计">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1fm1hp7r6ndj30fc06cmx4.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2017/12/03/C-游戏编程入门读书笔记/"/>
+
+
+
+
+
+  <title> C++游戏编程入门读书笔记 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2017/12/03/C-游戏编程入门读书笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                C++游戏编程入门读书笔记
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-03T15:12:14+08:00">
+                2017-12-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/03/C-游戏编程入门读书笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/03/C-游戏编程入门读书笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/12/03/C-游戏编程入门读书笔记/" class="leancloud_visitors" data-flag-title="C++游戏编程入门读书笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.</p>
+<blockquote>
+<p>周末打麻将的时候和几个本科生一时兴起约了尬图书馆，第二天直接从寝室出发也没带书，准备去图书馆随便借点来看，我到了图书馆的时候他们还都在睡觉，看来我保住了研究生爱学习的良好形象，虽然打麻将什么的也是前晚熬夜打麻将是我带着他们去的（逃~）</p>
+<p>去了图书加自习室的南馆四楼，计软分区，周末一天时间复习复习C++再好不过了。</p>
+<p>《C++游戏编程入门》是之前是一本很基础但写的有很好的一本书，这本书虽说是游戏编程，但编写的都是控制台程序，说是游戏编程不如说是小程序例子下讲解C++，</p>
+<p>书的内容不是很多，学过C++的大概三四个小时就能看完，</p>
+<p>里面的例子很详细，全部都是C++的基础，很适合复习基础来食用，几乎每句代码都是一个知识点来展开谈，教科书式的晦涩语句也几乎没有，很多复杂的东西被几句话讲的很明白。</p>
+</blockquote>
+<p>阅读本文可以帮助你迅速复习C++，了解和补充一些程序设计知识。</p>
+<a id="more"></a>
+<h1 id="使用随机数"><a href="#使用随机数" class="headerlink" title="使用随机数"></a>使用随机数</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdlib&gt;</span><span class="comment">//包含了随机数生成函数</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;ctime&gt;</span><span class="comment">//包含time（）函数</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main2</span><span class="params">()</span> </span>&#123;</div><div class="line">	srand(<span class="keyword">static_cast</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">int</span>&gt;(time(<span class="number">0</span>)));</div><div class="line">	<span class="keyword">int</span> randomnumber = rand();</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; randomnumber&lt;&lt;<span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">	<span class="keyword">int</span> die = (randomnumber % <span class="number">10</span>)+<span class="number">1</span>;<span class="comment">//产生1-10的随机数</span></div><div class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; die &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">cin</span>.get();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用string对象"><a href="#使用string对象" class="headerlink" title="使用string对象"></a>使用string对象</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="built_in">string</span> word1 = <span class="string">"game"</span>;</div><div class="line">	<span class="built_in">string</span> word2 = <span class="string">"over"</span>;<span class="comment">//string的两种初始化方式</span></div><div class="line">	<span class="function"><span class="built_in">string</span> <span class="title">word3</span><span class="params">(<span class="number">3</span>,<span class="string">'!'</span>)</span></span>;<span class="comment">//用多个字符对string进行初始化</span></div><div class="line">	<span class="built_in">string</span> phrase = word1 + <span class="string">""</span> + word2 + word3;<span class="comment">//string的拼接用了=运算重载，很是方便</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; phrase &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"字符串大小:"</span> &lt;&lt; phrase.size() &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; phrase[<span class="number">0</span>] &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//按下表访问字符串中字符</span></div><div class="line">	phrase[<span class="number">0</span>] = <span class="string">'L'</span>;<span class="comment">//按下标替换字符</span></div><div class="line"></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; phrase.size(); ++i) &#123;<span class="comment">//size()返回是unsigned int型</span></div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"第"</span> &lt;&lt; i &lt;&lt; <span class="string">"为"</span> &lt;&lt; phrase[i] &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; phrase.find(<span class="string">"over"</span>) &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//查找字符串位置，并返回查找单词首字母下标</span></div><div class="line"></div><div class="line">	<span class="keyword">if</span> (phrase.find(<span class="string">"nothiswords"</span>) == <span class="built_in">string</span>::npos) &#123;</div><div class="line">		<span class="comment">//string::npos访问的常量表示string对象可能的最大长度，它比对象中任意可能的合法位置都要大，可以表示“一个不可能存在的位置”，表明不找不到字符串</span></div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"'nothiswords'is not in the phrase"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line">	phrase.erase(<span class="number">4</span>, <span class="number">5</span>);<span class="comment">//删除从第四个字符开始的五个字符</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; phrase&lt;&lt;<span class="built_in">endl</span>;</div><div class="line"></div><div class="line">	phrase.erase(<span class="number">4</span>);<span class="comment">//删除从第四个字符开始的所有字符</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; phrase&lt;&lt;<span class="built_in">endl</span>;</div><div class="line"></div><div class="line">	phrase.erase();<span class="comment">//删除所有字符</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"phase:"</span>&lt;&lt;phrase &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (phrase.empty()) &#123;<span class="comment">//判断句子是不是空了</span></div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"phrase是空的"</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="built_in">string</span> a;</div><div class="line">	<span class="keyword">if</span> (a.empty()) &#123;<span class="comment">//未初始化的string对象也是空的</span></div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"a是空的"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="built_in">cin</span>.get();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用vector"><a href="#使用vector" class="headerlink" title="使用vector"></a>使用vector</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; inventory;<span class="comment">//尽管向量是动态的，但不可以使用下标运算符增加向量元素，例inventory[4] = "axe";是错的，要push_back</span></div><div class="line">	inventory.push_back(<span class="string">"sword"</span>);</div><div class="line">	inventory.push_back(<span class="string">"armor"</span>);</div><div class="line">	inventory.push_back(<span class="string">"shield"</span>);</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; inventory.size(); ++i) &#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; inventory[i] &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line">	inventory[<span class="number">0</span>] = <span class="string">"axe"</span>;</div><div class="line">	<span class="comment">//弹出一个元素</span></div><div class="line">	inventory.pop_back();</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i &lt; inventory.size(); ++i) &#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; inventory[i] &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//清除vector</span></div><div class="line">	inventory.clear();</div><div class="line">	<span class="comment">//判断是否为空</span></div><div class="line">	<span class="keyword">if</span> (inventory.empty())<span class="comment">//向量等STL和字符串有很多相似之处</span></div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"为空"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="built_in">cin</span>.get();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="其它STL容器"><a href="#其它STL容器" class="headerlink" title="其它STL容器"></a>其它STL容器</h2><p>STL定义的容器分为两大类：顺序型和关联型。顺序型容器可以依次检索元素值，而关联型容器则基于键值检索元素值。</p>
+<h2 id="使用迭代器"><a href="#使用迭代器" class="headerlink" title="使用迭代器"></a>使用迭代器</h2><p><img src="http://ww1.sinaimg.cn/large/005HFdfGgy1fm1hp7r6ndj30fc06cmx4.jpg" alt=""></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main8</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; inventory;</div><div class="line">	inventory.push_back(<span class="string">"sword"</span>);</div><div class="line">	inventory.push_back(<span class="string">"armor"</span>);</div><div class="line">	inventory.push_back(<span class="string">"shield"</span>);</div><div class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::iterator myiter;<span class="comment">//声明了一个名为myiter的迭代器</span></div><div class="line">	<span class="comment">//何为迭代器？迭代器是标识容器中的某个特定元素的值，给定一个迭代器，可以访问元素的值，给定正确类型的迭代器，就可以修改其值。</span></div><div class="line">	<span class="comment">//迭代器还可以通过常见的算数运算符在元素之间移动。</span></div><div class="line">	<span class="comment">//可以将迭代器想象成贴在容器中某个特定元素上的便签，迭代器虽然不是元素本身，但它是应用元素的一种方式。</span></div><div class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::const_iterator iter;<span class="comment">//声明了一个名为iter的常量迭代器</span></div><div class="line">	<span class="comment">//除了不能用来修改其引用元素外，常量迭代器与常规迭代器几乎一样。由常量迭代器与常规迭代器几乎一样。可以将常量迭代器想象成提供了制度访问权限</span></div><div class="line">	<span class="comment">//C++有很多权限上的严格限制，这也是C++的特色，使代码意图清晰，也更安全。</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"Your items:"</span> &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//用迭代器循环打印</span></div><div class="line">	<span class="keyword">for</span> (iter = inventory.begin(); iter != inventory.end(); ++iter) &#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; *iter &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//用迭代器去修改元素的值</span></div><div class="line">	myiter = inventory.begin();</div><div class="line">	*myiter = <span class="string">"axe"</span>;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"Now your items:"</span> &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//用迭代器循环打印</span></div><div class="line">	<span class="keyword">for</span> (iter = inventory.begin(); iter != inventory.end(); ++iter) &#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; *iter &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; (*myiter).size() &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//可以把迭代器当做向量等容器的指针，用法和数组指针都极为类似</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; myiter-&gt;size() &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">	<span class="comment">//插入值操作，插入的地方值后移</span></div><div class="line">	inventory.insert(inventory.begin(), <span class="string">"crossbow"</span>);</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"Now your items:"</span> &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//用迭代器循环打印</span></div><div class="line">	<span class="keyword">for</span> (iter = inventory.begin(); iter != inventory.end(); ++iter) &#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; *iter &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//清除元素</span></div><div class="line">	inventory.erase((inventory.begin() + <span class="number">2</span>));<span class="comment">//erase接受一个迭代器作为实参</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"Now your items:"</span> &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//用迭代器循环打印</span></div><div class="line">	<span class="keyword">for</span> (iter = inventory.begin(); iter != inventory.end(); ++iter) &#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; *iter &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">cin</span>.get();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="使用算法"><a href="#使用算法" class="headerlink" title="使用算法"></a>使用算法</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdlib&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;ctime&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="comment">//使用 STL 内置算法</span></div><div class="line"></div><div class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::const_iterator iter;<span class="comment">//常量迭代器</span></div><div class="line">	<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; scores;</div><div class="line">	scores.push_back(<span class="number">1200</span>);</div><div class="line">	scores.push_back(<span class="number">1500</span>);</div><div class="line">	scores.push_back(<span class="number">1900</span>);</div><div class="line">	scores.push_back(<span class="number">111</span>);</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"scores :"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	<span class="keyword">for</span> (iter = scores.begin(); iter != scores.end(); ++iter)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; *iter &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//使用查询算法</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"Finding a score.\n"</span>;</div><div class="line">	<span class="keyword">int</span> score;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"Please enter a score\n"</span>;</div><div class="line">	<span class="built_in">cin</span> &gt;&gt; score;</div><div class="line">	iter = find(scores.begin(), scores.end(), score);</div><div class="line">	<span class="keyword">if</span> (iter != scores.end()) &#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"score found\n"</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span></div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"not found\n"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//随机打乱顺序,游戏中很有用噢，可以用来洗牌，也可以用来打乱某一关遭遇的敌人顺序</span></div><div class="line">	srand(<span class="keyword">static_cast</span>&lt;<span class="keyword">unsigned</span> <span class="keyword">int</span>&gt;(time(<span class="number">0</span>)));<span class="comment">//用时间作为随机种子</span></div><div class="line">	random_shuffle(scores.begin(), scores.end());</div><div class="line">	<span class="keyword">for</span> (iter = scores.begin(); iter != scores.end(); ++iter)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; *iter &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//对元素进行升序排序</span></div><div class="line">	sort(scores.begin(), scores.end());</div><div class="line">	<span class="keyword">for</span> (iter = scores.begin(); iter != scores.end(); ++iter)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">cout</span> &lt;&lt; *iter &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">cin</span>.get();</div><div class="line">	<span class="built_in">cin</span>.get();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="理解代码重用"><a href="#理解代码重用" class="headerlink" title="理解代码重用"></a>理解代码重用</h1><ul>
+<li><strong>提高产量</strong> 。通过重用已有的代码和一些元素的基础上（例如游戏引擎），可以迅速构建出完整的项目。</li>
+<li><strong>改善质量。</strong> 经过测试和已经确认无bug的代码进行重用，可以使程序稳定性增强。</li>
+<li><strong>改善性能。</strong> 一旦写出了或者改进后的高性能的代码，对其重用可以避免再造轮子，也避免了低性能代码的产生。</li>
+</ul>
+<h1 id="函数指定默认参数"><a href="#函数指定默认参数" class="headerlink" title="函数指定默认参数"></a>函数指定默认参数</h1><p>在函数中的默认参数设置时，一旦在参数列表里指定了一个默认参数，则必须为余下的所有参数指定默认参数。</p>
+<p>（<strong>此形参后面的所有参数都要设置上默认参数</strong>）</p>
+<p>因此下面的原型是合法的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a , <span class="keyword">int</span> b , <span class="keyword">int</span> c = <span class="number">100</span> , <span class="keyword">int</span> d = <span class="number">20</span> )</span></span></div></pre></td></tr></table></figure>
+<p>而下面这个是非法的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a , <span class="keyword">int</span> b = <span class="number">2</span> , <span class="keyword">int</span> c = <span class="number">3</span> , <span class="keyword">int</span> d )</span></span></div></pre></td></tr></table></figure>
+<h1 id="函数重载"><a href="#函数重载" class="headerlink" title="函数重载"></a>函数重载</h1><p>实现函数重载，需要使用不同的形参列表为同一个函数编写不同的定义。</p>
+<p>注意，仅仅是返回类型不同的函数，将导致编译错误。</p>
+<p>例如：</p>
+<p>下面是错误的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span></div><div class="line"><span class="keyword">float</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></div></pre></td></tr></table></figure>
+<p>下面是正确的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span></div><div class="line"><span class="keyword">float</span> <span class="title">func</span><span class="params">(<span class="keyword">float</span>)</span></div></pre></td></tr></table></figure>
+<h1 id="程序规划"><a href="#程序规划" class="headerlink" title="程序规划"></a>程序规划</h1><p>在编写一切代码之前，例如编写游戏，游戏设计者已在概念书、设计文档和原型上花费数不清的时间。一旦设计工作完成，程序员便开始他们的工作——更多的<strong>规划</strong>。只有在程序员写下他们自己的技术设计之后，他们才开始认真的编码。</p>
+<p>一般流程：</p>
+<ul>
+<li><p>编写伪代码</p>
+<p>在抽象层面考虑代码，伪代码的每一行应当是一个函数调用。</p>
+<p>之后，所有要做的则是编写伪代码所暗示的函数。</p>
+<p>例如一个控制台版本的XXOO游戏，伪代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">create an empty xxoo board</div><div class="line"></div><div class="line">display the game instructions</div><div class="line"></div><div class="line">determine who goes first</div><div class="line"></div><div class="line">display the board</div><div class="line"></div><div class="line"><span class="keyword">while</span> nobody has won and it's not a tie	<span class="comment">//tie代表平局局</span></div><div class="line">	<span class="keyword">if</span> it's the human's turn</div><div class="line">		get the human move</div><div class="line">		update the board with the human's move</div><div class="line">	otherwise</div><div class="line">		calculate the computer's move <span class="comment">//这里是计算出电脑该怎么行动，因为电脑是需要自己编写的AI，要根据人类的棋局选择下一步放在哪里</span></div><div class="line">		update the board with the computer's move</div><div class="line">	display the board</div><div class="line">	<span class="keyword">switch</span> turns <span class="comment">//转换选手</span></div><div class="line">congratulate the winner or declare a tie</div></pre></td></tr></table></figure>
+</li>
+<li><p>数据表示</p>
+<p>有了一个不错的规划，但仍然很抽象，需要真正定义其中的元素。</p>
+<p>例如：如何表示游戏棋盘？如何表示棋子和一招棋？</p>
+<p>选择恰当的数据结构，去定义抽象的事物。</p>
+</li>
+<li><p>创建函数列表</p>
+<p>伪代码暗示了所需要的不同函数，为他们创建一个列表，并确定各自功能、拥有的参数和返回值。</p>
+<p>| 函数                                       | 描述                                       |<br>| —————————————- | —————————————- |<br>| void instructions();                     | 显示游戏操作指南                                 |<br>| char askYesNo(string question);          | 接受一个问题，返回“y”或“n”                         |<br>| int askNumber(string question, int high, int low = 0); | 询问一定范围内的数字。接受一个问题、一个范围上限和一个范围下限。返回low到high之间的数字 |<br>| char humanPiece();                       | 确定玩家的棋子。返回X或O                            |<br>| char opponent(char piece);               | 返回给定棋子的对应棋子。                             |<br>| void displayBoard(const vector<char>&amp; board); | 在屏幕上显示当前棋盘。                              |<br>| char winner(const vector<char>&amp; board);  | 确定游戏的胜者。返回X、O、或T（和棋）或N（还没有哪一方胜出）         |<br>| bool isLegal(const vector<char>&amp; board, int move); | 判断输入的数字是否合法                              |<br>| int humanMove(const vector<char>&amp; board, char human); | 获取人类玩家的下棋。接受一个棋盘与人类玩家的棋子作为参数，返回玩家下棋的数字位置。 |<br>| int computerMove(vector<char> board, char computer); | 获取计算机玩家的下棋。接受一个棋盘与人类玩家的棋子作为参数，返回玩家下棋的数字位置。 |<br>| void announceWinner(char winner, char computer, char human); | 宣布最后结果。                                  |</char></char></char></char></char></p>
+</li>
+</ul>
+<h1 id="使用常量指针"><a href="#使用常量指针" class="headerlink" title="使用常量指针"></a>使用常量指针</h1><p>声明一个常量指针，无法修改存储在常量指针中的地址</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> score =<span class="number">100</span></div><div class="line"><span class="keyword">int</span> * <span class="keyword">const</span> ps =&amp;score;<span class="comment">//ps是常量，不可以变动，而*ps可以改变</span></div></pre></td></tr></table></figure>
+<p><strong>注意，和所有常量一样，第一次声明常量指针时候必须初始化</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> *<span class="keyword">const</span> p; <span class="comment">//illegal !，因为常量p声明之后就无法修改，再也无法赋值了，所以，声明时要初始化</span></div></pre></td></tr></table></figure>
+<p><strong> 提示：在C++中尽管可以使用指针，但还是尽可能的使用引用，引用在语法上比指针更加简洁，并且让代码更易读懂。 </strong></p>
+<h1 id="使用指向常量的指针"><a href="#使用指向常量的指针" class="headerlink" title="使用指向常量的指针"></a>使用指向常量的指针</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">int</span>* p <span class="comment">//指向int型常量的指针p</span></div></pre></td></tr></table></figure>
+<p>指针本身可以变得，但是被指的对象为常量，不可改变。</p>
+<h1 id="使用指向常量的常量指针"><a href="#使用指向常量的常量指针" class="headerlink" title="使用指向常量的常量指针"></a>使用指向常量的常量指针</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> a=<span class="number">1</span>;</div><div class="line"><span class="keyword">const</span> <span class="keyword">int</span>* <span class="keyword">const</span> p=&amp;a;</div></pre></td></tr></table></figure>
+<p><strong>注意</strong></p>
+<p>使用指针时候要注意野指针问题。</p>
+<p>特别是函数返回类型为一个指针时，例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="built_in">string</span>* <span class="title">badpointer</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="built_in">string</span> local =<span class="string">"this a string"</span>;</div><div class="line">    <span class="built_in">string</span>* plocal =&amp;local;</div><div class="line">  	<span class="keyword">return</span> plocal;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码可能导致程序崩溃，因为返回的指针所指向的字符串在函数结束之后不复存在。成为野指针。</p>
+<h1 id="静态数据成员"><a href="#静态数据成员" class="headerlink" title="静态数据成员"></a>静态数据成员</h1><ul>
+<li>静态变量在函数调用之间保留其值</li>
+<li>类中定义的<strong>公有</strong>静态数据成员，可以在程序任意一处以加上类域的方式访问：<code>Critter::s</code>，只有静态成员变量可以这样访问！</li>
+<li>静态数据成员私有化的时候，就只能和其它私有数据成员一样，只能在类成员函数之中对其进行访问。</li>
+</ul>
+<h1 id="静态成员函数"><a href="#静态成员函数" class="headerlink" title="静态成员函数"></a>静态成员函数</h1><ul>
+<li><strong>静态成员函数</strong>是为整个类而存在的函数。</li>
+</ul>
+<p><code>static int get_s();</code></p>
+<ul>
+<li>静态成员函数主要用来使用静态数据成员。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">int Critter::get_s()&#123;</div><div class="line">  return s;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>静态成员函数不能访问非静态数据成员！</strong></p>
+<p>因为静态成员函数是为整个类而存在的，而与具体的该类的某个实例无关。</p>
+</li>
+<li><p>从外部调用调用类需要用类域名限定它:<code>Critter::get_s()</code></p>
+</li>
+</ul>
+<h1 id="STL的reserve（）"><a href="#STL的reserve（）" class="headerlink" title="STL的reserve（）"></a>STL的reserve（）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vector&lt;string&gt; str_list;</div><div class="line">int spaces=10;</div><div class="line">str_list.reserve(spaces);</div></pre></td></tr></table></figure>
+<p>函数reserve()将字符串的容量设置为至少size. 如果size指定的数值要小于当前字符串中的字符数(亦即size &lt; this→size()), 容量将被设置为可以恰好容纳字符的数值. reserve()以线性时间(linear time)运行。</p>
+<p>它最大的用处是为了避免反复重新分配缓冲区内存而导致效率降低，或者在使用某些STL操作(例如std::copy)之前保证缓冲区够大。</p>
+<h1 id="对于指针和数组的关系"><a href="#对于指针和数组的关系" class="headerlink" title="对于指针和数组的关系"></a>对于指针和数组的关系</h1><p>指针和数组名之间的关系记住这几个公式即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">int array[10];</div></pre></td></tr></table></figure>
+<ul>
+<li>$$array \equiv \&amp;array[0]$$</li>
+<li>$array+k\equiv \&amp;array[k]$</li>
+<li>$*array\equiv array[0]$</li>
+<li>$*(array+k)\equiv array[k]$</li>
+</ul>
+<h1 id="避免内存泄露"><a href="#避免内存泄露" class="headerlink" title="避免内存泄露"></a>避免内存泄露</h1><p>两种典型的导致内存泄露的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">void leak1()</div><div class="line">&#123;</div><div class="line">  int* drip1 = new int(30);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>分配了个内存块，函数没有返回内存指针，没办法释放，内存泄露。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">void leak2()</div><div class="line">&#123;</div><div class="line">  int* drip2 = new int(50);</div><div class="line">  drip2 = new int(100);</div><div class="line">  delete drip2;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此时没有任何指针指向堆中存储50那块内存，程序无法释放它，内存泄露。</p>
+<h1 id="深拷贝和浅拷贝"><a href="#深拷贝和浅拷贝" class="headerlink" title="深拷贝和浅拷贝"></a>深拷贝和浅拷贝</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">简单的来说就是，在有指针的情况下，浅拷贝只是增加了一个指针指向已经存在的内存，而深拷贝就是增加一个指针并且申请一个新的内存，使这个增加的指针指向这个新的内存，采用深拷贝的情况下，释放内存的时候就不会出现在浅拷贝时重复释放同一内存的错误！</div></pre></td></tr></table></figure>
+<p>例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> Critter&#123;</div><div class="line">  pubilc:</div><div class="line">  	Critter(<span class="keyword">const</span> <span class="built_in">string</span>&amp; name=<span class="string">" "</span>);<span class="comment">//构造函数</span></div><div class="line">  	Critter(<span class="keyword">const</span> Critter&amp; c);<span class="comment">//拷贝构造</span></div><div class="line">  	Critter&amp; Critter::<span class="keyword">operator</span>=(<span class="keyword">const</span> Critter&amp; c);<span class="comment">//重载=运算符</span></div><div class="line">    ~Critter();<span class="comment">//析构</span></div><div class="line">  <span class="keyword">private</span>:</div><div class="line">  	<span class="built_in">string</span>* m_pName;</div><div class="line">&#125;;</div><div class="line">Critter::Critter(<span class="keyword">const</span> <span class="built_in">string</span>&amp; name)</div><div class="line">&#123;</div><div class="line">    m_pName=<span class="keyword">new</span> <span class="built_in">string</span>(name)</div><div class="line">&#125;</div><div class="line">Critter::Critter(<span class="keyword">const</span> Critter&amp; c)</div><div class="line">&#123;</div><div class="line">    m_pName=<span class="keyword">new</span> <span class="built_in">string</span>(*(c.m_pName));</div><div class="line">&#125;</div><div class="line">Critter&amp; Critter::<span class="keyword">operator</span>=(<span class="keyword">const</span> Critter&amp; c)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> != &amp;c)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">delete</span> m_pName;</div><div class="line">      	m_pName = <span class="keyword">new</span> <span class="built_in">string</span>(*(c.m_pName));</div><div class="line">    &#125;</div><div class="line">  <span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">&#125;</div><div class="line">Critter::~Critter()</div><div class="line">&#123;</div><div class="line">    <span class="keyword">delete</span> m_pName;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="类的访问权限"><a href="#类的访问权限" class="headerlink" title="类的访问权限"></a>类的访问权限</h1><ul>
+<li>public成员可以被程序中的所有代码访问。</li>
+<li>protected成员只能被本类与特定派生类访问，这取决于继承的访问级别。</li>
+<li>private成员只能被本类成员访问，即它们不能被任何派生类直接访问。</li>
+</ul>
+<h1 id="虚基类成员函数"><a href="#虚基类成员函数" class="headerlink" title="虚基类成员函数"></a>虚基类成员函数</h1><p>对于任何继承的基类成员函数，如果期望在派生类中对其重写，则应当使用关键字virtual将其声明为虚函数。</p>
+<p><strong>尽管可以重写非虚成员函数，但这可能会导致一些意外行为，一个较好的准则是将任何要重写的基类成员函数声明为虚函数。</strong></p>
+<h1 id="重写函数与重载函数"><a href="#重写函数与重载函数" class="headerlink" title="重写函数与重载函数"></a>重写函数与重载函数</h1><p>注意：在重写一个基类的重载成员函数时，基类成员函数的所有重载版本都会被覆盖掉，意味着访问其他版本的成员函数的唯一方式是显式的地调用基类成员函数。因此，如果要重写重载成员函数，最好重写重载函数的每个版本。</p>
+<h1 id="在派生类中使用重载运算符与拷贝构造函数"><a href="#在派生类中使用重载运算符与拷贝构造函数" class="headerlink" title="在派生类中使用重载运算符与拷贝构造函数"></a>在派生类中使用重载运算符与拷贝构造函数</h1><p>重载运算符与拷贝构造函数不会从基类继承过来，所以在派生类中需要重新处理。</p>
+<p>在派生类中重载赋值运算符时，通常需要调用基类中的赋值运算符成员函数，方法是使用基类名称作为前缀显式调用。例：</p>
+<p>Boss是从Enemy继承而来，那么Boss中定义的重载赋值运算符成员函数可以这样开始：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Boss&amp; operator= (const Boss &amp; b)</div><div class="line">&#123;</div><div class="line">  Enemy::opertor=(b);</div><div class="line">&#125;</div><div class="line">Boss(const Boss&amp; b)：Enemy(b)</div><div class="line">&#123;//这里再处理余下部分数据...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="纯虚函数"><a href="#纯虚函数" class="headerlink" title="纯虚函数"></a>纯虚函数</h1><p>当类包含至少一个纯虚函数时，该类为抽象类。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/28/隐藏在cin中的陷阱/" rel="next" title="隐藏在cin中的陷阱">
+                <i class="fa fa-chevron-left"></i> 隐藏在cin中的陷阱
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/20/通信类的研究生该怎么读/" rel="prev" title="通信类的研究生该怎么读">
+                通信类的研究生该怎么读 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/12/03/C-游戏编程入门读书笔记/"
+           data-title="C++游戏编程入门读书笔记" data-url="https://ysbbswork.github.io/2017/12/03/C-游戏编程入门读书笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用随机数"><span class="nav-number">1.</span> <span class="nav-text">使用随机数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用string对象"><span class="nav-number">1.1.</span> <span class="nav-text">使用string对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用vector"><span class="nav-number">1.2.</span> <span class="nav-text">使用vector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其它STL容器"><span class="nav-number">1.3.</span> <span class="nav-text">其它STL容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用迭代器"><span class="nav-number">1.4.</span> <span class="nav-text">使用迭代器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用算法"><span class="nav-number">2.</span> <span class="nav-text">使用算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#理解代码重用"><span class="nav-number">3.</span> <span class="nav-text">理解代码重用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#函数指定默认参数"><span class="nav-number">4.</span> <span class="nav-text">函数指定默认参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#函数重载"><span class="nav-number">5.</span> <span class="nav-text">函数重载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序规划"><span class="nav-number">6.</span> <span class="nav-text">程序规划</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用常量指针"><span class="nav-number">7.</span> <span class="nav-text">使用常量指针</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用指向常量的指针"><span class="nav-number">8.</span> <span class="nav-text">使用指向常量的指针</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用指向常量的常量指针"><span class="nav-number">9.</span> <span class="nav-text">使用指向常量的常量指针</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态数据成员"><span class="nav-number">10.</span> <span class="nav-text">静态数据成员</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#静态成员函数"><span class="nav-number">11.</span> <span class="nav-text">静态成员函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#STL的reserve（）"><span class="nav-number">12.</span> <span class="nav-text">STL的reserve（）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对于指针和数组的关系"><span class="nav-number">13.</span> <span class="nav-text">对于指针和数组的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#避免内存泄露"><span class="nav-number">14.</span> <span class="nav-text">避免内存泄露</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#深拷贝和浅拷贝"><span class="nav-number">15.</span> <span class="nav-text">深拷贝和浅拷贝</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类的访问权限"><span class="nav-number">16.</span> <span class="nav-text">类的访问权限</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#虚基类成员函数"><span class="nav-number">17.</span> <span class="nav-text">虚基类成员函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重写函数与重载函数"><span class="nav-number">18.</span> <span class="nav-text">重写函数与重载函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在派生类中使用重载运算符与拷贝构造函数"><span class="nav-number">19.</span> <span class="nav-text">在派生类中使用重载运算符与拷贝构造函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#纯虚函数"><span class="nav-number">20.</span> <span class="nav-text">纯虚函数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1039 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,笔记,Vim," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="学习Vim相关的教程有很多，有Book，甚至有在线的练习网站，
+我将最常用的几个命令和vim的相关以笔记的方式整理出来，
+算是一个 旋风式 入门了吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vim旋风式入门笔记">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/01/05/Vim旋风式入门笔记/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="学习Vim相关的教程有很多，有Book，甚至有在线的练习网站，
+我将最常用的几个命令和vim的相关以笔记的方式整理出来，
+算是一个 旋风式 入门了吧。">
+<meta property="og:updated_time" content="2019-04-25T14:35:30.538Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vim旋风式入门笔记">
+<meta name="twitter:description" content="学习Vim相关的教程有很多，有Book，甚至有在线的练习网站，
+我将最常用的几个命令和vim的相关以笔记的方式整理出来，
+算是一个 旋风式 入门了吧。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/01/05/Vim旋风式入门笔记/"/>
+
+
+
+
+
+  <title> Vim旋风式入门笔记 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/01/05/Vim旋风式入门笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Vim旋风式入门笔记
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-05T21:38:22+08:00">
+                2019-01-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/01/05/Vim旋风式入门笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/01/05/Vim旋风式入门笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/01/05/Vim旋风式入门笔记/" class="leancloud_visitors" data-flag-title="Vim旋风式入门笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>学习Vim相关的教程有很多，有Book，甚至有在线的练习网站，</p>
+<p>我将最常用的几个命令和vim的相关以笔记的方式整理出来，</p>
+<p>算是一个 旋风式 入门了吧。</p>
+<a id="more"></a>
+<h2 id="vim三种模式"><a href="#vim三种模式" class="headerlink" title="vim三种模式"></a>vim三种模式</h2><ul>
+<li>命令模式</li>
+<li>编辑模式</li>
+<li>末行模式 命令模式下：进入</li>
+</ul>
+<h2 id="命令模式操作："><a href="#命令模式操作：" class="headerlink" title="命令模式操作："></a>命令模式操作：</h2><ul>
+<li><p>保存退出：ZZ</p>
+</li>
+<li><p>代码格式化：gg=G</p>
+<ul>
+<li><p>“gg”可以跳到第一行。</p>
+<p>“G”可以跳到最后一行。</p>
+</li>
+<li><p>而“=”则是 调用命令行的indent程序来使文本智能的缩进。如果你的linux上没有装indent，而盲目的使用gg=G，很可能会损坏你正在编辑的文件。</p>
+</li>
+</ul>
+</li>
+<li><p>光标移动到行首：0 （零）</p>
+</li>
+<li><p>光标移动到行尾：$</p>
+</li>
+<li><p>光标移动到文件首部：gg</p>
+</li>
+<li><p>光标移动到危机尾部：G</p>
+</li>
+<li><p>行跳转123行：123G</p>
+</li>
+</ul>
+<h3 id="删除操作："><a href="#删除操作：" class="headerlink" title="删除操作："></a>删除操作：</h3><ul>
+<li>撤销：u</li>
+<li>反撤销：ctrl+r</li>
+<li>删除字符：<ul>
+<li>删除光标前的:X</li>
+<li>删除光标后的：x</li>
+</ul>
+</li>
+<li>删除单词：dw</li>
+<li>删除光标前的字符串：d0 </li>
+<li>删除光标后的字符串：d$ 或 D</li>
+<li>删除当前行：dd</li>
+<li>删除多行：ndd<ul>
+<li>n为行数</li>
+</ul>
+</li>
+</ul>
+<h3 id="复制粘贴操作"><a href="#复制粘贴操作" class="headerlink" title="复制粘贴操作"></a>复制粘贴操作</h3><ul>
+<li>复制：<ul>
+<li>1行：yy</li>
+<li>多行：nyy</li>
+</ul>
+</li>
+<li>粘贴：<ul>
+<li>p：粘贴到下一行</li>
+<li>P ：粘贴到上一行</li>
+</ul>
+</li>
+<li>可视模式：v<ul>
+<li>移动光标，选中范围内的内容：<ul>
+<li>hjkl</li>
+</ul>
+</li>
+<li>复制：y</li>
+<li>删除：d</li>
+<li>粘贴:<ul>
+<li>p：粘贴到光标后面</li>
+<li>P：粘贴到光标前面</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="替换操作："><a href="#替换操作：" class="headerlink" title="替换操作："></a>替换操作：</h3><ul>
+<li>r：替换一个，光标盖住的字符</li>
+<li>R：替换多个，从光标盖住的这个往后替换</li>
+</ul>
+<h3 id="搜索操作："><a href="#搜索操作：" class="headerlink" title="搜索操作："></a>搜索操作：</h3><ul>
+<li>/xxx 向下搜索xxx</li>
+<li>?xxx 向上搜索xxx<ul>
+<li>下一个:n 上一个：N</li>
+</ul>
+</li>
+<li># :<ul>
+<li>光标移动到待搜索关键字上边，键盘输入#</li>
+</ul>
+</li>
+</ul>
+<h2 id="文本编辑模式"><a href="#文本编辑模式" class="headerlink" title="文本编辑模式"></a>文本编辑模式</h2><h3 id="进入文本编辑模式"><a href="#进入文本编辑模式" class="headerlink" title="进入文本编辑模式"></a>进入文本编辑模式</h3><ul>
+<li><strong>a：从光标后开始插入字符</strong></li>
+<li><strong>A：行尾插入</strong></li>
+<li><strong>i：光标前插入字符</strong></li>
+<li>I：行首插入</li>
+<li><strong>o：光标下创建新行</strong></li>
+<li>O：光标上创建新行</li>
+</ul>
+<h2 id="末行模式"><a href="#末行模式" class="headerlink" title="末行模式"></a>末行模式</h2><p>输入：进入末行模式</p>
+<ul>
+<li>直接输入数字，跳转到指定行：n（回车）</li>
+<li>末行模式-》命令模式<ul>
+<li>两次esc</li>
+<li>末行模式下执行一个命令</li>
+</ul>
+</li>
+<li>保存退出<ul>
+<li>保存不退出：w</li>
+<li>退出：q</li>
+<li>退出不保存：q!</li>
+<li>保存退出：wq</li>
+</ul>
+</li>
+<li>替换<ul>
+<li>替换光标所在行的字符串：<code>：s/old/new/g</code></li>
+<li>替换一个范围：<code>：n1,n2/old/new/g</code></li>
+<li>替换整个文档的n1:n2就不是两个行范围，写%，相当于全部行。</li>
+</ul>
+</li>
+<li>末行模式分屏<ul>
+<li>水平分屏：sp</li>
+<li>垂直分屏：vsp</li>
+<li>显示不同文件 后面加文件名</li>
+<li>屏幕切换：ctrl + w + w</li>
+<li>关闭：q 关闭所有：qall</li>
+<li>保存：w</li>
+<li>保存关闭：wq</li>
+</ul>
+</li>
+<li>末行模式下输入shell命令：<ul>
+<li><code>！+shell命令</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="垂直分屏打开"><a href="#垂直分屏打开" class="headerlink" title="垂直分屏打开"></a>垂直分屏打开</h2><p><code>vim -O *.cpp</code></p>
+<h2 id="vi-的配置"><a href="#vi-的配置" class="headerlink" title="vi 的配置"></a>vi 的配置</h2><ul>
+<li>用户级别：<ul>
+<li>~/.vimrc</li>
+</ul>
+</li>
+<li>系统级别：<ul>
+<li>/etc/vim/vimrc</li>
+</ul>
+</li>
+</ul>
+<h2 id="补充一些命令"><a href="#补充一些命令" class="headerlink" title="补充一些命令"></a>补充一些命令</h2><ul>
+<li>全文缩进调整<ul>
+<li>全文的话gg=G</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/01/05/Vim旋风式入门笔记/">Vim旋风式入门笔记</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年01月05日 - 21:01</p>
+  <p><span>最后更新:</span>2019年04月25日 - 22:04</p>
+  <p><span>原始链接:</span><a href="/2019/01/05/Vim旋风式入门笔记/" title="Vim旋风式入门笔记">https://ysbbswork.github.io/2019/01/05/Vim旋风式入门笔记/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/01/05/Vim旋风式入门笔记/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/Vim/" rel="tag"># Vim</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/05/C语言库介绍小结/" rel="next" title="C语言库介绍小结">
+                <i class="fa fa-chevron-left"></i> C语言库介绍小结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/26/makefile学习笔记/" rel="prev" title="makefile学习笔记">
+                makefile学习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/01/05/Vim旋风式入门笔记/"
+           data-title="Vim旋风式入门笔记" data-url="https://ysbbswork.github.io/2019/01/05/Vim旋风式入门笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#vim三种模式"><span class="nav-number">1.</span> <span class="nav-text">vim三种模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令模式操作："><span class="nav-number">2.</span> <span class="nav-text">命令模式操作：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#删除操作："><span class="nav-number">2.1.</span> <span class="nav-text">删除操作：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制粘贴操作"><span class="nav-number">2.2.</span> <span class="nav-text">复制粘贴操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#替换操作："><span class="nav-number">2.3.</span> <span class="nav-text">替换操作：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搜索操作："><span class="nav-number">2.4.</span> <span class="nav-text">搜索操作：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文本编辑模式"><span class="nav-number">3.</span> <span class="nav-text">文本编辑模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#进入文本编辑模式"><span class="nav-number">3.1.</span> <span class="nav-text">进入文本编辑模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#末行模式"><span class="nav-number">4.</span> <span class="nav-text">末行模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垂直分屏打开"><span class="nav-number">5.</span> <span class="nav-text">垂直分屏打开</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vi-的配置"><span class="nav-number">6.</span> <span class="nav-text">vi 的配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充一些命令"><span class="nav-number">7.</span> <span class="nav-text">补充一些命令</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

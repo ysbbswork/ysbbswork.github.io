@@ -1,0 +1,914 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C/C++,Linux,Ubuntu,Vim,虚拟机," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="以Oracle VM VirtualBox虚拟机装Ubuntu为例，主要记录在linux下打造一个舒适好用的C++环境，对于写代码来说已经非常舒服的配置方式了，主要记录软件和vim等配置，实际装机和其它均可以参考。
+虚拟机安装配置Oracle VM VirtualBox 新建linux-Ubuntu，配置的话，默认的1G内存跑16.04的Ubuntu有点吃不消，我电脑12G内存，我给虚拟机4096">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在linux下打造一个舒适好用的C++环境">
+<meta property="og:url" content="https://ysbbswork.github.io/2018/05/09/在linux下打造一个舒适好用的C-环境/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="以Oracle VM VirtualBox虚拟机装Ubuntu为例，主要记录在linux下打造一个舒适好用的C++环境，对于写代码来说已经非常舒服的配置方式了，主要记录软件和vim等配置，实际装机和其它均可以参考。
+虚拟机安装配置Oracle VM VirtualBox 新建linux-Ubuntu，配置的话，默认的1G内存跑16.04的Ubuntu有点吃不消，我电脑12G内存，我给虚拟机4096">
+<meta property="og:updated_time" content="2018-05-09T08:36:36.165Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在linux下打造一个舒适好用的C++环境">
+<meta name="twitter:description" content="以Oracle VM VirtualBox虚拟机装Ubuntu为例，主要记录在linux下打造一个舒适好用的C++环境，对于写代码来说已经非常舒服的配置方式了，主要记录软件和vim等配置，实际装机和其它均可以参考。
+虚拟机安装配置Oracle VM VirtualBox 新建linux-Ubuntu，配置的话，默认的1G内存跑16.04的Ubuntu有点吃不消，我电脑12G内存，我给虚拟机4096">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2018/05/09/在linux下打造一个舒适好用的C-环境/"/>
+
+
+
+
+
+  <title> 在linux下打造一个舒适好用的C++环境 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/05/09/在linux下打造一个舒适好用的C-环境/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                在linux下打造一个舒适好用的C++环境
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-09T16:22:55+08:00">
+                2018-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/09/在linux下打造一个舒适好用的C-环境/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/05/09/在linux下打造一个舒适好用的C-环境/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/05/09/在linux下打造一个舒适好用的C-环境/" class="leancloud_visitors" data-flag-title="在linux下打造一个舒适好用的C++环境">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>以Oracle VM VirtualBox虚拟机装Ubuntu为例，主要记录在linux下打造一个舒适好用的C++环境，对于写代码来说已经非常舒服的配置方式了，主要记录软件和vim等配置，实际装机和其它均可以参考。</p>
+<h1 id="虚拟机安装配置"><a href="#虚拟机安装配置" class="headerlink" title="虚拟机安装配置"></a>虚拟机安装配置</h1><p>Oracle VM VirtualBox 新建linux-Ubuntu，配置的话，默认的1G内存跑16.04的Ubuntu有点吃不消，我电脑12G内存，我给虚拟机4096MB内存，让安装在虚拟机上的系统流畅的跑起来。</p>
+<ul>
+<li>虚拟机 设备-网络设置 - 桥接网卡 模式</li>
+<li>设备-安装增强模式，添加光碟安装后，弹出光碟，并将剪切板双向和文件双向拖拽勾选上。</li>
+</ul>
+<h1 id="安装软件"><a href="#安装软件" class="headerlink" title="安装软件"></a>安装软件</h1><h2 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install git</div></pre></td></tr></table></figure>
+<h2 id="安装vim8"><a href="#安装vim8" class="headerlink" title="安装vim8"></a>安装vim8</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo add-apt-repository ppa:jonathonf/vim </div><div class="line">sudo apt update </div><div class="line">sudo apt install vim</div></pre></td></tr></table></figure>
+<p>vim配置C++ IDE:<a href="https://github.com/yangyangwithgnu/use_vim_as_ide" target="_blank" rel="external">https://github.com/yangyangwithgnu/use_vim_as_ide</a> ，文章中写的比较乱，但是可以参考。</p>
+<h2 id="安装VIM插件管理神器"><a href="#安装VIM插件管理神器" class="headerlink" title="安装VIM插件管理神器"></a>安装VIM插件管理神器</h2><p>运行下面命令安装<code>Vundle</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim</div></pre></td></tr></table></figure>
+<p>Vundle可以帮助我们自动安装卸载vim的插件，配置信息写在vimrc文件中。</p>
+<h1 id="vimrc配置文件"><a href="#vimrc配置文件" class="headerlink" title="vimrc配置文件"></a>vimrc配置文件</h1><p>为了省事，我并没有把每个配置都单独拿出来解释，这是完全的vim配置文件，到这一步，可以完全复制进使用。</p>
+<p>其它插件和vim配置信息：</p>
+<p>.vimrc</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div></pre></td><td class="code"><pre><div class="line">set nocompatible "be iMproved, required</div><div class="line"></div><div class="line">filetype off " required</div><div class="line"></div><div class="line"></div><div class="line">" set the runtime path to include Vundle and initialize</div><div class="line"></div><div class="line">set rtp+=~/.vim/bundle/Vundle.vim</div><div class="line"></div><div class="line">call vundle#begin()</div><div class="line"></div><div class="line">" alternatively, pass a path where Vundle should install plugins</div><div class="line"></div><div class="line">"call vundle#begin('~/some/path/here')</div><div class="line"></div><div class="line"></div><div class="line">" let Vundle manage Vundle, required</div><div class="line"></div><div class="line">Plugin 'VundleVim/Vundle.vim'</div><div class="line"></div><div class="line">Plugin 'scrooloose/syntastic' " 语法检测工具 </div><div class="line"></div><div class="line">Plugin 'scrooloose/nerdcommenter' "注释代码工具 \cc注释当前行 \cu 撤销注释当前行 \cs sexily注释 \cA 行尾注释，切换成输入模式 </div><div class="line"></div><div class="line">Plugin 'scrooloose/nerdtree' "树状结构文件夹目录</div><div class="line"></div><div class="line">Plugin 'majutsushi/tagbar' </div><div class="line"></div><div class="line">Plugin 'jiangmiao/auto-pairs' " 括号自动匹配</div><div class="line"></div><div class="line">Plugin 'Valloric/YouCompleteMe'</div><div class="line"></div><div class="line">" All of your Plugins must be added before the following line</div><div class="line"></div><div class="line">call vundle#end()            " required</div><div class="line"></div><div class="line">filetype plugin indent on    " required</div><div class="line"></div><div class="line">" To ignore plugin indent changes, instead use:</div><div class="line"></div><div class="line">" filetype plugin on</div><div class="line"></div><div class="line">"</div><div class="line"></div><div class="line">" Brief help</div><div class="line"></div><div class="line">" :PluginList       - lists configured plugins</div><div class="line"></div><div class="line">" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate</div><div class="line"></div><div class="line">" :PluginSearch foo - searches for foo; append `!` to refresh local cache</div><div class="line"></div><div class="line">" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal</div><div class="line"></div><div class="line">"</div><div class="line"></div><div class="line">" see :h vundle for more details or wiki for FAQ</div><div class="line"></div><div class="line">" Put your non-Plugin stuff after this line</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">syntax on "自动语法高亮"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">"用浅色高亮当前行"</div><div class="line"></div><div class="line">autocmd InsertLeave * se nocul</div><div class="line"></div><div class="line">autocmd InsertEnter * se cul</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set smartindent "智能对齐"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set autoindent "自动对齐"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set confirm "在处理未保存或只读文件的时候，弹出确认框"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set tabstop=4 "tab键的宽度"</div><div class="line"></div><div class="line">set softtabstop=4 "使得按退格键可以一次删掉4个空格"</div><div class="line"></div><div class="line">set shiftwidth=4 "统一缩进为4"</div><div class="line"></div><div class="line">set expandtab "不要用空格替代制表符"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set autochdir "自动切换当前目录位当前文件所在目录"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set number "显示行号"</div><div class="line"></div><div class="line">set history=50  "历史纪录数"</div><div class="line"></div><div class="line">set hlsearch "搜索时高亮被查找到的文本"</div><div class="line"></div><div class="line">set incsearch "搜素高亮,搜索逐渐高亮"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set hidden " 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set gdefault "行内替换“</div><div class="line"></div><div class="line">set encoding=utf-8</div><div class="line"></div><div class="line">set fileencodings=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,utf-16,big5,euc-jp,latin1 "编码设置”</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set guifont=Menlo:h16:cANSI "设置字体“</div><div class="line"></div><div class="line">set langmenu=zn_CN.UTF-8</div><div class="line"></div><div class="line">set helplang=cn  "语言设置”</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set ruler "在编辑过程中，在右下角显示光标位置的状态行“</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set laststatus=2 " 显示状态栏 (默认值为 1, 无法显示状态栏)</div><div class="line"></div><div class="line">set statusline=\ %&lt;%F[%1*%M%*%n%R%H]%=\ %y\ %0(%&#123;&amp;fileformat&#125;\ %&#123;&amp;encoding&#125;\ %c:%l/%L%)\</div><div class="line"></div><div class="line">" 设置在状态行显示的信息</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set showcmd "在状态行显示目前所执行的命令，未完成的指令片段也会显示出来"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set scrolloff=3 "光标移动到buffer的顶部和底部时保持3行的距离"</div><div class="line"></div><div class="line">set showmatch "高亮显示对应的括号"</div><div class="line"></div><div class="line">set matchtime=5 "对应括号高亮时间(单位是十分之一秒)"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set autowrite "在切换buffer时自动保存当前文件"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set wildmenu  "增强模式中的命令行自动完成操作"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set linespace=2 "字符间插入的像素行数目"</div><div class="line"></div><div class="line">set whichwrap=b,s,&lt;,&gt;,[,] "开启normal 或visual模式下的backspace键空格键，左右方向键,insert或replace模式下的左方向键，右方向键的跳行功能"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">filetype plugin indent on "分为三部分命令:file on,file plugin on,file indent on 分别是自动识别文件类型, 用用文件类型脚本,使用缩进定义文件"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set foldenable  "允许折叠"</div><div class="line"></div><div class="line">set foldmethod=syntax " 设置语法折叠</div><div class="line"></div><div class="line">set foldcolumn=0 " 设置折叠区域的宽度</div><div class="line"></div><div class="line">setlocal foldlevel=1 " 设置折叠层数为</div><div class="line"></div><div class="line">" set foldclose=all " 设置为自动关闭折叠</div><div class="line"></div><div class="line">" " nnoremap &lt;space&gt; @=((foldclosed(line('.')) &lt; 0) ? 'zc' : 'zo')&lt;CR&gt;</div><div class="line"></div><div class="line">" " 用空格键来开关折叠</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">set cursorline "突出显示当前行"</div><div class="line"></div><div class="line">set magic  "设置魔术？神马东东"</div><div class="line"></div><div class="line">set ignorecase "搜索忽略大小写"</div><div class="line"></div><div class="line">filetype on "打开文件类型检测功能"</div><div class="line"></div><div class="line">set background=dark</div><div class="line"></div><div class="line">set t_Co=256   "256色"</div><div class="line"></div><div class="line">set mouse=a  "允许鼠标"</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">" 配置nerdtree</div><div class="line"></div><div class="line">let NERDTreeQuitOnOpen=1 "打开文件时关闭树</div><div class="line"></div><div class="line">let NERDTreeShowBookmarks=1 "显示书签</div><div class="line"></div><div class="line">" 配置nerdtree的快捷键</div><div class="line"></div><div class="line">let mapleader = ","  "设置前导键为,</div><div class="line"></div><div class="line">map &lt;leader&gt;ne :NERDTreeToggle&lt;CR&gt;  "，ne 打开 关闭 文件树</div><div class="line"></div><div class="line">map &lt;leader&gt;tl :TlistToggle&lt;cr&gt;    " ，tl 新建标签</div><div class="line"></div><div class="line">nnoremap &lt;leader&gt;ma :set mouse=a&lt;cr&gt;</div><div class="line"></div><div class="line">nnoremap &lt;leader&gt;mu :set mouse=&lt;cr&gt;</div><div class="line"></div><div class="line"></div><div class="line">" tagbar插件</div><div class="line"></div><div class="line">nmap &lt;leader&gt;tb :TagbarToggle&lt;CR&gt;</div></pre></td></tr></table></figure>
+<p>此时进入VIM中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:PluginInstall</div></pre></td></tr></table></figure>
+<p>会自动帮你将配置文件中所需要的插件。</p>
+<p>每个插件都需要下载安装，需要等待很长时间，建议吃饭的时候去做这件事。</p>
+<p>最后一个安装的插件是<code>&#39;Valloric/YouCompleteMe&#39;</code>,是必然会安装出错的插件，但这个插件是写C时的VIM神器，会提示很多信息，自动补全等，我们又不得不装，但是这个YCM，安装过程错误百出，十分麻烦，甚至有外国网友戏称之为FuckYouCompleteMe。。</p>
+<p>那么下面是我遇到的所有YCM安装过程中的问题和解决办法总汇，如果你是在Ubuntu16.04，那么按照我的步骤，一定能让你顺利安装上这个恼人的YCM。</p>
+<h1 id="安装YCM过程中各种解决办法："><a href="#安装YCM过程中各种解决办法：" class="headerlink" title="安装YCM过程中各种解决办法："></a>安装YCM过程中各种解决办法：</h1><h2 id="问题一"><a href="#问题一" class="headerlink" title="问题一:"></a>问题一:</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">YouCompleteMe unavailable: requires Vim 7.4.1578+.</div></pre></td></tr></table></figure>
+<p>vim版本不对，但实际上vim版本为要求的版本以上；</p>
+<p>解决办法：</p>
+<p>尝试升级vim为最新的vim8</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo add-apt-repository ppa:jonathonf/vim </div><div class="line">sudo apt update </div><div class="line">sudo apt install vim</div></pre></td></tr></table></figure>
+<h2 id="问题二："><a href="#问题二：" class="headerlink" title="问题二："></a>问题二：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Cannot add PPA. Please check that the PPA name or format is correct</div></pre></td></tr></table></figure>
+<p>解决办法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install --reinstall ca-certificates</div><div class="line"></div><div class="line">sudo -E add-apt-repository ppa:ppaname/ppa</div></pre></td></tr></table></figure>
+<p>第一个通过ca证书方式，第二个是忽略代理添加ppa，如果还是<code>Cannot add PPA</code>，建议将系统升级到Ubuntu16.04或以上。在低版本的系统中，莫名其妙的PPA就是添加不上，update也是错误百出，将系统升级到了16.04，就顺利多了。</p>
+<h2 id="问题三："><a href="#问题三：" class="headerlink" title="问题三："></a>问题三：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">YouCompleteMe unavailable: No module named ycmd</div></pre></td></tr></table></figure>
+<p>解决办法：</p>
+<p>进入 <code>~/.vim/bundle/YouCompleteMe/</code>文件夹下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git submodule update –init –recursive</div><div class="line"></div><div class="line">$ ./install.py</div></pre></td></tr></table></figure>
+<h2 id="问题四："><a href="#问题四：" class="headerlink" title="问题四："></a>问题四：</h2><p>从这里开始的步骤和方法是必须要做的，如果你运气好，没有遇到前面的问题，那么下面的基本你几乎必须要做，才能成功安装上YCM</p>
+<p>错误显示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">The ycmd server SHUT DOWN (restart with &apos;:YcmRestartServer&apos;). YCM core library not detected; you need to compile YCM before using it. Follow the instructions in the documentation</div></pre></td></tr></table></figure>
+<p>解决办法：进入 <code>~/.vim/bundle/YouCompleteMe/</code>文件夹下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install clang</div><div class="line">$ sudo apt-get install python-dev python3-dev </div><div class="line">$ ./install.sh --clang-completer --system-libclang</div></pre></td></tr></table></figure>
+<h2 id="问题五："><a href="#问题五：" class="headerlink" title="问题五："></a>问题五：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NoExtraConfDetected: No .ycm_extra_conf.py file detected, so no compile flags are available.</div></pre></td></tr></table></figure>
+<p>缺少配置文件，所以我们添加一个就可以了</p>
+<ul>
+<li>复制 .ycm_extra_conf.py  文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cp ~/.vim/bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py ~/.vim/</div></pre></td></tr></table></figure>
+<ul>
+<li>添加 vim 配置<br>注意下面的 python 解释器的路径要和编译 ycm_core  的时候使用的 python 解释器是相同的版本（2 或 3）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">“ ～/.vimrc</div><div class="line">let g:ycm_server_python_interpreter=&apos;/usr/bin/python&apos;</div><div class="line">let g:ycm_global_ycm_extra_conf=&apos;~/.vim/.ycm_extra_conf.py&apos;</div></pre></td></tr></table></figure>
+<h1 id="安装TagBar"><a href="#安装TagBar" class="headerlink" title="安装TagBar"></a>安装TagBar</h1><p>使用一般IDE都会在侧面生成一个当前文件的结构图，就不说sublime里面还有个文件缩略图，那么在vim里我们也能添加这么一个tagbar，让我们在处理一个文件时，快速定位到函数变量，对代码了如指掌。之前已经成功装上了tagbar,但是使用<code>TagBar</code>之前先确保已经有<code>ctags</code>。</p>
+<p>所以我们还要装一下这个ctags</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install ctags</div></pre></td></tr></table></figure>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><p>最后打开vim就可以使用打造好的IDE了，编辑C/C++就可以享受到代码提示，高亮，符号补齐等效果了，</p>
+<p>按<code>，ne</code> 打开 关闭 文件树,<code>，tb</code> 打开 关闭 tablist等。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/Ubuntu/" rel="tag"># Ubuntu</a>
+          
+            <a href="/tags/Vim/" rel="tag"># Vim</a>
+          
+            <a href="/tags/虚拟机/" rel="tag"># 虚拟机</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/24/vps搭小飞机出海/" rel="next" title="vps搭小飞机出海">
+                <i class="fa fa-chevron-left"></i> vps搭小飞机出海
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/09/有趣的linux下的表达方式vt100/" rel="prev" title="有趣的linux下的表达方式vt100">
+                有趣的linux下的表达方式vt100 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/05/09/在linux下打造一个舒适好用的C-环境/"
+           data-title="在linux下打造一个舒适好用的C++环境" data-url="https://ysbbswork.github.io/2018/05/09/在linux下打造一个舒适好用的C-环境/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#虚拟机安装配置"><span class="nav-number">1.</span> <span class="nav-text">虚拟机安装配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装软件"><span class="nav-number">2.</span> <span class="nav-text">安装软件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装git"><span class="nav-number">2.1.</span> <span class="nav-text">安装git</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装vim8"><span class="nav-number">2.2.</span> <span class="nav-text">安装vim8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装VIM插件管理神器"><span class="nav-number">2.3.</span> <span class="nav-text">安装VIM插件管理神器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vimrc配置文件"><span class="nav-number">3.</span> <span class="nav-text">vimrc配置文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装YCM过程中各种解决办法："><span class="nav-number">4.</span> <span class="nav-text">安装YCM过程中各种解决办法：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一"><span class="nav-number">4.1.</span> <span class="nav-text">问题一:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二："><span class="nav-number">4.2.</span> <span class="nav-text">问题二：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题三："><span class="nav-number">4.3.</span> <span class="nav-text">问题三：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题四："><span class="nav-number">4.4.</span> <span class="nav-text">问题四：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题五："><span class="nav-number">4.5.</span> <span class="nav-text">问题五：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装TagBar"><span class="nav-number">5.</span> <span class="nav-text">安装TagBar</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用"><span class="nav-number">6.</span> <span class="nav-text">使用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

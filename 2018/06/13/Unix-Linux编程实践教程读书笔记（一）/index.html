@@ -1,0 +1,984 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux,笔记,C," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="文件操作：
+
+cp文件复制
+cp shooping_list last.week.list将shopping_list复制一份，新的文件名为last.week.list
+
+mv重命名或移动文件
+mv prog1.c first_p.c将文件prog1.c改名
+12mkdir mycodemv first_p.c mycode
+新建一个文档，然后将文件移动到这个目录中。
+
+
+Unix系统编程三个重要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unix-Linux编程实践教程读书笔记（一）">
+<meta property="og:url" content="https://ysbbswork.github.io/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="文件操作：
+
+cp文件复制
+cp shooping_list last.week.list将shopping_list复制一份，新的文件名为last.week.list
+
+mv重命名或移动文件
+mv prog1.c first_p.c将文件prog1.c改名
+12mkdir mycodemv first_p.c mycode
+新建一个文档，然后将文件移动到这个目录中。
+
+
+Unix系统编程三个重要">
+<meta property="og:image" content="https://img-blog.csdn.net/20140831224917875?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvY3l3b3Nw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2018-06-21T14:25:55.036Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Unix-Linux编程实践教程读书笔记（一）">
+<meta name="twitter:description" content="文件操作：
+
+cp文件复制
+cp shooping_list last.week.list将shopping_list复制一份，新的文件名为last.week.list
+
+mv重命名或移动文件
+mv prog1.c first_p.c将文件prog1.c改名
+12mkdir mycodemv first_p.c mycode
+新建一个文档，然后将文件移动到这个目录中。
+
+
+Unix系统编程三个重要">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20140831224917875?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvY3l3b3Nw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/"/>
+
+
+
+
+
+  <title> Unix-Linux编程实践教程读书笔记（一） | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Unix-Linux编程实践教程读书笔记（一）
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-13T15:37:47+08:00">
+                2018-06-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/13/Unix-Linux编程实践教程读书笔记（一）/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/" class="leancloud_visitors" data-flag-title="Unix-Linux编程实践教程读书笔记（一）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>文件操作：</strong></p>
+<ul>
+<li><p>cp文件复制</p>
+<p><code>cp shooping_list last.week.list</code>将shopping_list复制一份，新的文件名为last.week.list</p>
+</li>
+<li><p>mv重命名或移动文件</p>
+<p><code>mv prog1.c first_p.c</code>将文件prog1.c改名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir mycode</div><div class="line">mv first_p.c mycode</div></pre></td></tr></table></figure>
+<p>新建一个文档，然后将文件移动到这个目录中。</p>
+</li>
+</ul>
+<p><strong>Unix系统编程三个重要方面：</strong></p>
+<ul>
+<li><p>通信</p>
+<p>某个用户或进程如何与其他用户或进程交换信息</p>
+</li>
+<li><p>协助</p>
+<p>在同一个时刻，程序如何来协调多个进程使他们能够没有冲突地访问共享资源？</p>
+</li>
+<li><p>网络访问</p>
+<p>在这个例子中，互相独立的计算机通过网络连接到一起，那么计算机中的程序是如何来使用网络呢？</p>
+<a id="more"></a>
+</li>
+</ul>
+<p><strong>后台暂停Ctrl-Z操作：</strong></p>
+<p>​    （1） CTRL+Z停止进程并放入后台</p>
+<p>​    （2） jobs 显示当前暂停的进程</p>
+<p>​    （3） bg %N 使第N个任务在后台运行（%前有空格）</p>
+<p>​    （4） fg %N 使第N个任务在前台运行</p>
+<p>​    默认bg，fg不带%N时表示对最后一个进程操作！</p>
+<p><strong>标准输入流和直接从输入设备读区别：</strong></p>
+<p>一般我们获取输入，都是从标准输入中读数据（例如：getchar()），问题是当用文件通过管道作为输入流传给程序的时候，他不仅数据从标准输入流中获取，后面的命令键值也从标准输入流（就是传入的文件中获取了）</p>
+<p>这显然是有问题的。</p>
+<p>解决的办法就是从标准输入中读取要处理的数据，直接从键盘读取用户的输入。</p>
+<p>Linux下输入设备作为文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">FILE *fp_tty;</div><div class="line">fp_tty=fopen(&quot;/dev/tty&quot;,&quot;r&quot;);</div><div class="line"></div><div class="line">c=getc(fp_tty);</div></pre></td></tr></table></figure>
+<p><strong>Man的使用：</strong></p>
+<p>​    man -k 可以搜索联机帮助中所有的相关章节。</p>
+<p>​    man是按照手册的章节号的顺序进行搜索的，比如：<code>man sleep</code></p>
+<p>​    只会显示sleep命令的手册,如果想查看库函数sleep，就要输入:<code>man 3 sleep</code></p>
+<p>​    ps：从阅读man手册的description可以大概知道系统命令的实现方式，再去利用man一层层查询。例如：<code>man who</code>会告诉你他是通过检查<code>/var/adm/utmp</code>来得到用户的信息实现的who，如果要查utmp则进一步查询。</p>
+<p>​    例如查询如何从文件中读取数据结构：可以尝试<code>man -k file | grep read</code></p>
+<p><strong><a href="(https://ysbbswork.github.io/2018/06/05/Linux%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8IO/">使用：open、read、close</a>)</strong></p>
+<p>​    这几个文件操作都是系统调用，是内核提供的服务，如果在过程中内核检测到任何错误，这个系统调用就会返回-1，而具发生什么错误，需要进一步<a href="https://ysbbswork.github.io/2018/06/06/Linux%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89%E2%80%94%E2%80%94%E5%A4%84%E7%90%86%E9%94%99%E8%AF%AF/">错误处理</a>。</p>
+<p><strong>提高文件I/O效率的方法：使用缓冲</strong></p>
+<p>​    例如实现一个cp的功能，从一个文件中读多少，写多少到指定的另一个文件。那么如何让程序更有效率呢？</p>
+<p>​    系统调用时需要开销的，程序中频繁的系统调用会降低程序的运行效率。</p>
+<p>​    例如：</p>
+<p>​    文件大小 =2500字节</p>
+<p>​    如果缓存区大小 = 100字节</p>
+<p>​        那么需要25次read( )和25次write( )</p>
+<p>​    如果缓存区大小 = 1000字节</p>
+<p>​        那么需要3次read( )和3次write( )</p>
+<p>​    关于系统调用为什么开销大：首先操作系统工作环境分为内核模式和用户模式，内核模式和用户模式能做的事情不同，这是为了安全起见，因为在CPU的所有指令中，有一些指令是非常危险的，如果错用，将导致整个系统崩溃。比如：清内存、设置时钟等。如果所有的程序都能使用这些指令，那么你的系统一天死机n回就不足为奇了。所以当发生系统调用的时候，会从用户态转换到内核态，不仅要转移相关的数据，还要建立一些特殊的堆栈和内存环境（上下文），系统调用结束后还要把上下文环境恢复成用户程序运行的状态，这种切换是有比较大开销的。</p>
+<p><strong>内核缓冲技术</strong></p>
+<p>​    内核模式和用户模式之间的切换需要消耗时间，相比之下，磁盘的I/O操作消耗时间更多，为了效率，内核也使用缓冲技术来提高对磁盘的访问速度。</p>
+<p>​    当进程所要求的数据块不再内核缓冲区时，内核会把相应的数据块加入到请求数据列表中，然后把该进程挂起，接着为其他进程服务。一段时间之后（很短），内核把相应的数据块从磁盘读取到内核缓存区，然后再把数据复制到进程的缓冲区中，最后唤醒被挂起的进程。</p>
+<p>​    例如系统调用read和write。read把数据从内核缓冲区复制到进程缓冲区，write把数据从进程缓冲区复制到内核缓冲区，他们并不等价于数据在内核缓冲和磁盘之间的交换。从理论上讲，内核可以在任何时候写磁盘，但并不是所有的write操作都会导致内核的写动作。内核会把要写的数据暂时存在缓冲区中，积累到一定数量后再一次写入。有时候导致意外情况，比如突然断电，内核还来不及把内核缓冲区的数据写到磁盘上，这些更新的数据就会丢失。</p>
+<p><strong>文件读写中write</strong></p>
+<p>​    write每次只会更新下一条记录，而不是当前的那一条。因为系统每次打开一个文件都会保存一个指向文件当前位置的指针，当读写操作完成时，指针会移到下一个记录位置，这个指针与文件描述符相关联。</p>
+<p>问题：在文件操作中，如何改变一个文件的当前读/写位置？</p>
+<p>答题：使用系统调用lseek</p>
+<p>​    指针是与文件描述符相关联的，而不是与文件关联，所以如果两个程序同时打开一个文件，这时会有两个指针，两个程序对文件的读写操作不会相互干扰。</p>
+<p>对于不同进程线程对文件的操作：<a href="https://blog.csdn.net/cywosp/article/details/38965239" target="_blank" rel="external">来源</a></p>
+<blockquote>
+<p>下图展示了文件描述符、打开的文件句柄以及i-node之间的关系，图中，两个进程拥有诸多打开的文件描述符。</p>
+<blockquote>
+<blockquote>
+<p><img src="https://img-blog.csdn.net/20140831224917875?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvY3l3b3Nw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="img"></p>
+</blockquote>
+</blockquote>
+<p>​    在进程A中，文件描述符1和30都指向了同一个打开的文件句柄（标号23）。这可能是通过调用dup()、dup2()、fcntl()或者对同一个文件多次调用了open()函数而形成的。</p>
+<p>​    进程A的文件描述符2和进程B的文件描述符2都指向了同一个打开的文件句柄（标号73）。这种情形可能是在调用fork()后出现的（即，进程A、B是父子进程关系），或者当某进程通过UNIX域套接字将一个打开的文件描述符传递给另一个进程时，也会发生。再者是不同的进程独自去调用open函数打开了同一个文件，此时进程内部的描述符正好分配到与其他进程打开该文件的描述符一样。</p>
+<p>​    此外，进程A的描述符0和进程B的描述符3分别指向不同的打开文件句柄，但这些句柄均指向i-node表的相同条目（1976），换言之，指向同一个文件。发生这种情况是因为每个进程各自对同一个文件发起了open()调用。同一个进程两次打开同一个文件，也会发生类似情况。</p>
+<p><strong>4. 总结</strong></p>
+<p>​    <strong>1. 由于进程级文件描述符表的存在，不同的进程中会出现相同的文件描述符，它们可能指向同一个文件，也可能指向不同的文件</strong></p>
+<p>​    2. 两个不同的文件描述符，若指向同一个打开文件句柄，将共享同一文件偏移量。因此，如果通过其中一个文件描述符来修改文件偏移量（由调用read()、write()或lseek()所致），那么从另一个描述符中也会观察到变化，无论这两个文件描述符是否属于不同进程，还是同一个进程，情况都是如此。</p>
+<p>​    3. 要获取和修改打开的文件标志（例如：O_APPEND、O_NONBLOCK和O_ASYNC），可执行fcntl()的F_GETFL和F_SETFL操作，其对作用域的约束与上一条颇为类似。</p>
+<p>​    4. 文件描述符标志（即，close-on-exec）为进程和文件描述符所私有。对这一标志的修改将不会影响同一进程或不同进程中的其他文件描述符</p>
+</blockquote>
+<p><strong><a href="https://ysbbswork.github.io/2018/06/06/Linux%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89%E2%80%94%E2%80%94%E5%A4%84%E7%90%86%E9%94%99%E8%AF%AF/">处理系统调用中的错误</a></strong></p>
+<p><strong>文件读写小结</strong></p>
+<ul>
+<li>进程对文件读/x写都要通过文件描述符，文件描述符表示文件和进程之间的连接。</li>
+<li>每次系统调用都会导致用户模式和内核模式的切换以及执行内核代码，所以减少程序中的系统调用发射的次数可以提高程序的运行效率。</li>
+<li>程序可以通过缓冲技术来减少系统调用的次数，仅当写缓冲区满或读缓冲区空时才调用内核服务。</li>
+<li>内核可以通过内核缓冲来减少访问磁盘I/O的次数。</li>
+</ul>
+<p><strong>目录和文件属性</strong></p>
+<p>​    什么是目录：目录是一种特殊的文件，它的内容是文件和目录的名字。包含很多记录，每个记录的格式由统一的标准定义。每条记录的内容代表一个文件或目录。与普通文件不同的是，目录文件永远不会空，每个目录都至少包含两个特殊的项——“ . ”和” .. “，一个表示当前目录，一个表示上一级目录。</p>
+<p>​    目录可以被标准的文件操作系统调用打开（open，read，close）</p>
+<p>​    但是通过联机帮助可以知道系统提供专门用来读目录的opendir ,readdie ,closedir等一套对目录进行操作的方法。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/">Unix-Linux编程实践教程读书笔记（一）</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2018年06月13日 - 15:06</p>
+  <p><span>最后更新:</span>2018年06月21日 - 22:06</p>
+  <p><span>原始链接:</span><a href="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/" title="Unix-Linux编程实践教程读书笔记（一）">https://ysbbswork.github.io/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/C/" rel="tag"># C</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/08/多和巨人待在一起/" rel="next" title="多和巨人待在一起">
+                <i class="fa fa-chevron-left"></i> 多和巨人待在一起
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/14/C-11多线程小记/" rel="prev" title="C++11多线程小记">
+                C++11多线程小记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/06/13/Unix-Linux编程实践教程读书笔记（一）/"
+           data-title="Unix-Linux编程实践教程读书笔记（一）" data-url="https://ysbbswork.github.io/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

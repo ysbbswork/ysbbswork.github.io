@@ -1,0 +1,999 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Linux后台开发主要涉及进程，网络，系统性能调优等方面的命令，网络上给的总结如下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux后台开发常用命令">
+<meta property="og:url" content="https://ysbbswork.github.io/2018/06/21/Linux后台开发常用命令/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="Linux后台开发主要涉及进程，网络，系统性能调优等方面的命令，网络上给的总结如下。">
+<meta property="og:updated_time" content="2018-06-21T14:27:26.489Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux后台开发常用命令">
+<meta name="twitter:description" content="Linux后台开发主要涉及进程，网络，系统性能调优等方面的命令，网络上给的总结如下。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2018/06/21/Linux后台开发常用命令/"/>
+
+
+
+
+
+  <title> Linux后台开发常用命令 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/06/21/Linux后台开发常用命令/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux后台开发常用命令
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-21T16:30:08+08:00">
+                2018-06-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/06/21/Linux后台开发常用命令/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/21/Linux后台开发常用命令/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/06/21/Linux后台开发常用命令/" class="leancloud_visitors" data-flag-title="Linux后台开发常用命令">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Linux后台开发主要涉及进程，网络，系统性能调优等方面的命令，网络上给的总结如下。</p>
+<a id="more"></a>
+<p>ipcs：</p>
+<p>提供关于一些进程间通信方式的信息，包括<strong>共享内存</strong>，<strong>消息队列</strong>，<strong>信号</strong></p>
+<p><strong>interprocess communication （ipc）</strong></p>
+<table>
+<thead>
+<tr>
+<th>Ipcs -a</th>
+<th>默认输出信息，打印出所有进程间通信方式的信息</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ipcs -q</td>
+<td>输出使用消息队列进行进程间通信的信息</td>
+</tr>
+<tr>
+<td>Ipcs -s</td>
+<td>输出使用信号进行进程间通信的信息</td>
+</tr>
+<tr>
+<td>Ipcs -m</td>
+<td>输出使用共享内存进行进程间通信的信息</td>
+</tr>
+<tr>
+<td>Ipcs -t</td>
+<td>输出信息的时间详细变化</td>
+</tr>
+<tr>
+<td>Ipcs -p</td>
+<td>输出ipc方式的进程<strong>id</strong></td>
+</tr>
+<tr>
+<td>Ipcs -c</td>
+<td>输出ipc方式的创建者</td>
+</tr>
+<tr>
+<td>Ipcs -u</td>
+<td>输出ipc方式的各种状态</td>
+</tr>
+</tbody>
+</table>
+<p>ipcrm：</p>
+<p>移除一个消息<strong>对象</strong>。或者共享内存<strong>段</strong>，或者一个信号<strong>集</strong>，同时会将与ipc对象相关链的数据也一起移除。只有<strong>超级管理员，或者ipc对象的创建者</strong>才有这项权利啦.</p>
+<p>Key id  shm msg sem</p>
+<table>
+<thead>
+<tr>
+<th>Ipcrm -M shmkey</th>
+<th>移除使用shmkey创建的共享内存段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ipcrm -m shmid</td>
+<td>移除使用shmid标识的共享内存段</td>
+</tr>
+<tr>
+<td>Ipcrm -Q msgkey</td>
+<td>移除使用msgkey创建的消息队列</td>
+</tr>
+<tr>
+<td>Ipcrm -q msgid</td>
+<td>移除使用msgid标识的消息队列</td>
+</tr>
+<tr>
+<td>Ipcrm -S semkey</td>
+<td>移除使用semkey创建的信号</td>
+</tr>
+<tr>
+<td>Ipcrm -s semid</td>
+<td>移除使用semid标识的信号</td>
+</tr>
+</tbody>
+</table>
+<p>信号量又称为信号灯，它是用来协调不同<a href="http://soft.zdnet.com.cn/files/list-0-0-76839-1-1.htm" target="_blank" rel="external">进程</a>间的数据对象的，而最主要的应用是<strong>共享内存方式的</strong><a href="http://soft.zdnet.com.cn/files/list-0-0-76839-1-1.htm" target="_blank" rel="external"><strong>进程</strong></a><strong>间通信。</strong>本质上，信号量是一个计数器，它用来记录对某个资源（如共享内存）的存取状况；共享内存是运行在同一台机器上的<a href="http://soft.zdnet.com.cn/files/list-0-0-76839-1-1.htm" target="_blank" rel="external">进</a><a href="http://soft.zdnet.com.cn/files/list-0-0-76839-1-1.htm" target="_blank" rel="external">程</a>间通信最快的方式，因为数据不需要在不同的<a href="http://soft.zdnet.com.cn/files/list-0-0-76839-1-1.htm" target="_blank" rel="external">进程</a>间复制。通常由一个<a href="http://soft.zdnet.com.cn/files/list-0-0-76839-1-1.htm" target="_blank" rel="external">进程</a>创建一块共享内存区，其余<a href="http://soft.zdnet.com.cn/files/list-0-0-76839-1-1.htm" target="_blank" rel="external">进程</a>对这块内存区进行读写。在<a href="http://soft.zdnet.com.cn/files/list-0-0-96517-1-1.htm" target="_blank" rel="external">Linux</a>系统下 ，常用的方式是通过shmXXX函数族来实现利用共享内存进行存储的。如Shmget，类似于 malloc函数。</p>
+<p>netstat</p>
+<p>是一款命令行工具，可用于列出系统上<strong>所有</strong>网络套接字的连接情况，包括tcp/udp/unix套接字，还能列出处于<strong>监听状态/等待请求</strong>的套接字。如果想确认系统web服务有没有开启，可以查看80端口是否开启。主要功能：打印网络连接、路由表、连接的数据统计、伪装连接以及广播域成员。</p>
+<p><strong>1.列出所有连接（-a（all））</strong></p>
+<p>netstat –a  上述命令列出 tcp, udp 和 unix 协议下所有套接字的所有连接</p>
+<p><strong>2.只列出tcp/udp的连接</strong></p>
+<p>Netstat –<strong>at</strong>  (all tcp)  只列出tcp连接（包括ipv4/ipv6）</p>
+<p>Netstat –<strong>au</strong>   只列出udp连接（包括ipv4/ipv6）</p>
+<p><strong>3.禁用反向域名解析，加快查询速度（-n 助记no（禁止））</strong></p>
+<p>默认情况下 netstat 会通过<strong>反向域名解析技术</strong>查找每个 IP 地址对应的主机名。这会降低查找速度。如果你觉得 IP 地址已经足够，而没有必要知道主机名，就使用 -n 选项禁用域名解析功能。</p>
+<p>Netstat <strong>-ant</strong></p>
+<p><strong>4.列出监听套接字的连接（-l：listen）</strong></p>
+<p>任何网络服务的后台进程都会打开一个端口，用于监听接入的请求</p>
+<p>Netstat<strong>–tnl</strong>  现在我们可以看到处于监听状态的 TCP 端口和连接。</p>
+<p>如果你查看所有监听端口，去掉 -t 选项。如果你只想查看 UDP 端口，使用 -u 选项，代替 -t 选项。-tnl -unl</p>
+<p><strong>注意</strong>：不要使用 -a 选项，否则 netstat 会列出所有连接，而不仅仅是监听端口。</p>
+<p><strong>5.获取进程名，进程号和用户id（-p，process）</strong></p>
+<p>查看端口和连接的信息时，能查看到它们对应的进程名和进程号对系统管理员来说是非常有帮助的。举个栗子，Apache 的 httpd 服务开启80端口，如果你要查看 http 服务是否已经启动，或者 http 服务是由 apache 还是 nginx 启动的，这时候你可以看看进程名。</p>
+<p>使用 <strong>-p 选项查看进程信息。</strong></p>
+<p>使用 -p 选项时，netstat 必须运行在 root 权限之下，不然它就不能得到运行在 root 权限下的进程名，而很多服务包括 http 和 ftp 都运行在root 权限之下。</p>
+<p><strong>Sudo netstat -nlpt</strong> 列出tcp监听套接字和对应的进程名</p>
+<p>使用 -ep 选项可以同时查看进程名和用户名。</p>
+<p>sudo netstat -ltpe</p>
+<p>列出用户名，若结合-n：则只列出用户id</p>
+<p><strong>6.打印统计数据（-s/statistics）</strong></p>
+<p>Netstat 可以打印出<strong>网络统计数据</strong>，包括某个协议下的收发包数量。</p>
+<p>Netstat –s   若需要打印tcp/udp的数据包，则加-t/-u选项。</p>
+<p><strong>7.打印内核路由信息（-r/route）</strong></p>
+<p>Netstat –r   跟route命令显示的一样。</p>
+<p><strong>8.打印网络接口信息（-i/interface）</strong></p>
+<p>Netstat –I  加-e：更清晰明了 跟ifconfig命令一样</p>
+<p><strong>9.持续输出（-c/continue）</strong></p>
+<p>Netstat –ct 持续输出tcp信息</p>
+<p><strong>10.显示多播组信息（-g/group）</strong></p>
+<p>Netstat -g</p>
+<p><strong>11.打印active状态的连接</strong></p>
+<p><strong>Active状态的套接字用ESTABLISHED来表示</strong>。</p>
+<p>netstat -atnp | grep ESTA：意思是列出active状态的tcp连接，配合watch 命令监视 active 状态的连接</p>
+<p><strong>watch-d -n0 “netstat -atnp | grep ESTA”</strong></p>
+<p><strong>12.查看服务是否在运行</strong></p>
+<p>如果你想看看 http,smtp 或ntp 服务是否在运行，使用 <strong>grep</strong></p>
+<p>sudo netstat -aple | grep ntp</p>
+<p>ntp 是网络时间协议，用于保证机器时间一致。不只是服务器，你的 Windowd、Mac 这样的桌面大多也有用它。ntpd 是提供这个服务的守护进程。</p>
+<p><strong>tcpdump</strong></p>
+<p>用简单的话来定义tcpdump，就是：dumpthe traffic on a network，根据使用者的定义对网络上的<strong>数据包进行截获的包分析工具</strong>。 tcpdump可以将网络中传送的数据包的<strong>“头”</strong>完全截获下来提供分析。它支持针对<strong>网络层</strong>、<strong>协议</strong>、<strong>主机</strong>、<strong>网络</strong>或<strong>端口</strong>的过滤，并提供<strong>and、or、not</strong>等逻辑语句来帮助你去掉无用的信息。如果选用明文传送内容，还可以对截获内容查看，所以有点黑客工具的味道。</p>
+<p><strong>常用命令：</strong></p>
+<table>
+<thead>
+<tr>
+<th>tcpdump</th>
+<th>普通情况下，直接启动tcpdump将监视<strong>第一个网络接口上所有流过的数据包</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tcpdump -i <strong>eth1</strong></td>
+<td>监视指定接口的数据包</td>
+</tr>
+<tr>
+<td>tcpdump <strong>hos</strong>t sundown</td>
+<td>截获所有进入或离开sundown的数据包</td>
+</tr>
+<tr>
+<td>tcpdump host 210.27.48.1</td>
+<td>截获所有210.27.48.1 的主机收到的和发出的所有的数据包</td>
+</tr>
+<tr>
+<td>tcpdump host helios and hotoracehotorace</td>
+<td>打印helios 与 hot 或者与 ace 之间通信的数据包</td>
+</tr>
+<tr>
+<td>tcpdump host 210.27.48.1 and \ (210.27.48.2 or 210.27.48.3 )</td>
+<td>截获主机210.27.48.1 和主机210.27.48.2 或210.27.48.3的通信</td>
+</tr>
+<tr>
+<td>tcpdump ip host ace and not helios</td>
+<td>打印ace与任何其他主机之间通信的IP 数据包, 但<strong>不包括</strong>与helios之间的数据包.</td>
+</tr>
+<tr>
+<td>tcpdump ip host 210.27.48.1 and ! 210.27.48.2</td>
+<td>获取主机210.27.48.1除了和主机210.27.48.2之外所有主机通信的ip包</td>
+</tr>
+<tr>
+<td>tcpdump -i eth0 src host hostname</td>
+<td>截获主机hostname发送的所有数据</td>
+</tr>
+<tr>
+<td>tcpdump -i eth0 dst host hostname</td>
+<td>监视所有送到主机hostname的数据包</td>
+</tr>
+<tr>
+<td>tcpdump <strong>tcp port</strong> 23 and host 210.27.48.1</td>
+<td>获取主机210.27.48.1接收或发出的tcp包</td>
+</tr>
+<tr>
+<td>tcpdump <strong>udp </strong>port 123</td>
+<td>对本机的udp 123 端口进行监视</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/15/使用select实现套接字多路复用小记/" rel="next" title="使用select实现套接字多路复用小记">
+                <i class="fa fa-chevron-left"></i> 使用select实现套接字多路复用小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/21/makefile编写旋风实践/" rel="prev" title="makefile编写旋风实践">
+                makefile编写旋风实践 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2018/06/21/Linux后台开发常用命令/"
+           data-title="Linux后台开发常用命令" data-url="https://ysbbswork.github.io/2018/06/21/Linux后台开发常用命令/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>

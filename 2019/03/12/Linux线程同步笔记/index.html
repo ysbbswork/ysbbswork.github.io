@@ -1,0 +1,1082 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Linux,笔记,线程,同步,线程锁," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="互斥锁
+创建互斥锁
+
+pthread_mutex_t mutex;
+
+
+使用例：
+12345678910111213141516171819202122//创建一把互斥锁pthread_mutex_t mutex;void* funcA_num(void* arg)&amp;#123;    for(int i=0;i&amp;lt;MAX; ++i)    &amp;#123;        // 访问全局变量之前加锁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux线程同步笔记">
+<meta property="og:url" content="https://ysbbswork.github.io/2019/03/12/Linux线程同步笔记/index.html">
+<meta property="og:site_name" content="ysbbs">
+<meta property="og:description" content="互斥锁
+创建互斥锁
+
+pthread_mutex_t mutex;
+
+
+使用例：
+12345678910111213141516171819202122//创建一把互斥锁pthread_mutex_t mutex;void* funcA_num(void* arg)&amp;#123;    for(int i=0;i&amp;lt;MAX; ++i)    &amp;#123;        // 访问全局变量之前加锁">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1g10019l7ypj30p60c7n3g.jpg">
+<meta property="og:updated_time" content="2019-03-12T09:56:46.504Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux线程同步笔记">
+<meta name="twitter:description" content="互斥锁
+创建互斥锁
+
+pthread_mutex_t mutex;
+
+
+使用例：
+12345678910111213141516171819202122//创建一把互斥锁pthread_mutex_t mutex;void* funcA_num(void* arg)&amp;#123;    for(int i=0;i&amp;lt;MAX; ++i)    &amp;#123;        // 访问全局变量之前加锁">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/005HFdfGgy1g10019l7ypj30p60c7n3g.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ysbbswork.github.io/2019/03/12/Linux线程同步笔记/"/>
+
+
+
+
+
+  <title> Linux线程同步笔记 | ysbbs </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ysbbs</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Let's start BB ！</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2019/03/12/Linux线程同步笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux线程同步笔记
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-12T17:50:26+08:00">
+                2019-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/03/12/Linux线程同步笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2019/03/12/Linux线程同步笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/03/12/Linux线程同步笔记/" class="leancloud_visitors" data-flag-title="Linux线程同步笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h2><ul>
+<li><p>创建互斥锁</p>
+<ul>
+<li><code>pthread_mutex_t mutex;</code></li>
+</ul>
+</li>
+<li><p>使用例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">//创建一把互斥锁</div><div class="line">pthread_mutex_t mutex;</div><div class="line"></div><div class="line">void* funcA_num(void* arg)</div><div class="line">&#123;</div><div class="line">    for(int i=0;i&lt;MAX; ++i)</div><div class="line">    &#123;</div><div class="line">        // 访问全局变量之前加锁</div><div class="line">        //如果Mutex被锁上了，代码阻塞在当前位置</div><div class="line">        pthread_mutex_lock(&amp;mutex);</div><div class="line">        </div><div class="line">        int cur = number;</div><div class="line">        cur++;</div><div class="line">        number = cur;</div><div class="line">        printf(&quot;Thread A,id = %lu,number = %d\n&quot;,pthread_self(),number);</div><div class="line">        </div><div class="line">        //解锁</div><div class="line">        pthread_mutex_unlock(&amp;mutex);</div><div class="line">        usleep(10);</div><div class="line">    &#125;</div><div class="line">    return NULL;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>互斥锁的特点</p>
+<ul>
+<li>多个线程访问共享数据的时候是串行的</li>
+</ul>
+</li>
+<li><p>使用互斥锁的缺点</p>
+<ul>
+<li>效率低</li>
+</ul>
+</li>
+<li><p>互斥锁使用步骤：</p>
+<ul>
+<li>创建互斥锁：<code>pthread_mutex_t mutex;</code></li>
+<li>初始化这把锁：<code>pthread_mutex_init(&amp;mutex,NULL);</code></li>
+<li>寻找共享资源：<ul>
+<li>操作共享资源代码之前加锁，操作完解锁<ul>
+<li><code>pthread_mutex_lock(&amp;mutex);</code></li>
+<li>。。。临界区，尽可能小</li>
+<li><code>pthread_mutex_unlock(&amp;mutex);</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>造成死锁原因：</p>
+<ul>
+<li>自己锁自己两次<ul>
+<li>会阻塞在第二次锁的位置</li>
+<li>操作完成后一定要解锁</li>
+</ul>
+</li>
+<li>多个线程多个锁，两个共享资源互锁<ul>
+<li>线程1对共享资源A加锁成功——A锁</li>
+<li>线程2对共享资源B加锁成功——B锁<ul>
+<li>线程1访问共享资源B，对b加锁——线程1阻塞在B锁上</li>
+<li>线程2访问共享资源A，对A加锁——线程2阻塞在A锁上</li>
+</ul>
+</li>
+<li>如何解决：<ul>
+<li>让线程都按照一定的顺序去访问共享资源</li>
+<li>去访问其它锁的时候，先将自己的锁解开</li>
+<li>trylock，如果失败就进行处理，比如sleep一下，在尝试加锁访问数学，不要阻塞在那里</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h2><ul>
+<li><p>读写锁的类型</p>
+<ul>
+<li>读锁</li>
+</ul>
+</li>
+<li><p>只要没有线程持有给定的读写锁用于写，那么任意数目的线程可以持有读写锁用于读。</p>
+</li>
+<li><p>仅当没有线程持有某个给定的读写锁用于读或用于写时，才能分配读写锁用于写。</p>
+</li>
+<li><p>读写锁用于读称为共享锁，读写锁用于写称为排它锁。</p>
+</li>
+<li><p>函数原型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">pthread_rwlock lock;</div><div class="line">pthread_rwlock_init(&amp;lock,NULL);</div><div class="line">pthread_rwlock_destroy(pthread_rwlock *rwlock);</div><div class="line">int pthread_rwlock_rdlock(pthread_rwlock *rwlock);</div><div class="line">int pthread_rwlock_wrlock(pthread_rwlock *rwlock);</div><div class="line">int pthread_rwlock_unlock(pthread_rwlock *rwlock);</div></pre></td></tr></table></figure>
+</li>
+<li><p>特点</p>
+<ul>
+<li>读共享</li>
+<li>写独占</li>
+<li>读写不能同时，写的优先级高</li>
+</ul>
+</li>
+<li><p>几种场景</p>
+<ul>
+<li>线程A加写锁成功，线程B请求读锁<ul>
+<li>线程B阻塞</li>
+</ul>
+</li>
+<li>线程A持有读锁，线程B请求写锁<ul>
+<li>线程B阻塞</li>
+</ul>
+</li>
+<li>线程A拥有读锁，线程B请求读锁<ul>
+<li>线程B加锁成功</li>
+</ul>
+</li>
+<li>线程A持有读锁，然后线程B请求写锁，然后线程C请求读锁<ul>
+<li>B阻塞，C阻塞——因为写的优先级高</li>
+<li>A解锁，B线程加写锁成功，C继续阻塞</li>
+<li>B解锁，C加读锁成功</li>
+</ul>
+</li>
+<li>线程A持有写锁，然后线程B请求读锁，然后线程C请求写锁<ul>
+<li>B阻塞，C阻塞</li>
+<li>A解锁，C加写锁成功，B继续阻塞</li>
+<li>C解锁，B加锁成功</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>使用场景</p>
+<ul>
+<li>互斥锁：读写都串行</li>
+<li>读写锁：<ul>
+<li>读：并行</li>
+<li>写：串行</li>
+</ul>
+</li>
+<li>读写场景，读多写少</li>
+</ul>
+</li>
+</ul>
+<h2 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h2><p>自旋锁类似于互斥锁，它的性能比互斥锁更高。<br>自旋锁与互斥锁很重要的一个区别在于，线程在申请自旋锁的时候，线程不会被挂起，它处于忙等待的状态，一般用于等待时间比较短的情形。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">pthread_spin_init</div><div class="line">pthread_spin_destroy</div><div class="line">pthread_spin_lock</div><div class="line">pthread_spin_unlock</div></pre></td></tr></table></figure>
+<h2 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h2><p>多线程中经常需要使用到锁(pthread_mutex_t)来完成多个线程之间的互斥操作。</p>
+<p><strong>但是互斥锁有一个明显到缺点: 只有两种状态，锁定和非锁定。</strong></p>
+<p><strong>而条件变量则通过允许线程阻塞并等待另一个线程发送唤醒信号的方法弥补了互斥锁的不足，它常和互斥锁一起使用。</strong></p>
+<ul>
+<li><p>条件变量不是锁，但是条件变量能够阻塞线程</p>
+</li>
+<li><p>使用条件变量+互斥量，才能实现同步</p>
+<ul>
+<li>互斥量：保护一块共享数据</li>
+<li>条件变量：引起阻塞<ul>
+<li>生产者和消费者模型</li>
+<li><img src="http://ww1.sinaimg.cn/large/005HFdfGgy1g10019l7ypj30p60c7n3g.jpg" alt=""></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>条件变量的两个动作</p>
+<ul>
+<li>条件不满足，线程阻塞</li>
+<li>当条件满足，通知阻塞线程开始工作</li>
+</ul>
+</li>
+<li><p>条件变量的类型：pthread_cond_t;</p>
+</li>
+<li><p>主要函数：</p>
+<ul>
+<li><p>初始化一个条件变量</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">pthread_cond_init(</div><div class="line">	pthread_cond_t *restrict cond,</div><div class="line">	const pthread_condattr_t *restrict</div><div class="line">);</div></pre></td></tr></table></figure>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">int pthread_cond_wait(pthread_cond_t *cond,pthread_mutex_t *mutex);</div></pre></td></tr></table></figure>
+<ul>
+<li>阻塞线程</li>
+<li>将已经上锁的mutex解锁</li>
+<li>当该函数收到信号，解除阻塞，会对互斥锁加锁</li>
+</ul>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">int pthread_cond_timewait(pthread_cond_t *cond,pthread_mutex *mutex,const timespec *abstime);</div><div class="line">int pthread_cond_destroy(pthread_cond_t *cond);  </div><div class="line">int pthread_cond_signal(pthread_cond_t *cond);</div><div class="line">int pthread_cond_broadcast(pthread_cond_t *cond);  //解除所有线程的阻塞</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>具体实现生产者消费者模型</p>
+<ul>
+<li><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div></pre></td><td class="code"><pre><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;errno.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;unistd.h&gt;</div><div class="line"> </div><div class="line">#define MAXITEMS 1000000 /* 需要生产n个item */</div><div class="line">#define MAXNTHREADS 10 /* 生产线n条 */</div><div class="line"> </div><div class="line">int buff[MAXITEMS];</div><div class="line"> </div><div class="line">struct &#123;</div><div class="line">	pthread_mutex_t mutex;</div><div class="line">	int nput;</div><div class="line">	int nval;</div><div class="line">&#125; put = &#123;</div><div class="line">	PTHREAD_MUTEX_INITIALIZER</div><div class="line">&#125;;</div><div class="line"> </div><div class="line">struct &#123;</div><div class="line">	pthread_mutex_t mutex;</div><div class="line">	pthread_cond_t cond;</div><div class="line">	int nready;</div><div class="line">&#125; nready = &#123;</div><div class="line">	PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER</div><div class="line">&#125;;</div><div class="line"> </div><div class="line">//创建线程</div><div class="line">int Pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg) &#123;</div><div class="line">	int res = pthread_create(thread, attr, start_routine, arg);</div><div class="line">	if (res != 0) &#123;</div><div class="line">		perror("pthread_create fail");</div><div class="line">		exit(EXIT_FAILURE);</div><div class="line">	&#125;	</div><div class="line">&#125;</div><div class="line"> </div><div class="line">//互斥锁</div><div class="line">int Pthread_mutex_lock(pthread_mutex_t *mutex) &#123;</div><div class="line">	int res = pthread_mutex_lock(mutex);</div><div class="line">	if (res != 0) &#123;</div><div class="line">		perror("Pthread_mutex_lock fail");</div><div class="line">	&#125;	</div><div class="line">&#125;</div><div class="line"> </div><div class="line">//互斥解锁</div><div class="line">int Pthread_mutex_unlock(pthread_mutex_t *mutex) &#123;</div><div class="line">	int res = pthread_mutex_unlock(mutex);</div><div class="line">	if (res != 0) &#123;</div><div class="line">		perror("Pthread_mutex_unlock fail");</div><div class="line">	&#125;	</div><div class="line">&#125;</div><div class="line"> </div><div class="line">//发送线程信号</div><div class="line">int Pthread_cond_signal(pthread_cond_t *cond) &#123;</div><div class="line">	int res = pthread_cond_signal(cond);</div><div class="line">	if (res != 0) &#123;</div><div class="line">		perror("Pthread_cond_signal fail");</div><div class="line">	&#125;	</div><div class="line">&#125;</div><div class="line"> </div><div class="line">/*</div><div class="line">pthread_cond_wait会释放mutex,并进入阻塞状态,</div><div class="line">一旦获取到信号则会将mutex锁住，并返回</div><div class="line">*/</div><div class="line">int Pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex) &#123;</div><div class="line">	int res = pthread_cond_wait(cond, mutex);</div><div class="line">	if (res != 0) &#123;</div><div class="line">		perror("pthread_cond_wait fail");</div><div class="line">	&#125;	</div><div class="line">&#125;</div><div class="line"> </div><div class="line">//线程函数声明</div><div class="line">void* produce(void*);</div><div class="line">void* consume(void*);</div><div class="line"> </div><div class="line">int main(int argc, char const *argv[])</div><div class="line">&#123;</div><div class="line">	int i, count[MAXNTHREADS];</div><div class="line">	pthread_t tid_produce[MAXNTHREADS], tid_consume;</div><div class="line"> </div><div class="line">	// n个生产者</div><div class="line">	for (i=0; i&lt;MAXNTHREADS; ++i) &#123;</div><div class="line">		count[i] = 0;</div><div class="line">		Pthread_create(&amp;tid_produce[i], NULL, produce, &amp;count[i]);</div><div class="line">	&#125;</div><div class="line"> </div><div class="line">	// 1个消费者，也可以是n个</div><div class="line">	Pthread_create(&amp;tid_consume, NULL, consume, NULL);</div><div class="line"> </div><div class="line">	for (i=0; i&lt;MAXNTHREADS; ++i) &#123;</div><div class="line">		pthread_join(tid_produce[i], NULL);</div><div class="line">		printf("count[%d] = %d\n", i, count[i]);</div><div class="line">	&#125;</div><div class="line"> </div><div class="line">	pthread_join(tid_consume, NULL);</div><div class="line"> </div><div class="line">	return 0;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// 生产者</div><div class="line">void* produce(void* arg) &#123;</div><div class="line">	</div><div class="line">	int dosignal;</div><div class="line">	for ( ; ; ) &#123;</div><div class="line">		Pthread_mutex_lock(&amp;put.mutex);</div><div class="line">		if (put.nput &gt;= MAXITEMS) &#123;</div><div class="line">			Pthread_mutex_unlock(&amp;put.mutex);</div><div class="line">			return(NULL); /* 数据填满了 */</div><div class="line">		&#125;</div><div class="line"> </div><div class="line">		buff[put.nput] = put.nval;</div><div class="line">		put.nput++;</div><div class="line">		put.nval++;</div><div class="line">		Pthread_mutex_unlock(&amp;put.mutex);</div><div class="line"> </div><div class="line">		Pthread_mutex_lock(&amp;nready.mutex);</div><div class="line">		dosignal = (nready.nready == 0); /* 是否需要唤醒 */</div><div class="line">		nready.nready++;</div><div class="line">		Pthread_mutex_unlock(&amp;nready.mutex);</div><div class="line"> </div><div class="line">		if (dosignal) &#123;</div><div class="line">			Pthread_cond_signal(&amp;nready.cond);</div><div class="line">		&#125;</div><div class="line"> </div><div class="line">		*((int *)arg) += 1; /* 当前线程生产了多少个数据 */</div><div class="line"> </div><div class="line">	&#125;</div><div class="line"> </div><div class="line">	return(NULL);</div><div class="line">&#125;</div><div class="line"> </div><div class="line"> </div><div class="line">// 消费者</div><div class="line">void* consume(void* arg) &#123;</div><div class="line"> </div><div class="line">	int i;</div><div class="line"> </div><div class="line">	for (i=0; i&lt;MAXITEMS; i++) &#123;</div><div class="line"> </div><div class="line">		Pthread_mutex_lock(&amp;nready.mutex);</div><div class="line">		while (nready.nready == 0) &#123; /* while 循环是防止wait返回时发生虚假唤醒 */</div><div class="line">			Pthread_cond_wait(&amp;nready.cond, &amp;nready.mutex);</div><div class="line">		&#125;</div><div class="line">		nready.nready--;</div><div class="line">		Pthread_mutex_unlock(&amp;nready.mutex);</div><div class="line"> </div><div class="line">		//如果线程没同步成功,则会有输出</div><div class="line">		if (buff[i] != i)</div><div class="line">			printf("buff[%d] = %d\n", i, buff[i]);</div><div class="line">	&#125;</div><div class="line"> </div><div class="line">	return(NULL);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h2><p>对于信号量，可以理解成带计数的互斥量。</p>
+<p>具体应用的话，我没想到特别的用法，google了一下，多是照本宣科。</p>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/03/12/Linux线程同步笔记/">Linux线程同步笔记</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Yang Shuai 的个人博客">Yang Shuai</a></p>
+  <p><span>发布时间:</span>2019年03月12日 - 17:03</p>
+  <p><span>最后更新:</span>2019年03月12日 - 17:03</p>
+  <p><span>原始链接:</span><a href="/2019/03/12/Linux线程同步笔记/" title="Linux线程同步笔记">https://ysbbswork.github.io/2019/03/12/Linux线程同步笔记/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ysbbswork.github.io/2019/03/12/Linux线程同步笔记/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/weixinpay.jpg" alt="Yang Shuai WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.jpg" alt="Yang Shuai Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/笔记/" rel="tag"># 笔记</a>
+          
+            <a href="/tags/线程/" rel="tag"># 线程</a>
+          
+            <a href="/tags/同步/" rel="tag"># 同步</a>
+          
+            <a href="/tags/线程锁/" rel="tag"># 线程锁</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/12/进程间通信笔记（二）/" rel="next" title="进程间通信笔记（二）">
+                <i class="fa fa-chevron-left"></i> 进程间通信笔记（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/12/守护进程/" rel="prev" title="守护进程">
+                守护进程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2019/03/12/Linux线程同步笔记/"
+           data-title="Linux线程同步笔记" data-url="https://ysbbswork.github.io/2019/03/12/Linux线程同步笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Yang Shuai" />
+          <p class="site-author-name" itemprop="name">Yang Shuai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">89</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#互斥锁"><span class="nav-number">1.</span> <span class="nav-text">互斥锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁"><span class="nav-number">2.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#读写锁"><span class="nav-number">3.</span> <span class="nav-text">读写锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自旋锁"><span class="nav-number">4.</span> <span class="nav-text">自旋锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件变量"><span class="nav-number">5.</span> <span class="nav-text">条件变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信号量"><span class="nav-number">6.</span> <span class="nav-text">信号量</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yang Shuai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ysbbsduoshuo"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("edrvng15bi57PPaiJ3NQWQ6q-gzGzoHsz", "GXBArCm2d08FJLrGSpf3PSkH");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>
