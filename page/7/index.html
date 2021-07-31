@@ -260,173 +260,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yang Shuai">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ysbbs">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/" itemprop="url">
-                  Unix-Linux编程实践教程读书笔记（一）
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-13T15:37:47+08:00">
-                2018-06-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/06/13/Unix-Linux编程实践教程读书笔记（一）/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/" class="leancloud_visitors" data-flag-title="Unix-Linux编程实践教程读书笔记（一）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><strong>文件操作：</strong></p>
-<ul>
-<li><p>cp文件复制</p>
-<p><code>cp shooping_list last.week.list</code>将shopping_list复制一份，新的文件名为last.week.list</p>
-</li>
-<li><p>mv重命名或移动文件</p>
-<p><code>mv prog1.c first_p.c</code>将文件prog1.c改名</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir mycode</div><div class="line">mv first_p.c mycode</div></pre></td></tr></table></figure>
-<p>新建一个文档，然后将文件移动到这个目录中。</p>
-</li>
-</ul>
-<p><strong>Unix系统编程三个重要方面：</strong></p>
-<ul>
-<li><p>通信</p>
-<p>某个用户或进程如何与其他用户或进程交换信息</p>
-</li>
-<li><p>协助</p>
-<p>在同一个时刻，程序如何来协调多个进程使他们能够没有冲突地访问共享资源？</p>
-</li>
-<li><p>网络访问</p>
-<p>在这个例子中，互相独立的计算机通过网络连接到一起，那么计算机中的程序是如何来使用网络呢？</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/06/13/Unix-Linux编程实践教程读书笔记（一）/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/06/08/多和巨人待在一起/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -678,7 +511,7 @@
           <h1 id="处理系统调用中的错误"><a href="#处理系统调用中的错误" class="headerlink" title="处理系统调用中的错误"></a>处理系统调用中的错误</h1><p>系统调用会遇到哪些错误呢？每个系统调用都有自己的错误集，以open为例，如果要打开的文件不存在，或者没有权限，都会报错，返回-1，但是如何确定到底是发生了哪一类具体错误呢？</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/06/06/Linux编程笔记（三）——处理错误/#more" rel="contents">
+            <a class="btn" href="/2018/06/06/Linux编程笔记（三）——处理错误/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -828,7 +661,7 @@
 <p>文件描述符数组在每个进程中都会持有一份，所以理论上是每个进程最多可以打开 1024 个文件，而不是系统中所有的进程一共只能打开 1024 个文件。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/06/05/Linux编程笔记（二）——系统调用IO/#more" rel="contents">
+            <a class="btn" href="/2018/06/05/Linux编程笔记（二）——系统调用IO/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -975,7 +808,7 @@
           <p>学习使用cocos2dx的时候少不了的就是在各个时间环节出打Log了，游戏人物和场景进行到哪一步，坐标是怎么遍历的都可以通过Log输出到控制台，不仅是对于游戏编程，对于非黑窗口，或者不想往黑窗口中print调试语句的时候，往VS的控制台输出调试的语句跟踪程序运行是非常舒服的办法。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/06/04/像cocos2dX一样往VS控制台输出log/#more" rel="contents">
+            <a class="btn" href="/2018/06/04/像cocos2dX一样往VS控制台输出log/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1124,7 +957,7 @@
 <p>那么，我们就开始吧。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/05/27/重读c-primer（基础部分）/#more" rel="contents">
+            <a class="btn" href="/2018/05/27/重读c-primer（基础部分）/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1818,7 +1651,158 @@
 <p>例：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/05/21/C-socket编程（一）/#more" rel="contents">
+            <a class="btn" href="/2018/05/21/C-socket编程（一）/#далее" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/05/13/Linux管道编程小记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/05/13/Linux管道编程小记/" itemprop="url">
+                  Linux管道编程小记
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T21:43:40+08:00">
+                2018-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/13/Linux管道编程小记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/05/13/Linux管道编程小记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/05/13/Linux管道编程小记/" class="leancloud_visitors" data-flag-title="Linux管道编程小记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>匿名管道pipe是单向的，或者说是半双工的。</p>
+<p>提供了一个和它有共同先祖的进程的通信方式。</p>
+<p>注意：如果需要全双工通信，应该转而考虑套接字API</p>
+<p>另一种类型的管道被称为命名管道。一个命名管道像正常管道一样工作，但是它存在于文件系统中，因而任意进程都可以找到它。这使得不同先祖的进程之间也可以进行通信。</p>
+<p>注意：管道只不过是一对文件描述符，因此所有能够操作文件描述符的函数都可以用于管道。这些函数包括但不限于 select，read，write，fcntl，freopen。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/05/13/Linux管道编程小记/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1905,7 +1889,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-count">106</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -260,154 +260,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/01/01/C-文件流读写/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yang Shuai">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ysbbs">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/01/01/C-文件流读写/" itemprop="url">
-                  C++文件流读写
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-01T16:06:27+08:00">
-                2018-01-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/01/01/C-文件流读写/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/01/01/C-文件流读写/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2018/01/01/C-文件流读写/" class="leancloud_visitors" data-flag-title="C++文件流读写">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><strong>流</strong>被用来读取/写入文件、连接网络和字符串，它的一个有用的特性是易于从混合数据类型中得到字符串。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;sstream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fstream&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line">	<span class="built_in">ostringstream</span> strbuf; <span class="comment">//字符流声明</span></div><div class="line">  </div><div class="line">	<span class="keyword">int</span> lucky = <span class="number">7</span>;</div><div class="line">	<span class="keyword">float</span> pi = <span class="number">3.14</span>;</div><div class="line">	<span class="keyword">double</span> e = <span class="number">2.71</span>;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"an in-memory stream"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  </div><div class="line">	strbuf &lt;&lt; <span class="string">"lucknumber"</span> &lt;&lt; lucky &lt;&lt; <span class="built_in">endl</span><span class="comment">//将各种类型的值和字符串一起传给字符流，然后再做统一处理</span></div><div class="line">		&lt;&lt; <span class="string">"pi:"</span> &lt;&lt; pi &lt;&lt; <span class="built_in">endl</span></div><div class="line">		&lt;&lt; <span class="string">"e:"</span> &lt;&lt; e &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">  </div><div class="line">	<span class="built_in">string</span> strval = strbuf.str();<span class="comment">//将字符串流转换成字符串</span></div><div class="line">	<span class="built_in">cout</span> &lt;&lt; strval;<span class="comment">//打印字符串</span></div><div class="line">  </div><div class="line">	ofstream outf;<span class="comment">//声明openfile对象</span></div><div class="line">	outf.open(<span class="string">"mydata"</span>);<span class="comment">//打开文件，没有则创建</span></div><div class="line">	outf &lt;&lt; strval;<span class="comment">//将字符串流输出给文件</span></div><div class="line">	outf.close();<span class="comment">//关闭文件</span></div><div class="line">  </div><div class="line">  	<span class="built_in">cout</span> &lt;&lt; <span class="string">"read data from the file"</span> &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//读文件</span></div><div class="line">	<span class="built_in">string</span> newstr;</div><div class="line">	ifstream inf;<span class="comment">//声明一个输入文件流对象</span></div><div class="line">	inf.open(<span class="string">"mydata"</span>);<span class="comment">//打开文件</span></div><div class="line">  </div><div class="line">	<span class="keyword">if</span> (inf) &#123;<span class="comment">//Make sure the filr exists before attempting to read</span></div><div class="line">		<span class="keyword">while</span> (! inf.eof()) &#123;<span class="comment">//文件流每次读取为一行，读取后会自动进入下一行，直到inf.eof()</span></div><div class="line">			getline(inf, newstr);<span class="comment">//把读取的每行当做字符串处理</span></div><div class="line">			<span class="built_in">cout</span> &lt;&lt; newstr &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">		&#125;</div><div class="line">		inf.close();</div><div class="line">	&#125;</div><div class="line">  </div><div class="line">	<span class="built_in">cin</span>.get();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="QT中实现"><a href="#QT中实现" class="headerlink" title="QT中实现"></a>QT中实现</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QTextStream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QString&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QFile&gt;</span></span></div><div class="line"></div><div class="line"><span class="function">QTextStream <span class="title">cout</span><span class="params">(<span class="built_in">stdout</span>)</span></span>;</div><div class="line"><span class="function">QTextStream <span class="title">cerr</span><span class="params">(<span class="built_in">stderr</span>)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    QString str,newstr;<span class="comment">//Qstring为QT中的string，有丰富的API更好用</span></div><div class="line">    <span class="function">QTextStream <span class="title">strbuf</span><span class="params">(&amp;str)</span></span>;<span class="comment">//QT的字符流声明</span></div><div class="line">    <span class="keyword">int</span> lucky =<span class="number">7</span>;</div><div class="line">    <span class="keyword">float</span> pi =<span class="number">3.14</span>;</div><div class="line">    <span class="keyword">double</span> e=<span class="number">2.71</span>;</div><div class="line"></div><div class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"A in-memory stream"</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">    strbuf&lt;&lt;<span class="string">"luckynumber:"</span>&lt;&lt;lucky&lt;&lt;<span class="built_in">endl</span><span class="comment">//一样先把字符都输入到字符流中，方便后面统一处理</span></div><div class="line">         &lt;&lt;<span class="string">"pi:"</span>&lt;&lt;pi&lt;&lt;<span class="built_in">endl</span></div><div class="line">        &lt;&lt;<span class="string">"e:"</span>&lt;&lt;e&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">    <span class="built_in">cout</span>&lt;&lt;str;</div><div class="line"></div><div class="line">    <span class="function">QFile <span class="title">data</span><span class="params">(<span class="string">"mydata"</span>)</span></span>;<span class="comment">//创建QT文件类对象，并用文件初始化QFile对象</span></div><div class="line">    data.open(QIODevice::WriteOnly);<span class="comment">//打开文件，以QTIO的写方式</span></div><div class="line">    <span class="function">QTextStream <span class="title">out</span><span class="params">(&amp;data)</span></span>;<span class="comment">//这里和VC不太一样，要输出到文件，先要将文件转换成对应的字符串流</span></div><div class="line">    out&lt;&lt;str;<span class="comment">//输出到已绑定字符流文件</span></div><div class="line">    data.close();</div><div class="line"></div><div class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="string">"Read from file line-by-line"</span>&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">    <span class="keyword">if</span>(data.open(QIODevice::ReadOnly))&#123;</div><div class="line">        <span class="function">QTextStream <span class="title">in</span><span class="params">(&amp;data)</span></span>;</div><div class="line">        <span class="keyword">while</span> (not in.atEnd())&#123;</div><div class="line">            newstr = in.readLine();</div><div class="line">            <span class="built_in">cout</span>&lt;&lt;newstr&lt;&lt;<span class="built_in">endl</span>;</div><div class="line">        &#125;</div><div class="line">        data.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="小试QT-GUI"><a href="#小试QT-GUI" class="headerlink" title="小试QT GUI"></a>小试QT GUI</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QtGui&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QMessageBox&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QInputDialog&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QApplication&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span>* argv[])</span></span>&#123;</div><div class="line">    <span class="function">QApplication <span class="title">app</span><span class="params">(argc,argv)</span></span>;</div><div class="line">    <span class="function">QTextStream <span class="title">cout</span><span class="params">(<span class="built_in">stdout</span>)</span></span>;</div><div class="line">    <span class="keyword">int</span> answer = <span class="number">0</span>;</div><div class="line">    <span class="keyword">do</span>&#123;</div><div class="line">        <span class="keyword">int</span> factArg=<span class="number">0</span>;</div><div class="line">        <span class="function"><span class="keyword">int</span> <span class="title">fact</span><span class="params">(<span class="number">1</span>)</span></span>;</div><div class="line">      </div><div class="line">        factArg = QInputDialog::getInt(<span class="number">0</span>,<span class="string">"Factorial Calculator"</span>,<span class="string">"Factorial of:"</span>,<span class="number">1</span>);<span class="comment">//QT的输入对话框</span></div><div class="line">      </div><div class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"User entered:"</span>&lt;&lt;factArg&lt;&lt;<span class="built_in">endl</span>;<span class="comment">//打印到控制台</span></div><div class="line">      <span class="comment">//业务内容</span></div><div class="line">        <span class="keyword">int</span> i =<span class="number">2</span>;</div><div class="line">        <span class="keyword">while</span>(i&lt;=factArg)&#123;</div><div class="line">            fact=fact*i;</div><div class="line">            ++i;</div><div class="line">        &#125;</div><div class="line">      </div><div class="line">        QString response=QString(<span class="string">"The factorial of %1 is %2.\n%3"</span>)</div><div class="line">                .arg(factArg).arg(fact)</div><div class="line">                .arg(<span class="string">"Do you want to computer another factorial?"</span>);<span class="comment">//Qstring格式化字符串内容</span></div><div class="line">      </div><div class="line">        answer=QMessageBox::question(<span class="number">0</span>,<span class="string">"play again?"</span>,response,</div><div class="line">                QMessageBox::Yes|QMessageBox::No);<span class="comment">//对话框设置</span></div><div class="line"></div><div class="line">    &#125;<span class="keyword">while</span>(answer==QMessageBox::Yes);</div><div class="line">    <span class="keyword">return</span> EXIT_SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="QString"><a href="#QString" class="headerlink" title="QString"></a>QString</h1><p>可以将char类型的字符串用等号之间转换过来</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QTextStream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;QString&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span>* charstr=<span class="string">"this is a char string"</span>;</div><div class="line"><span class="function">QTextStream <span class="title">cout</span><span class="params">(<span class="built_in">stdout</span>)</span></span>;</div><div class="line">QString str=charstr;</div><div class="line"><span class="built_in">cout</span>&lt;&lt;str&lt;&lt;<span class="built_in">endl</span>;</div><div class="line"><span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2017/12/27/c-lambda表达式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -535,7 +387,7 @@
 <p>几个例子：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/27/c-lambda表达式/#more" rel="contents">
+            <a class="btn" href="/2017/12/27/c-lambda表达式/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -860,7 +712,7 @@
 <p>阅读本文可以帮助你迅速复习C++，了解和补充一些程序设计知识。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/03/C-游戏编程入门读书笔记/#more" rel="contents">
+            <a class="btn" href="/2017/12/03/C-游戏编程入门读书笔记/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1625,7 +1477,7 @@
 <p>typedef和#define宏有点相似，但比#define实际要复杂的多，也隐藏了很多陷阱，从网上摘了一些总结的很好的例子，希望下次用typedef的时候更能游刃有余。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/09/13/C中的typedef用法小结/#more" rel="contents">
+            <a class="btn" href="/2017/09/13/C中的typedef用法小结/#далее" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1823,6 +1675,158 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2017/07/27/碎碎念/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/07/27/碎碎念/" itemprop="url">
+                  碎碎念
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-27T22:19:27+08:00">
+                2017-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/07/27/碎碎念/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/07/27/碎碎念/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/07/27/碎碎念/" class="leancloud_visitors" data-flag-title="碎碎念">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>今天在github上clone了一份关于贪心算法的python代码，作为我用python写knapsack解算法的一个参考，我自己写的那个贪心总感觉太乱了，用了numpy库但几乎是画蛇添足，本想看看网络一般python的贪心是什么风格，结果下载的代码真让我惊艳到了，原来这么简单的东西都可以写的那么精致，用python类实现，把每个item都构造成一个类对象，调用各种魔法方法简直是在炫技。</p>
+<p>看完代码之后有种痛苦，痛苦于自己从未想过去如何更好的实现代码，如何更好的利用python特性去写程序，感觉python在我手里都是暴遣天物，自己从未领悟到面向对象编程的优势，甚至一直有着面向对象编程无用的感觉。</p>
+<p>如果今天没有看到这么精致小巧很好的利用面向对象实现的算法代码，我可能一直都意识不到阅读代码的重要性，一直闭门造车，造出来的车虽然能跑，但更像是一个畸形的怪物，耗油量大，跑的慢。</p>
+<p>在网上的大神经常说，要去实践，想个idea，然后不停的去实现，在项目中，兴趣中去编程，就可以慢慢成为大神。</p>
+<p>我之前的理解一直都是去做一些别人没有做过的，新奇好玩的，去实现一些新的idea，凡是有点俗套的，已有的东西我都不太稀罕去实现一遍，去思考，去做一遍。</p>
+<p>今天痛定思痛，也是突然领悟，没有对比，永远都不知道自己有多烂。</p>
+<p>反而看来，去实现一些经典的东西，一些已经很成熟的东西，然后熟悉了，去阅读别人优秀的代码，去对比自己的思路，才知道自己哪里欠缺，哪些技巧方法是自己不知道，或者自己的思路有多笨，都可以一目了然。</p>
+<p>未来的日子还很长，不应眼高手低，从小的东西实现开始做起，对比，学习，去努力熟悉和发挥出python的魅力。</p>
+<p>人生苦短，我用python。</p>
+<p>希望明天会更好。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -1872,7 +1876,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">107</span>
+                <span class="site-state-item-count">106</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
