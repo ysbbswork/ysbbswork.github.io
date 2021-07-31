@@ -260,189 +260,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/05/10/Linux编程笔记（一）——标准IO/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Yang Shuai">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ysbbs">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2018/05/10/Linux编程笔记（一）——标准IO/" itemprop="url">
-                  Linux编程笔记（一）——标准IO
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-10T21:44:41+08:00">
-                2018-05-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/05/10/Linux编程笔记（一）——标准IO/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/05/10/Linux编程笔记（一）——标准IO/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2018/05/10/Linux编程笔记（一）——标准IO/" class="leancloud_visitors" data-flag-title="Linux编程笔记（一）——标准IO">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h1><p>标准I/O提供的f系列I/O文件操作，如（fwrite,fread,fseek等）都是提供了有缓存的接口，如果数据需要送到像控制终端等交互设备，必须要设置fflush或者使用非缓存I/O。</p>
-<p>而缓存可以减少系统调用的次数，增加效率。</p>
-<p>这是标准I/O相对于系统调用的特点，也是优点。</p>
-<p>而系统调用的I/O读写是无缓冲的，实时性高。</p>
-<p>到这里我们还是没有说明白为什么标准 IO 吞吐量高，而系统 IO 实时性高。我再举个简单的栗子：门卫老大爷负责送信到邮局，他去一次邮局要花费 10 分钟的时间，而每次最多能送 20 封信，每当信件累计到 20 封的时候他就要动身去邮局了。但是当他收到一封加急的邮件时，就会立即去一趟邮局。系统 IO 就好比每收到一封信时都要去一趟邮局，所以实时性高。而标准 IO 就好比要攒够 20 封信才去一趟邮局，所以吞吐量高，因为用户把信件交到老大爷的手上时就会立即返回，响应速度快，用户体验更好。而我们使用 fflush(3) 之类的函数强制刷新缓冲的时候，就相当于是老大爷收到了一封加急信件需要立即去一趟邮局送信。</p>
-<h1 id="标准I-O"><a href="#标准I-O" class="headerlink" title="标准I/O"></a>标准I/O</h1><h2 id="1-fopen-3"><a href="#1-fopen-3" class="headerlink" title="1.fopen(3)"></a>1.fopen(3)</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="function">FILE *<span class="title">fopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">const</span> <span class="keyword">char</span> *mode)</span></span>;</div></pre></td></tr></table></figure>
-<p>这是今天要学习的第一个函数，在操作文件之前，我们需要通过 fopen() 函数将文件打开，通过这个函数我们可以告诉操作系统我们要操作的是哪个文件，以及用什么样的方式操作这个文件。</p>
-<p>参数列表：</p>
-<p>path：要操作的文件路径。</p>
-<p>mode：文件的打开方式，这个打开方式一共分为6种。</p>
-<p>　　r：以<strong>只读</strong>的方式打开文件，并且文件位置指针会被定位到文件首。如果要打开的文件不存在则报错。</p>
-<p>　　r+：以<strong>读写</strong>的方式打开文件，并且文件位置指针会被定位到文件首。如果要打开的文件不存在则报错。</p>
-<p>　　w：以<strong>只写</strong>的方式打开文件，如果文件不存在则创建，如果文件已存在则被<strong>截断</strong>为 0 字节，并且文件位置指针会被定位到文件首。</p>
-<p>　　w+：以<strong>读写</strong>的方式打开文件，如果文件不存在则创建，如果文件已存在则被<strong>截断</strong>为 0 字节，并且文件位置指针会被定位到文件首。</p>
-<p>　　a：以<strong>追加</strong>的方式打开文件，如果文件不存在则创建，且文件位置指针会被定位到文件最后一个有效字符的后面（EOF，end of the file）。</p>
-<p>　　a+：以<strong>读和追加</strong>的方式打开文件，如果文件不存在则创建，且读文件位置指针会被初始化到文件首，但是总是写入到最后一个有效字符的后面（EOF，end of the file）。</p>
-<p>返回值：</p>
-<p>　　FILE 是一个由标准库定义的结构体，各位童鞋不要企图通过手动修改结构体里的内容来实现文件的操作，一定要通过标准库函数来操作文件。</p>
-<p>　　这个函数返回一个 FILE 类型的指针，它作为我们打开文件的凭据，后面所有对这个文件的操作都需要使用这个指针，而且使用之后一定不要忘记调用 fclose(3) 函数释放资源。</p>
-<p>　　如果该函数返回了一个指向 NULL 的指针，则表示文件打开失败了，可以通过 errno 获取到具体失败的原因。</p>
-<h2 id="2-fclose-3"><a href="#2-fclose-3" class="headerlink" title="2.fclose(3)"></a>2.fclose(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1 fclose - close a stream</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 int fclose(FILE *fp);</div></pre></td></tr></table></figure>
-<p>这个函数是与 fopen(3) 函数对应的，当我们使用完一个文件之后，需要调用 fclose(3) 函数释放相关的资源，否则会造成内存泄漏。当一个 FILE 指针被 fclose(3) 函数成功释放后，这个指针所指向的内容将不能再次被使用，如果需要再次打开文件还需要调用 fopen(3) 函数。</p>
-<p>参数列表：</p>
-<p>　　fp：fopen(3) 函数的返回值作为参数传入即可。</p>
-<h2 id="3-fgets-3"><a href="#3-fgets-3" class="headerlink" title="3.fgets(3)"></a>3.fgets(3)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1 fgets - input of strings</div><div class="line">2 </div><div class="line">3 #include &lt;stdio.h&gt;</div><div class="line">4 </div><div class="line">5 int fgetc(FILE *stream);</div><div class="line">6 </div><div class="line">7 char *fgets(char *s, int size, FILE *stream);</div></pre></td></tr></table></figure>
-<p>从输入流 stream 中读取一个字符串回填到 s 所指向的空间。</p>
-<p>这里出现了一个 stream 的概念，这个 stream 是什么呢，它被成为“流”，其实就是操作系统对于可以像文件一样操作的东西的一种抽象。它并非像自然界的小河流水一样潺潺细流，而通常是要么没有数据，要么一下子来一坨数据。当然 stream 也未必一定就是文件，比如系统为每个进程默认打开的三个 stream：stdin、stdout、stderr，它们本身就不是文件，就是与文件有着相同的操作方式，所以同样被抽象成了“流”。</p>
-<p>这个函数并没有解决 gets(3) 函数可能会导致的数组越界问题，而是通过牺牲了获取数据的正确性来保证程序不会出现数组越界的错误，实际上是掩盖了 gets(3) 的问题。</p>
-<p>该函数遇到如下四种情况会返回：</p>
-<p>　　1.当读入的数据量达到 size - 1 时；</p>
-<p>　　2.当读取的字符遇到 \n 时；</p>
-<p>　　3.当读取的字符遇到 EOF 时；</p>
-<p>　　4.当读取遇到错误时；</p>
-<p>并且它会在读取到的数据的最后面添加一个 \0 到 s 中。</p>
-<p>返回值：</p>
-<p>　　成功时返回 s。</p>
-<p>　　返回 NULL 时表示出现了错误或者读到了 strem 的末尾(EOF)。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/10/Linux编程笔记（一）——标准IO/#далее" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2018/05/09/有趣的linux下的表达方式vt100/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -941,7 +758,7 @@
 <p>2.有没有python，没有安装python：apt-get install python</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/24/vps搭小飞机出海/#далее" rel="contents">
+            <a class="btn" href="/2018/03/24/vps搭小飞机出海/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1262,7 +1079,7 @@
 <p>第一次遇到这种情况，攻克的过程也挺复杂有趣，中间学到了很多东西，新手一开始遇到还真的会和我一样摸不着头脑，即使google可能也会从编码去查，绕很多弯路也百思不得其解。后来用这种发现这种方式的网站还挺多的，毕竟这种反爬机制是很易用的，想绕过去也是很麻烦的，所以写这篇文章，记录下整个攻克的方法和过程分享出来。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/13/攻破网页字符替换反爬虫机制小记/#далее" rel="contents">
+            <a class="btn" href="/2018/03/13/攻破网页字符替换反爬虫机制小记/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1989,6 +1806,180 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://ysbbswork.github.io/2017/12/27/c-lambda表达式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang Shuai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ysbbs">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/12/27/c-lambda表达式/" itemprop="url">
+                  c++lambda表达式
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-27T14:34:49+08:00">
+                2017-12-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/27/c-lambda表达式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/12/27/c-lambda表达式/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/12/27/c-lambda表达式/" class="leancloud_visitors" data-flag-title="c++lambda表达式">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><strong>本博客采用创作共用版权协议, 要求署名、非商业用途和保持一致. 转载本博客文章必须也遵循署名-非商业用途-保持一致的创作共用协议.</strong></p>
+<p>C++ 11中的Lambda表达式用于定义并创建匿名的函数对象，以简化编程工作。Lambda的语法形式如下：<br>[函数对象参数](操作符重载函数参数) mutable或exception声明-&gt;返回值类型{ 函数体 }</p>
+<p>可以看到，Lambda主要分为五个部分：</p>
+<p>[函数对象参数]、(操作符重载函数参数)、mutable或exception声明、-&gt;返回值类型、{ 函数体 }。</p>
+<p>下面分别进行介绍。<br>一、[函数对象参数]，标识一个Lambda的开始，这部分必须存在，不能省略。函数对象参数是传递给编译器自动生成的函数对象类的构造函数的。<br>函数对象参数只能使用那些到定义Lambda为止时Lambda所在作用范围内可见的局部变量（包括Lambda所在类的this）。函数对象参数有以下形式：</p>
+<ul>
+<li><p>空。没有使用任何函数对象参数。</p>
+</li>
+<li><p>= 。函数体内可以使用Lambda所在作用范围内所有可见的局部变量（包括Lambda所在类的this），并且是值传递方式（相当于编译器自动为我们按值传递了所有局部变量）。</p>
+</li>
+<li><p>&amp;。函数体内可以使用Lambda所在作用范围内所有可见的局部变量（包括Lambda所在类的this），并且是引用传递方式（相当于编译器自动为我们按引用传递了所有局部变量）。</p>
+</li>
+<li><p>this。函数体内可以使用Lambda所在类中的成员变量。</p>
+</li>
+<li><p>a。将a按值进行传递。按值进行传递时，函数体内不能修改传递进来的a的拷贝，因为默认情况下函数是const的。要修改传递进来的a的拷贝，可以添加mutable修饰符。</p>
+</li>
+<li><p>&amp;a。将a按引用进行传递。</p>
+</li>
+<li><p>a, &amp;b。将a按值进行传递，b按引用进行传递。</p>
+</li>
+<li><p>= ，&amp;a, &amp;b。除a和b按引用进行传递外，其他参数都按值进行传递。</p>
+</li>
+<li><p>&amp;, a, b。除a和b按值进行传递外，其他参数都按引用进行传递。</p>
+</li>
+</ul>
+<p>二、(操作符重载函数参数)，标识重载的()操作符的参数，没有参数时，这部分可以省略。参数可以通过按值（如：(a, b)）和按引用（如：(&amp;a, &amp;b)）两种方式进行传递。</p>
+<p>三、mutable或exception声明，这部分可以省略。按值传递函数对象参数时，加上mutable修饰符后，可以修改按值传递进来的拷贝（注意是能修改拷贝，而不是值本身）。<br>  exception声明用于指定函数抛出的异常，如抛出整数类型的异常，可以使用throw(int)。<br>四、-&gt;返回值类型，标识函数返回值的类型，当返回值为void，或者函数体中只有一处return的地方（此时编译器可以自动推断出返回值类型）时，这部分可以省略。<br>五、{ 函数体 }，标识函数的实现，这部分不能省略，但函数体可以为空。</p>
+<p>几个例子：</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/27/c-lambda表达式/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -2038,7 +2029,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">106</span>
+                <span class="site-state-item-count">105</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
